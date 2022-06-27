@@ -8,7 +8,7 @@
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
     "start": "parcel watch",
-    "build": "rm -rf dist/ && parcel build && parcel build \"src/*.js\" --dist-dir \"./dist/\"",
+    "build": "rm -rf dist/ && parcel build",
     "start:example": "pnpm --filter \"./examples\" start",
     "build:example": "pnpm --filter \"./examples\" build",
     "deploy": "pnpm build && standard-version --release-as",

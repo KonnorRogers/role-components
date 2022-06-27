@@ -1,0 +1,28 @@
+{
+  "name": "role-components",
+  "version": "1.0.0",
+  "description": "A variety of simple components that match an aria-role",
+  "type": "module",
+  "source": "src/index.js",
+  "module": "dist/role-components.js",
+  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "scripts": {
+    "start": "parcel watch",
+    "build": "rm -rf dist/ && parcel build",
+    "start:example": "pnpm --filter \"./examples\" start",
+    "build:example": "pnpm --filter \"./examples\" build"
+  },
+  "keywords": [
+    "web-components",
+    "aria"
+  ],
+  "author": "Konnor Rogers",
+  "license": "MIT",
+  "devDependencies": {
+    "parcel": "^2.6.2"
+  },
+  "dependencies": {
+    "@swc/helpers": "^0.4.2",
+    "@floating-ui/dom": "^0.5.4"
+  }
+}

@@ -1,1 +1,1 @@
-import "../dist/role-components.js"
+import "../dist/role-components"

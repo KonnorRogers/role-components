@@ -8,5 +8,12 @@
     "build": "rm -rf dist && parcel build"
   },
   "author": "Konnor Rogers",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@parcel/compressor-brotli": "^2.6.2",
+    "@parcel/compressor-gzip": "^2.6.2",
+    "@parcel/config-default": "^2.6.2",
+    "@parcel/core": "^2.6.2",
+    "parcel": "^2.6.2"
+  }
 }

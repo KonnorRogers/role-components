@@ -17,11 +17,12 @@ export class RoleTooltip extends BaseElement {
     ]
   }
 
-  /** @returns {string} */
+  /** @returns {"role-tooltip"} */
   static get baseName () {
     return "role-tooltip"
   }
 
+  /** @returns {["id"]} */
   static get observableAttributes () {
     return ["id"]
   }
@@ -30,13 +31,16 @@ export class RoleTooltip extends BaseElement {
   get styles () {
     return `
       :host {
+        --background-color: #222;
+        --arrow-size: 8px;
+
         display: none;
         position: absolute;
         left: 0px;
         top: 0px;
         max-width: calc(100vw - 10px);
         padding: 0.4em 0.6em;
-        background: #222;
+        background: var(--background-color);
         color: white;
         border-radius: 4px;
         font-size: 0.9em;
@@ -45,9 +49,9 @@ export class RoleTooltip extends BaseElement {
 
       .arrow {
         position: absolute;
-        background: #222;
-        width: 8px;
-        height: 8px;
+        background: var(--background-color);
+        width: var(--arrow-size);
+        height: var(--arrow-size);
         transform: rotate(45deg);
       }
     `
@@ -78,10 +82,18 @@ export class RoleTooltip extends BaseElement {
     this.attachListeners()
   }
 
+  /**
+   * Fires when the "id" attribute changes.
+   * @returns {void}
+   */
   idChanged () {
     this.attachListeners()
   }
 
+  /**
+   * Used for re-initialized event listeners
+   * @returns {void}
+   */
   attachListeners () {
     this.listeners.forEach(([event, listener]) => {
       // Remove listeners. Do it in the same loop for perf stuff.
@@ -90,19 +102,24 @@ export class RoleTooltip extends BaseElement {
     })
   }
 
+  /*
+   * Used for cleaning up
+   * @returns {void}
+   */
   removeListeners () {
     this.listeners.forEach(([event, listener]) => {
       this._tooltipAnchors.forEach((el) => el.removeEventListener(event, listener))
     })
   }
 
+  /** @returns {HTMLDivElement} */
   get arrow () {
     return this.shadowQuery(".arrow")
   }
 
   /**
    * @param {Event|Element} eventOrElement
-   * @returns void
+   * @returns {void}
    */
   show = (eventOrElement) => {
     let target = eventOrElement
@@ -116,7 +133,7 @@ export class RoleTooltip extends BaseElement {
 
   /**
    * @param {Event} [event]
-   * @returns void
+   * @returns {void}
    */
   hide = () => {
     this.style.display = 'none'

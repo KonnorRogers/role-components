@@ -60,7 +60,20 @@ export class RoleToolbar extends BaseElement {
       end: this.focusLast
     }
 
-    this.addEventListener("click", (_event) => {
+    this.addEventListener("click", (event) => {
+      const target = (event.composedPath?.()[0] || event.target)
+      const focusedElement = target.closest(`[data-role='toolbar-item']`)
+
+      if (focusedElement) {
+        this.toolbarItems.forEach((el, index) => {
+          if (el === focusedElement) {
+            this.currentFocusIndex = index
+            return
+          }
+          el.setAttribute("tabindex", "-1")
+        })
+      }
+
       this.focusCurrentElement()
     })
 
@@ -140,4 +153,3 @@ export class RoleToolbar extends BaseElement {
   /** @returns {void} */
   adoptedCallback() {}
 }
-

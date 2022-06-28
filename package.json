@@ -4,8 +4,8 @@
   "description": "A variety of simple components that match an aria-role",
   "type": "module",
   "source": "src/index.js",
-  "main": "dist/role-components.unbundled.js",
-  "module": "dist/role-components.unbundled.js",
+  "main": "dist/role-components.unbundled/index.js",
+  "module": "dist/role-components.unbundled/index.js",
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
     "start": "parcel watch \"src/**/*.js\" --target \"dist\"",

@@ -2,7 +2,13 @@ lockfileVersion: 5.3
 
 specifiers:
   '@floating-ui/dom': ^0.5.4
+  '@parcel/compressor-brotli': ^2.6.2
+  '@parcel/compressor-gzip': ^2.6.2
+  '@parcel/config-default': ^2.6.2
+  '@parcel/core': ^2.6.2
+  '@parcel/reporter-cli': ^2.6.2
   '@swc/helpers': ^0.4.2
+  glob: ^8.0.3
   parcel: ^2.6.2
   standard-version: ^9.5.0
 
@@ -11,6 +17,12 @@ dependencies:
   '@swc/helpers': 0.4.2
 
 devDependencies:
+  '@parcel/compressor-brotli': 2.6.2_@parcel+core@2.6.2
+  '@parcel/compressor-gzip': 2.6.2_@parcel+core@2.6.2
+  '@parcel/config-default': 2.6.2_@parcel+core@2.6.2
+  '@parcel/core': 2.6.2
+  '@parcel/reporter-cli': 2.6.2_@parcel+core@2.6.2
+  glob: 8.0.3
   parcel: 2.6.2
   standard-version: 9.5.0
 
@@ -235,6 +247,24 @@ packages:
     engines: {node: '>= 12.0.0'}
     dependencies:
       chalk: 4.1.2
+    dev: true
+
+  /@parcel/compressor-brotli/2.6.2_@parcel+core@2.6.2:
+    resolution: {integrity: sha512-du6NGGZt7DoT4+F3IihHWFvQnuBMxMDdFyl2odr+lGQfaLHxqb/leXxjBpxddDOxqkLIpxb642vYxKKL+3cg2g==}
+    engines: {node: '>= 12.0.0', parcel: ^2.6.2}
+    dependencies:
+      '@parcel/plugin': 2.6.2_@parcel+core@2.6.2
+    transitivePeerDependencies:
+      - '@parcel/core'
+    dev: true
+
+  /@parcel/compressor-gzip/2.6.2_@parcel+core@2.6.2:
+    resolution: {integrity: sha512-VKk9F2DwBEYRQN9DSGZS8dWhqJMQXFul7pYg3QJM8qiKN8uoRgAwEe0wS9/8NIwtnaSCtgdJAHPK5LmcR6Hzag==}
+    engines: {node: '>= 12.0.0', parcel: ^2.6.2}
+    dependencies:
+      '@parcel/plugin': 2.6.2_@parcel+core@2.6.2
+    transitivePeerDependencies:
+      - '@parcel/core'
     dev: true
 
   /@parcel/compressor-raw/2.6.2_@parcel+core@2.6.2:
@@ -1052,6 +1082,12 @@ packages:
       concat-map: 0.0.1
     dev: true
 
+  /brace-expansion/2.0.1:
+    resolution: {integrity: sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA==}
+    dependencies:
+      balanced-match: 1.0.2
+    dev: true
+
   /browserslist/4.21.0:
     resolution: {integrity: sha512-UQxE0DIhRB5z/zDz9iA03BOfxaN2+GQdBYH/2WrSIWEUrnpzTPJbhqt+umq6r3acaPRTW1FNTkrcp0PXgtFkvA==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
@@ -1545,6 +1581,10 @@ packages:
       path-exists: 4.0.0
     dev: true
 
+  /fs.realpath/1.0.0:
+    resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
+    dev: true
+
   /function-bind/1.1.1:
     resolution: {integrity: sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A==}
     dev: true
@@ -1603,6 +1643,17 @@ packages:
     resolution: {integrity: sha512-spLUXeTAVHxDtKsJc8FkFVgFtMdEN9qPGpL23VfSHx4fP4+Ds097IXLvymbnDH8FnmxX5Nr9bPw3A+AQ6mWEaQ==}
     dependencies:
       ini: 1.3.8
+    dev: true
+
+  /glob/8.0.3:
+    resolution: {integrity: sha512-ull455NHSHI/Y1FqGaaYFaLGkNMMJbavMrEGFXG/PGrg6y7sutWHUHrz6gy6WEBH6akM1M414dWKCNs+IhKdiQ==}
+    engines: {node: '>=12'}
+    dependencies:
+      fs.realpath: 1.0.0
+      inflight: 1.0.6
+      inherits: 2.0.4
+      minimatch: 5.1.0
+      once: 1.4.0
     dev: true
 
   /globals/13.15.0:
@@ -1717,6 +1768,13 @@ packages:
   /indent-string/4.0.0:
     resolution: {integrity: sha512-EdDDZu4A2OyIK7Lr/2zG+w5jmbuk1DVBnEwREQvBzspBJkCEbRa8GxU1lghYcaGJCnRWibjDXlq779X1/y5xwg==}
     engines: {node: '>=8'}
+    dev: true
+
+  /inflight/1.0.6:
+    resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
+    dependencies:
+      once: 1.4.0
+      wrappy: 1.0.2
     dev: true
 
   /inherits/2.0.4:
@@ -1918,6 +1976,13 @@ packages:
       brace-expansion: 1.1.11
     dev: true
 
+  /minimatch/5.1.0:
+    resolution: {integrity: sha512-9TPBGGak4nHfGZsPBohm9AWg6NoT7QTCehS3BIJABslyZbzxfV78QM2Y6+i741OPZIafFAaiiEMh5OyIrJPgtg==}
+    engines: {node: '>=10'}
+    dependencies:
+      brace-expansion: 2.0.1
+    dev: true
+
   /minimist-options/4.1.0:
     resolution: {integrity: sha512-Q4r8ghd80yhO/0j1O3B2BjweX3fiHg9cdOwjJd2J76Q135c+NDxGCqdYKQ1SKBuFfgWbAUzBfvYjPUEeNgqN1A==}
     engines: {node: '>= 6'}
@@ -2016,6 +2081,12 @@ packages:
 
   /nullthrows/1.1.1:
     resolution: {integrity: sha512-2vPPEi+Z7WqML2jZYddDIfy5Dqb0r2fze2zTxNNknZaFpVHU3mFB3R+DWeJWGVx0ecvttSGlJTI+WG+8Z4cDWw==}
+    dev: true
+
+  /once/1.4.0:
+    resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
+    dependencies:
+      wrappy: 1.0.2
     dev: true
 
   /ordered-binary/1.2.5:
@@ -2622,6 +2693,10 @@ packages:
       ansi-styles: 4.3.0
       string-width: 4.2.3
       strip-ansi: 6.0.1
+    dev: true
+
+  /wrappy/1.0.2:
+    resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
     dev: true
 
   /xtend/4.0.2:

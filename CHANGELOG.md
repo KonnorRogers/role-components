@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.5](https://github.com/ParamagicDev/role-components/compare/v1.0.4...v1.0.5) (2022-07-01)
+
+
+### Bug Fixes
+
+* allow tooltips to be non-contained ([0cb9a69](https://github.com/ParamagicDev/role-components/commit/0cb9a69e5f95d7ac5ade31289b9296af9e641c07))
+
 ### [1.0.4](https://github.com/ParamagicDev/role-components/compare/v1.0.3...v1.0.4) (2022-06-28)
 
 

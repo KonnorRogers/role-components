@@ -6,6 +6,10 @@ specifiers:
   '@parcel/config-default': ^2.6.2
   '@parcel/core': ^2.6.2
   parcel: ^2.6.2
+  role-components: link:../
+
+dependencies:
+  role-components: link:..
 
 devDependencies:
   '@parcel/compressor-brotli': 2.6.2_@parcel+core@2.6.2

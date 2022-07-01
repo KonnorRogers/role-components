@@ -1,7 +1,31 @@
-export class BaseElement extends HTMLElement {
+function attachReflection (klass) {
+  const handler = {}
+  klass.constructor.properties?.forEach((prop) => {
+    handler[prop] = {
+      get() {
+        return klass[`#${prop}`]
+      },
+      set(value) {
+        const oldValue = klass[`#${prop}`]
 
+        if (oldValue != value) {
+          klass[`${prop}PropChanged`]?.(oldValue, value)
+          klass[`#${prop}`] = value
+        }
+      }
+    }
+  })
+
+  Object.defineProperties(klass, handler)
+}
+export class BaseElement extends HTMLElement {
+  static get properties () {
+    return []
+  }
   constructor () {
     super()
+    attachReflection(this)
+
     this.__sheet__ = undefined;
 
     try {
@@ -117,4 +141,3 @@ function template (str) {
   template.innerHTML = str
   return template
 }
-

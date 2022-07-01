@@ -1,3 +1,2 @@
-import "../dist/role-components"
-// import "../dist/toolbar"
-// import "../dist/tooltip"
+import "../dist/toolbar"
+import "../dist/tooltip"

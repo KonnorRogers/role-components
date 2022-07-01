@@ -3,11 +3,23 @@ import {arrow, computePosition, flip, shift, offset} from '@floating-ui/dom';
 
 /** @extends import("../base-element").BaseElement */
 export class RoleTooltip extends BaseElement {
+  static get properties () {
+    return ["rootElement"]
+  }
+  rootElementPropChanged (oldVal, newVal) {
+    if (oldVal != null && newVal == null) {
+      this.removeListeners()
+      return
+    }
+
+    this.attachListeners()
+  }
+
   constructor () {
     super()
     this.setAttribute("role", "tooltip")
     this._tooltipAnchors = []
-
+    this.query = `[aria-describedby~='${this.getAttribute("id")}']`
     this.listeners = [
       ['pointerenter', this.show],
       ['pointerleave', this.hide],
@@ -15,6 +27,7 @@ export class RoleTooltip extends BaseElement {
       ['focusout', this.hide],
       ['keydown', this.keyboardHide],
     ]
+    this.rootElement = document
   }
 
   /** @returns {"role-tooltip"} */
@@ -47,6 +60,10 @@ export class RoleTooltip extends BaseElement {
         pointer-events: none;
       }
 
+      :host([no-contain]) {
+        position: fixed;
+      }
+
       .arrow {
         position: absolute;
         background: var(--background-color);
@@ -58,7 +75,7 @@ export class RoleTooltip extends BaseElement {
   }
 
   get tooltipAnchors () {
-    this._tooltipAnchors = document.querySelectorAll(`[aria-describedby~='${this.getAttribute("id")}']`);
+    this._tooltipAnchors = [...(this.rootElement || document).querySelectorAll(this.query)]
     return this._tooltipAnchors
   }
 

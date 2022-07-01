@@ -9,6 +9,9 @@
   },
   "author": "Konnor Rogers",
   "license": "MIT",
+  "dependencies": {
+    "role-components": "link:../"
+  },
   "devDependencies": {
     "@parcel/compressor-brotli": "^2.6.2",
     "@parcel/compressor-gzip": "^2.6.2",

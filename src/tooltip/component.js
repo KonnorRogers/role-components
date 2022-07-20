@@ -1,5 +1,5 @@
 import { BaseElement } from "../base-element"
-import {arrow, computePosition, flip, shift, offset} from '@floating-ui/dom';
+import {arrow, computePosition, flip, shift, offset, autoUpdate} from '@floating-ui/dom';
 
 /** @extends import("../base-element").BaseElement */
 export class RoleTooltip extends BaseElement {
@@ -58,9 +58,10 @@ export class RoleTooltip extends BaseElement {
         border-radius: 4px;
         font-size: 0.9em;
         pointer-events: none;
+        z-index: 1;
       }
 
-      :host([no-contain]) {
+      :host([hoist]) {
         position: fixed;
       }
 
@@ -153,7 +154,10 @@ export class RoleTooltip extends BaseElement {
    * @returns {void}
    */
   hide = () => {
-    this.style.display = 'none'
+    this.cleanup?.()
+    setTimeout(() => {
+      this.style.display = 'none'
+    })
   }
 
   /**
@@ -175,31 +179,34 @@ export class RoleTooltip extends BaseElement {
 
     this.style.display = "block"
 
-    computePosition(target, this, {
-      placement: this.getAttribute("placement") ?? "top",
-      middleware: [offset(6), flip(), shift({padding: 5}), arrow({element: arrowEl})]
-    }).then(({x, y, middlewareData, placement}) => {
-      Object.assign(this.style, {
-        left: `${x}px`,
-        top: `${y}px`,
-      });
+    this.cleanup = autoUpdate(target, this, () => {
+      computePosition(target, this, {
+        placement: this.getAttribute("placement") ?? "top",
+        middleware: [offset(6), flip(), shift({padding: 5}), arrow({element: arrowEl})],
+        strategy: this.hasAttribute("hoist") ? "fixed" : "absolute"
+      }).then(({x, y, middlewareData, placement}) => {
+        Object.assign(this.style, {
+          left: `${x}px`,
+          top: `${y}px`,
+        });
 
-      const {x: arrowX, y: arrowY} = middlewareData.arrow;
-      const staticSide = {
-        top: 'bottom',
-        right: 'left',
-        bottom: 'top',
-        left: 'right',
-      }[placement.split('-')[0]];
+        const {x: arrowX, y: arrowY} = middlewareData.arrow;
+        const staticSide = {
+          top: 'bottom',
+          right: 'left',
+          bottom: 'top',
+          left: 'right',
+        }[placement.split('-')[0]];
 
-      Object.assign(arrowEl.style, {
-        left: arrowX != null ? `${arrowX}px` : '',
-        top: arrowY != null ? `${arrowY}px` : '',
-        right: '',
-        bottom: '',
-        [staticSide]: '-4px',
+        Object.assign(arrowEl.style, {
+          left: arrowX != null ? `${arrowX}px` : '',
+          top: arrowY != null ? `${arrowY}px` : '',
+          right: '',
+          bottom: '',
+          [staticSide]: '-4px',
+        });
       });
-    });
+    })
   }
 
   /** @returns {void} */

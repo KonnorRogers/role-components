@@ -1,100 +1,103 @@
-import { BaseElement } from "../base-element"
+import { BaseElement, html, css } from "../base"
 
 /** @extends import("../base-element").BaseElement */
 export class RoleToolbar extends BaseElement {
-  constructor () {
-    super()
-  }
-
   /** @returns {string} */
   static get baseName() {
     return "role-toolbar"
   }
 
   /** @returns {string} */
-  get styles () {
-    return `
-      :host {
+  static get styles () {
+    return css`
+      .base {
         display: flex;
-        padding: 0.4em 0.6em;
+        padding: 0.4rem 0.6rem;
         border-radius: 4px;
         border: 2px solid transparent;
         gap: 4px;
       }
 
-      :host([orientation="vertical"]) {
+      :host([orientation="vertical"]) .base {
         flex-direction: column;
+
       }
 
-      :host(:focus-within) {
-        border: 2px solid #005a9c;
+      :host(:focus-within) .base {
+        border-color: #005a9c;
       }
     `
   }
 
-  /** @returns {string} */
-  render () {
-    return `<slot></slot>`
-  }
+	/**
+	 * @return {Record<string, EventHandler>}
+	 */
+  get keydownHandlers () {
+		if (this._keydownHandlers) return this._keydownHandlers
 
-  /** @returns {string[]} */
-  get observableAttributes () {
-    return []
-  }
-
-  /** @returns {void} */
-  connectedCallback() {
-    super.connectedCallback()
-
-    this.setAttribute("role", "toolbar")
-
-    this.addEventListener("slotchange", this.updateToolbarItems)
-    this.updateToolbarItems()
-
-    const keys = {
+  	this._keydownHandlers = {
       arrowleft: this.focusPrevious,
       arrowup: this.focusPrevious,
       arrowright: this.focusNext,
       arrowdown: this.focusNext,
       home: this.focusFirst,
       end: this.focusLast
+  	}
+
+  	return this._keydownHandlers
+  }
+
+
+  /** @returns {string} */
+  render () {
+    return html`<div role="toolbar" class="base" part="base"><slot></slot></div>`
+  }
+
+  /** @returns {void} */
+  connectedCallback() {
+    super.connectedCallback()
+
+    this.shadowRoot.querySelector("slot:not([name])").addEventListener("slotchange", this.updateToolbarItems)
+    this.updateToolbarItems()
+
+    this.addEventListener("click", this.handleClick)
+    this.addEventListener("keydown", this.handleKeyDown)
+  }
+
+  handleClick = (event) => {
+    const target = (event.composedPath?.()[0] || event.target)
+    const focusedElement = target.closest(`[data-role='toolbar-item']`)
+
+    if (focusedElement) {
+      this.toolbarItems.forEach((el, index) => {
+        if (el === focusedElement) {
+          this.currentFocusIndex = index
+          return
+        }
+        el.setAttribute("tabindex", "-1")
+      })
     }
 
-    this.addEventListener("click", (event) => {
-      const target = (event.composedPath?.()[0] || event.target)
-      const focusedElement = target.closest(`[data-role='toolbar-item']`)
+    this.focusCurrentElement()
+  }
 
-      if (focusedElement) {
-        this.toolbarItems.forEach((el, index) => {
-          if (el === focusedElement) {
-            this.currentFocusIndex = index
-            return
-          }
-          el.setAttribute("tabindex", "-1")
-        })
-      }
+  handleKeyDown = (event) => {
+    const key = event.key?.toLowerCase()
 
-      this.focusCurrentElement()
-    })
+    if (this.orientation === "vertical" && (key === "arrowleft" || key === "arrowright")) return
+    if (this.orientation === "horizontal" && (key === "arrowdown" || key === "arrowup")) return
 
-    this.addEventListener("keydown", (event) => {
-      const key = event.key?.toLowerCase()
-
-      if (this.orientation === "vertical" && (key === "arrowleft" || key === "arrowright")) return
-      if (this.orientation === "horizontal" && (key === "arrowdown" || key === "arrowup")) return
-
-      if (Object.keys(keys).includes(key)) {
-        event.preventDefault()
-        keys[key]()
-      }
-    })
+    if (Object.keys(this.keydownHandlers).includes(key)) {
+      event.preventDefault()
+      this.keydownHandlers[key]()
+    }
   }
 
   get orientation () {
     return this.getAttribute("orientation") === "vertical" ? "vertical" : "horizontal"
   }
 
-  focusNext = () => {
+  focusNext = (_event) => {
     this.currentFocusElement.setAttribute("tabindex", "-1")
     this.currentFocusIndex += 1
 
@@ -106,7 +109,7 @@ export class RoleToolbar extends BaseElement {
     this.focusCurrentElement()
   }
 
-  focusPrevious = () => {
+  focusPrevious = (_event) => {
     this.currentFocusElement.setAttribute("tabindex", "-1")
     this.currentFocusIndex -= 1
 

@@ -1,23 +1,35 @@
-import { BaseElement } from "../base-element"
+import { html, css, BaseElement } from "../base"
 import {arrow, computePosition, flip, shift, offset, autoUpdate} from '@floating-ui/dom';
 
 /** @extends import("../base-element").BaseElement */
 export class RoleTooltip extends BaseElement {
-  static get properties () {
-    return ["rootElement"]
+  static get observedAttributes() {
+    return ["id"]
   }
-  rootElementPropChanged (oldVal, newVal) {
-    if (oldVal != null && newVal == null) {
+
+  get rootElement () {
+  	if (this._rootElement == null) {
+  		this._rootElement = this.getRootNode().host || document
+  	}
+		return this._rootElement
+  }
+
+  set rootElement (newVal) {
+		const oldVal = this._rootElement
+
+		if (oldVal === newVal) return
+
+    if (newVal == null) {
       this.removeListeners()
       return
     }
 
+    this._rootElement = newVal
     this.attachListeners()
   }
 
   constructor () {
     super()
-    this.setAttribute("role", "tooltip")
     this._tooltipAnchors = []
     this.query = `[aria-describedby~='${this.getAttribute("id")}']`
     this.listeners = [
@@ -27,7 +39,6 @@ export class RoleTooltip extends BaseElement {
       ['focusout', this.hide],
       ['keydown', this.keyboardHide],
     ]
-    this.rootElement = document
   }
 
   /** @returns {"role-tooltip"} */
@@ -35,18 +46,15 @@ export class RoleTooltip extends BaseElement {
     return "role-tooltip"
   }
 
-  /** @returns {["id"]} */
-  static get observableAttributes () {
-    return ["id"]
-  }
-
   /** @returns {string} */
-  get styles () {
-    return `
-      :host {
+  static get styles () {
+    return css`
+			:host {
         --background-color: #222;
         --arrow-size: 8px;
+			}
 
+      .base {
         display: none;
         position: absolute;
         left: 0px;
@@ -61,7 +69,7 @@ export class RoleTooltip extends BaseElement {
         z-index: 1;
       }
 
-      :host([hoist]) {
+      :host([hoist]) .base {
         position: fixed;
       }
 
@@ -76,21 +84,23 @@ export class RoleTooltip extends BaseElement {
   }
 
   get tooltipAnchors () {
-    this._tooltipAnchors = [...(this.rootElement || document).querySelectorAll(this.query)]
+    this._tooltipAnchors = [...this.rootElement.querySelectorAll(this.query)]
     return this._tooltipAnchors
   }
 
   /** @returns {string} */
   render () {
-    return `
-      <slot></slot>
-      <div class="arrow" part="arrow"></div>
+    return html`
+			<div role="tooltip" part="base" class="base">
+      	<slot></slot>
+      	<div class="arrow" part="arrow"></div>
+			</div>
     `
   }
 
   /** @returns {string[]} */
   get observableAttributes () {
-    return []
+    return ["id"]
   }
 
   /** @returns {void} */
@@ -101,11 +111,13 @@ export class RoleTooltip extends BaseElement {
   }
 
   /**
-   * Fires when the "id" attribute changes.
+   * Fires when the observed attributes changes.
    * @returns {void}
    */
-  idChanged () {
-    this.attachListeners()
+  attributeChangedCallback (propertyName, _oldVal, _newVal) {
+  	if (propertyName === "id") {
+    	this.attachListeners()
+    }
   }
 
   /**
@@ -146,6 +158,8 @@ export class RoleTooltip extends BaseElement {
       target = eventOrElement.currentTarget
     }
 
+		this.willShow = true
+		console.log("SHOW: ", target)
     this.computeTooltipPosition(target)
   }
 
@@ -153,10 +167,13 @@ export class RoleTooltip extends BaseElement {
    * @param {Event} [event]
    * @returns {void}
    */
-  hide = () => {
+  hide = (_event) => {
+  	this.willShow = false
     this.cleanup?.()
-    setTimeout(() => {
-      this.style.display = 'none'
+
+    window.requestAnimationFrame(() => {
+    	if (this.willShow === true) return
+    	this.base.style.display = 'none'
     })
   }
 
@@ -176,16 +193,17 @@ export class RoleTooltip extends BaseElement {
    */
   computeTooltipPosition (target) {
     const arrowEl = this.arrow
+		const base = this.base
 
-    this.style.display = "block"
+    this.base.style.display = "unset"
 
-    this.cleanup = autoUpdate(target, this, () => {
-      computePosition(target, this, {
+    this.cleanup = autoUpdate(target, base, () => {
+      computePosition(target, base, {
         placement: this.getAttribute("placement") ?? "top",
         middleware: [offset(6), flip(), shift({padding: 5}), arrow({element: arrowEl})],
         strategy: this.hasAttribute("hoist") ? "fixed" : "absolute"
       }).then(({x, y, middlewareData, placement}) => {
-        Object.assign(this.style, {
+        Object.assign(base.style, {
           left: `${x}px`,
           top: `${y}px`,
         });
@@ -207,6 +225,10 @@ export class RoleTooltip extends BaseElement {
         });
       });
     })
+  }
+
+  get base () {
+  	return this.shadowQuery(".base")
   }
 
   /** @returns {void} */

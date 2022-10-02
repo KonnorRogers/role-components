@@ -1,2 +1,1 @@
-import "../dist/toolbar"
-import "../dist/tooltip"
+import "../dist/bundle/index.module.js"

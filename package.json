@@ -4,16 +4,13 @@
   "description": "A variety of simple components that match an aria-role",
   "type": "module",
   "source": "src/index.js",
-  "main": "dist/role-components.unbundled/index.js",
-  "module": "dist/role-components.unbundled/index.js",
+  "main": "dist/bundle/index.common.js",
+  "module": "dist/bundle/index.module.js",
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
-    "start": "parcel watch \"src/**/*.js\" --target \"dist\"",
-    "build": "rm -rf dist/ && parcel build \"src/**/*.js\"",
-    "build:bundle": "parcel build --target \"role-components.bundled\" --target \"role-components.unbundled\"",
-    "build:all": "pnpm run build && pnpm run build:bundle",
-    "start:example": "pnpm --filter \"./examples\" start",
-    "build:example": "pnpm --filter \"./examples\" build",
+    "start": "pnpm run build -- --watch",
+    "build": "rm -rf dist && node esbuild.config.js",
+    "start:example": "web-dev-server",
     "deploy": "pnpm build:all && standard-version --release-as",
     "deploy:beta": "pnpm build:all && standard-version --prerelease beta",
     "deploy:patch": "pnpm build:all && standard-version --release-as patch",
@@ -29,35 +26,16 @@
     "web-components",
     "aria"
   ],
-  "targets": {
-    "module": false,
-    "main": false,
-    "dist": {
-      "isLibrary": true,
-      "distDir": "./dist"
-    },
-    "bundles": {
-      "distDir": "./dist/bundles"
-    },
-    "role-components.bundled": {},
-    "role-components.unbundled": {
-      "isLibrary": true
-    }
-  },
   "author": "Konnor Rogers",
   "license": "MIT",
   "devDependencies": {
-    "@parcel/compressor-brotli": "^2.6.2",
-    "@parcel/compressor-gzip": "^2.6.2",
-    "@parcel/config-default": "^2.6.2",
-    "@parcel/core": "^2.6.2",
-    "@parcel/reporter-cli": "^2.6.2",
+    "@web/dev-server": "^0.1.34",
+    "@web/dev-server-esbuild": "^0.3.2",
+    "esbuild": "^0.15.10",
     "glob": "^8.0.3",
-    "parcel": "^2.6.2",
     "standard-version": "^9.5.0"
   },
   "dependencies": {
-    "@floating-ui/dom": "^0.5.4",
-    "@swc/helpers": "^0.4.2"
+    "@floating-ui/dom": "^0.5.4"
   }
 }

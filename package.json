@@ -11,11 +11,11 @@
     "start": "pnpm run build -- --watch",
     "build": "rm -rf dist && node esbuild.config.js",
     "start:example": "web-dev-server",
-    "deploy": "pnpm build:all && standard-version --release-as",
-    "deploy:beta": "pnpm build:all && standard-version --prerelease beta",
-    "deploy:patch": "pnpm build:all && standard-version --release-as patch",
-    "deploy:minor": "pnpm build:all && standard-version --release-as minor",
-    "deploy:major": "pnpm build:all && standard-version --release-as major",
+    "deploy": "pnpm build && standard-version --release-as",
+    "deploy:beta": "pnpm build && standard-version --prerelease beta",
+    "deploy:patch": "pnpm build && standard-version --release-as patch",
+    "deploy:minor": "pnpm build && standard-version --release-as minor",
+    "deploy:major": "pnpm build && standard-version --release-as major",
     "push": "git push --follow-tags origin main && pnpm publish"
   },
   "files": [

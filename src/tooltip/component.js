@@ -159,7 +159,6 @@ export class RoleTooltip extends BaseElement {
     }
 
 		this.willShow = true
-		console.log("SHOW: ", target)
     this.computeTooltipPosition(target)
   }
 

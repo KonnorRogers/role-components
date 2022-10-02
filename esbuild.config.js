@@ -9,7 +9,6 @@ import esbuild from "esbuild"
       return "." + path.sep + path.join(path.dirname(file), path.basename(file, path.extname(file)))
     });
 
-	console.log(entries)
   const defaultConfig = {
     entryPoints: ["./src/index.js"],
     sourcemap: true,

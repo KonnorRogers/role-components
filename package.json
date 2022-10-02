@@ -1,6 +1,6 @@
 {
   "name": "role-components",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A variety of simple components that match an aria-role",
   "type": "module",
   "source": "src/index.js",

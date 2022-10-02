@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.8](https://github.com/paramagicdev/role-components/compare/v1.0.7...v1.0.8) (2022-10-02)
+
+
+### Bug Fixes
+
+* deploy scripts ([0508372](https://github.com/paramagicdev/role-components/commit/0508372bbd5cf6090b778cbf0e36e808132a748f))
+* remove noisy console.log ([fc4d13c](https://github.com/paramagicdev/role-components/commit/fc4d13c776004ab0f70e4d1b396e3293066bf98f))
+
 ### [1.0.7](https://github.com/paramagicdev/role-components/compare/v1.0.6...v1.0.7) (2022-10-02)
 
 

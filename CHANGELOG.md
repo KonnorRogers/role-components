@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.9](https://github.com/paramagicdev/role-components/compare/v1.0.8...v1.0.9) (2022-10-02)
+
+
+### Bug Fixes
+
+* use getRootNode() ([fb1394c](https://github.com/paramagicdev/role-components/commit/fb1394c27fe65b2cd8146b47c3a81a98f3af5315))
+
 ### [1.0.8](https://github.com/paramagicdev/role-components/compare/v1.0.7...v1.0.8) (2022-10-02)
 
 

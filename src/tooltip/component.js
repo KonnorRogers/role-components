@@ -9,7 +9,7 @@ export class RoleTooltip extends BaseElement {
 
   get rootElement () {
   	if (this._rootElement == null) {
-  		this._rootElement = this.getRootNode().host || document
+  		this._rootElement = this.getRootNode() || document
   	}
 		return this._rootElement
   }

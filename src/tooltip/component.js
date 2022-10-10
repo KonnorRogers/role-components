@@ -3,17 +3,18 @@ import {arrow, computePosition, flip, shift, offset, autoUpdate} from '@floating
 
 /** @extends import("../base-element").BaseElement */
 export class RoleTooltip extends BaseElement {
+	/** @returns {Array<"id">} */
   static get observedAttributes() {
     return ["id"]
   }
 
+	/** @returns {ShadowRoot | document} */
   get rootElement () {
-  	if (this._rootElement == null) {
-  		this._rootElement = this.getRootNode() || document
-  	}
-		return this._rootElement
+  	this._rootElement = this.getRootNode() || document
+  	return this._rootElement
   }
 
+	/** @returns {void} */
   set rootElement (newVal) {
 		const oldVal = this._rootElement
 
@@ -98,16 +99,11 @@ export class RoleTooltip extends BaseElement {
     `
   }
 
-  /** @returns {string[]} */
-  get observableAttributes () {
-    return ["id"]
-  }
-
   /** @returns {void} */
   connectedCallback() {
     super.connectedCallback()
 
-    this.attachListeners()
+    setTimeout(() => this.attachListeners())
   }
 
   /**

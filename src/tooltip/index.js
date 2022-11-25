@@ -1,5 +1,8 @@
-import { RoleTooltip } from "./component"
+import { RoleTooltip } from "./component";
 
-window.customElements.define(RoleTooltip.baseName, class extends RoleTooltip{})
+window.customElements.define(
+  RoleTooltip.baseName,
+  class extends RoleTooltip {}
+);
 
-export { RoleTooltip }
+export { RoleTooltip };

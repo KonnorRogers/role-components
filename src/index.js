@@ -1,2 +1,2 @@
-export { RoleToolbar } from "./toolbar"
-export { RoleTooltip } from "./tooltip"
+export { RoleToolbar } from "./toolbar";
+export { RoleTooltip } from "./tooltip";

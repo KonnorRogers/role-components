@@ -1,4 +1,3 @@
-export function html (str) {
-	return str
+export function html(str) {
+  return str;
 }
-

@@ -14,8 +14,6 @@ import esbuild from "esbuild"
       entries[key] = value
     });
 
-  console.log(entries)
-
   const defaultConfig = {
     entryPoints: ["./src/index.js"],
     sourcemap: true,

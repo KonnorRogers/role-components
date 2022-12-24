@@ -30,19 +30,19 @@ import esbuild from "esbuild"
   const startTime = Number(new Date())
 
   await Promise.all[
-    // esbuild.build({
-    //   ...defaultConfig,
-    //   outfile: "dist/bundle/index.common.js",
-    //   format: "cjs",
-    //   minify: true,
-    // }),
-    //
-    // esbuild.build({
-    //   ...defaultConfig,
-    //   outfile: "dist/bundle/index.module.js",
-    //   format: "esm",
-    //   minify: true,
-    // }),
+    esbuild.build({
+      ...defaultConfig,
+      outfile: "dist/bundle/index.common.js",
+      format: "cjs",
+      minify: true,
+    }),
+
+    esbuild.build({
+      ...defaultConfig,
+      outfile: "dist/bundle/index.module.js",
+      format: "esm",
+      minify: true,
+    }),
 
     esbuild.build({
       ...defaultConfig,

@@ -48,7 +48,7 @@ import esbuild from "esbuild"
       outdir: 'dist',
       format: 'esm',
       target: "es2020",
-      external: ['./node_modules/*'],
+      external: ["@floating-ui/dom"],
       splitting: true,
       chunkNames: 'chunks/[name]-[hash]'
     })

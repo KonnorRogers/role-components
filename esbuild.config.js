@@ -10,7 +10,6 @@ import esbuild from "esbuild"
   	  // strips app/javascript/entrypoints from the key.
       const key = path.relative("src", path.join(path.dirname(file), path.basename(file, path.extname(file))))
       const value = "." + path.sep + path.join(path.dirname(file), path.basename(file, path.extname(file)))
-      console.log({key, value})
       entries[key] = value
     });
 

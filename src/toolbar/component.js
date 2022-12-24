@@ -3,6 +3,16 @@
 import { BaseElement, html, css } from "../base";
 
 export class RoleToolbar extends BaseElement {
+  /** @param {any[]} args */
+  constructor (...args) {
+    // @ts-expect-error
+    super(...args)
+
+    this.currentFocusIndex = 0
+
+    /** @type Array<Element> */
+    this.toolbarItems = []
+  }
   /** @returns {string} */
   static get baseName() {
     return "role-toolbar";
@@ -36,7 +46,7 @@ export class RoleToolbar extends BaseElement {
   }
 
   /**
-   * @return {Record<string, EventHandler>}
+   * @return {Record<string, (event: Event) => void>}
    */
   get keydownHandlers() {
     if (this._keydownHandlers) return this._keydownHandlers;
@@ -65,8 +75,8 @@ export class RoleToolbar extends BaseElement {
     super.connectedCallback();
 
     this.shadowRoot
-      .querySelector("slot:not([name])")
-      .addEventListener("slotchange", this.updateToolbarItems);
+      ?.querySelector("slot:not([name])")
+      ?.addEventListener("slotchange", this.updateToolbarItems);
     this.updateToolbarItems();
 
     this.addEventListener("click", this.handleClick);
@@ -76,8 +86,13 @@ export class RoleToolbar extends BaseElement {
     this.addEventListener("focus", this.handleClick);
   }
 
+  /** @param {Event} event */
   handleClick = (event) => {
+
     const target = event.composedPath?.()[0] || event.target;
+
+    if (!(target instanceof Element)) return
+
     const focusedElement = target.closest(`[data-role='toolbar-item']`);
 
     if (focusedElement) {
@@ -93,6 +108,7 @@ export class RoleToolbar extends BaseElement {
     this.focusCurrentElement();
   };
 
+  /** @param {KeyboardEvent} event */
   handleKeyDown = (event) => {
     const key = event.key?.toLowerCase();
 
@@ -109,7 +125,7 @@ export class RoleToolbar extends BaseElement {
 
     if (Object.keys(this.keydownHandlers).includes(key)) {
       event.preventDefault();
-      this.keydownHandlers[key]();
+      this.keydownHandlers[key](event);
     }
   };
 
@@ -119,8 +135,9 @@ export class RoleToolbar extends BaseElement {
       : "horizontal";
   }
 
+  /** @param {Event} _event */
   focusNext = (_event) => {
-    this.currentFocusElement.setAttribute("tabindex", "-1");
+    this.currentFocusElement?.setAttribute("tabindex", "-1");
     this.currentFocusIndex += 1;
 
     if (this.currentFocusIndex >= this.toolbarItems.length) {
@@ -131,8 +148,9 @@ export class RoleToolbar extends BaseElement {
     this.focusCurrentElement();
   };
 
+  /** @param {Event} _event */
   focusPrevious = (_event) => {
-    this.currentFocusElement.setAttribute("tabindex", "-1");
+    this.currentFocusElement?.setAttribute("tabindex", "-1");
     this.currentFocusIndex -= 1;
 
     if (this.currentFocusIndex < 0) {
@@ -149,32 +167,44 @@ export class RoleToolbar extends BaseElement {
   };
 
   focusLast = () => {
+    if (this.toolbarItems == null) return
+
     this.currentFocusIndex = this.toolbarItems.length - 1;
     this.focusCurrentElement();
   };
 
   focusCurrentElement = () => {
-    this.currentFocusElement.setAttribute("tabindex", "0");
-    this.currentFocusElement?.focus();
+    this.currentFocusElement?.setAttribute("tabindex", "0");
+
+    // @ts-expect-error
+    this.currentFocusElement?.focus?.();
   };
 
   get currentFocusElement() {
+    if (this.toolbarItems == null) return
+
     return this.toolbarItems[this.currentFocusIndex];
   }
 
   updateToolbarItems = () => {
-    this.toolbarItems = this.shadowQuery("slot")
+    const slot = this.shadowQuery("slot")
+
+    if (!(slot instanceof HTMLSlotElement)) return
+
+    /** @type {Element[]} */
+    const items = slot
       .assignedElements({ flatten: true })
       .filter((el) => {
-        return el.dataset.role?.match(/toolbar-item/);
+        return el instanceof HTMLElement && el.dataset.role?.match(/toolbar-item/);
       });
+    this.toolbarItems = items
     this.currentFocusIndex = this.toolbarItems.findIndex(
       (el) => el.getAttribute("tabindex") === "0"
     );
 
     if (this.currentFocusIndex === -1) {
       this.currentFocusIndex = 0;
-      this.currentFocusElement.setAttribute("tabindex", "0");
+      this.currentFocusElement?.setAttribute("tabindex", "0");
     }
   };
 

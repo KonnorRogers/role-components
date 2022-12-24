@@ -9,7 +9,7 @@
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
     "start": "pnpm run build -- --watch",
-    "build": "rm -rf dist && node esbuild.config.js",
+    "build": "rm -rf dist && node esbuild.config.js && npx tsc",
     "start:example": "web-dev-server",
     "deploy": "pnpm build && standard-version --release-as",
     "deploy:beta": "pnpm build && standard-version --prerelease beta",
@@ -33,7 +33,8 @@
     "@web/dev-server-esbuild": "^0.3.2",
     "esbuild": "^0.15.10",
     "glob": "^8.0.3",
-    "standard-version": "^9.5.0"
+    "standard-version": "^9.5.0",
+    "typescript": "^4.9.4"
   },
   "dependencies": {
     "@floating-ui/dom": "^0.5.4"

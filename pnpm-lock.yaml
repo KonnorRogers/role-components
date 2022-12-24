@@ -7,6 +7,7 @@ specifiers:
   esbuild: ^0.15.10
   glob: ^8.0.3
   standard-version: ^9.5.0
+  typescript: ^4.9.4
 
 dependencies:
   '@floating-ui/dom': 0.5.4
@@ -17,6 +18,7 @@ devDependencies:
   esbuild: 0.15.10
   glob: 8.0.3
   standard-version: 9.5.0
+  typescript: 4.9.4
 
 packages:
 
@@ -2545,6 +2547,12 @@ packages:
 
   /typedarray/0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
+    dev: true
+
+  /typescript/4.9.4:
+    resolution: {integrity: sha512-Uz+dTXYzxXXbsFpM86Wh3dKCxrQqUcVMxwU54orwlJjOpO3ao8L7j5lH+dWfTwgCwIuM9GQ2kvVotzYJMXTBZg==}
+    engines: {node: '>=4.2.0'}
+    hasBin: true
     dev: true
 
   /typical/4.0.0:

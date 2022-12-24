@@ -3,11 +3,18 @@ import glob from "glob"
 import esbuild from "esbuild"
 
 ;(async function () {
-  let entries = glob
-    .sync("src/**/*.{js}")
-    .map((file) => {
-      return "." + path.sep + path.join(path.dirname(file), path.basename(file, path.extname(file)))
+  const entries = {}
+
+  glob.sync("./src/**/*.js")
+    .forEach((file) => {
+  	  // strips app/javascript/entrypoints from the key.
+      const key = path.relative("src", path.join(path.dirname(file), path.basename(file, path.extname(file))))
+      const value = "." + path.sep + path.join(path.dirname(file), path.basename(file, path.extname(file)))
+      console.log({key, value})
+      entries[key] = value
     });
+
+  console.log(entries)
 
   const defaultConfig = {
     entryPoints: ["./src/index.js"],
@@ -23,19 +30,19 @@ import esbuild from "esbuild"
   const startTime = Number(new Date())
 
   await Promise.all[
-    esbuild.build({
-      ...defaultConfig,
-      outfile: "dist/bundle/index.common.js",
-      format: "cjs",
-      minify: true,
-    }),
-
-    esbuild.build({
-      ...defaultConfig,
-      outfile: "dist/bundle/index.module.js",
-      format: "esm",
-      minify: true,
-    }),
+    // esbuild.build({
+    //   ...defaultConfig,
+    //   outfile: "dist/bundle/index.common.js",
+    //   format: "cjs",
+    //   minify: true,
+    // }),
+    //
+    // esbuild.build({
+    //   ...defaultConfig,
+    //   outfile: "dist/bundle/index.module.js",
+    //   format: "esm",
+    //   minify: true,
+    // }),
 
     esbuild.build({
       ...defaultConfig,

@@ -112,7 +112,7 @@ export class BaseElement extends HTMLElement {
 }
 
 /**
- * @type {import("./base-element").toAnonymousClass}
+ * @type {import("./types").toAnonymousClass}
  */
 function toAnonymousClass (klass) {
   return class extends klass {}

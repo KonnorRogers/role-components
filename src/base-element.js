@@ -1,3 +1,6 @@
+// @ts-check
+
+/** @extends {HTMLElement} */
 export class BaseElement extends HTMLElement {
   constructor() {
     super();
@@ -13,31 +16,65 @@ export class BaseElement extends HTMLElement {
     const shadow = this.attachShadow({ mode: "open" });
     let content = this.render();
 
+    /** @type {any} */
+    const ctor = this.constructor
+
     if (this.__sheet__) {
       document.adoptedStyleSheets = [this.__sheet__];
       shadow.adoptedStyleSheets = [this.__sheet__];
     } else {
       content = `
-        <style>${this.constructor.styles}</style>
+        <style>${ctor.styles}</style>
         ${content}
       `;
     }
 
-    this.shadowRoot.innerHTML = content;
+    if (this.shadowRoot) {
+      this.shadowRoot.innerHTML = content;
+    }
+  }
+
+  /** @type {CustomElementRegistry} */
+  static customElementRegistry = window.customElements
+
+  /** @type {string} */
+  static baseName
+
+  /**
+   * @param {string} [name]
+   * @param {CustomElementConstructor} [ctor]
+   * @param {ElementDefinitionOptions} [options]
+   */
+  static define (
+    name,
+    ctor,
+    options
+  ) {
+    if (name == null) name = this.baseName
+    if (ctor == null) ctor = this
+
+    // Can't register twice.
+    if (this.customElementRegistry.get(name)) return
+
+  // creates anonymous class due to a limitation of CEs only allowing 1 class definition.
+    this.customElementRegistry.define(name, toAnonymousClass(ctor), options)
   }
 
   /** @returns {void} */
   connectedCallback() {
     if (!this.isConnected) return;
 
+    /**
+     * @type {any}
+     */
+    const ctor = this.constructor
+
     // Only actually parse the stylesheet when the first instance is connected.
-    // @ts-expect-error
     if (
-      this.shadowRoot.adoptedStyleSheets &&
-      this.__sheet__.cssRules.length == 0
+      this.shadowRoot && this.shadowRoot.adoptedStyleSheets &&
+      this.__sheet__ && this.__sheet__.cssRules.length == 0
     ) {
-      // @ts-expect-error
-      this.__sheet__.replaceSync(this.constructor.styles);
+      this.__sheet__.replaceSync(ctor.styles);
     }
   }
 
@@ -57,10 +94,10 @@ export class BaseElement extends HTMLElement {
 
   /**
    * @param {string} str
-   * @returns {null | Element}
+   * @returns {undefined | null | Element}
    */
   shadowQuery(str) {
-    return this.shadowRoot.querySelector(str);
+    return this.shadowRoot?.querySelector(str);
   }
 
   /**
@@ -68,6 +105,16 @@ export class BaseElement extends HTMLElement {
    * @returns {Element[]}
    */
   shadowQueryAll(str) {
-    return this.shadowRoot.querySelectorAll(str);
+    if (this.shadowRoot == null) return []
+
+    return [...this.shadowRoot.querySelectorAll(str)];
   }
 }
+
+/**
+ * @type {import("./base-element").toAnonymousClass}
+ */
+function toAnonymousClass (klass) {
+  return class extends klass {}
+}
+

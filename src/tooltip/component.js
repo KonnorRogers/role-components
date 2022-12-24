@@ -8,7 +8,6 @@ import {
   autoUpdate,
 } from "@floating-ui/dom";
 
-/** @extends import("../base-element").BaseElement */
 export class RoleTooltip extends BaseElement {
   /** @returns {Array<"id">} */
   static get observedAttributes() {
@@ -43,13 +42,15 @@ export class RoleTooltip extends BaseElement {
     this.listeners = [
       ["pointerenter", this.show],
       ["pointerleave", this.hide],
+      ["pointercancel", this.hide],
+      ["pointerout", this.hide],
       ["focusin", this.show],
       ["focusout", this.hide],
       ["keydown", this.keyboardHide],
     ];
   }
 
-  /** @returns {"role-tooltip"} */
+  /** @returns {string} */
   static get baseName() {
     return "role-tooltip";
   }

@@ -4,7 +4,7 @@ import esbuild from "esbuild"
 
 ;(async function () {
   let entries = glob
-    .sync("src/**/*.{ts,js}")
+    .sync("src/**/*.{js}")
     .map((file) => {
       return "." + path.sep + path.join(path.dirname(file), path.basename(file, path.extname(file)))
     });

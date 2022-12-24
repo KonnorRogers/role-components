@@ -1,8 +1,5 @@
 import { RoleToolbar } from "./component";
 
-window.customElements.define(
-  RoleToolbar.baseName,
-  class extends RoleToolbar {}
-);
+RoleToolbar.define()
 
 export { RoleToolbar };

@@ -1,6 +1,7 @@
+// @ts-check
+
 import { BaseElement, html, css } from "../base";
 
-/** @extends import("../base-element").BaseElement */
 export class RoleToolbar extends BaseElement {
   /** @returns {string} */
   static get baseName() {

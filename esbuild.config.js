@@ -2,6 +2,12 @@ import * as path from "path";
 import glob from "glob"
 import esbuild from "esbuild"
 
+const pkg = require("./package.json")
+const deps = [
+  ...Object.keys(pkg.dependencies || {}),
+  ...Object.keys(pkg.peerDependencies || {})
+]
+
 ;(async function () {
   const entries = {}
 
@@ -26,7 +32,7 @@ import esbuild from "esbuild"
 
   const startTime = Number(new Date())
 
-  await Promise.all[
+  await Promise.allSettled[
     esbuild.build({
       ...defaultConfig,
       outfile: "dist/bundle/index.common.js",
@@ -47,7 +53,7 @@ import esbuild from "esbuild"
       outdir: 'dist',
       format: 'esm',
       target: "es2020",
-      external: ["@floating-ui/dom"],
+      external: deps,
       splitting: true,
       chunkNames: 'chunks/[name]-[hash]'
     })

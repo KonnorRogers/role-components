@@ -8,8 +8,8 @@
   "module": "dist/bundle/index.module.js",
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
-    "start": "pnpm run build -- --watch",
-    "build": "rm -rf dist && node esbuild.config.js && npx tsc",
+    "start": "node esbuild.config.js --watch",
+    "build": "rm -rf dist && node esbuild.config.js && tsc",
     "start:example": "web-dev-server",
     "deploy": "pnpm build && standard-version --release-as",
     "deploy:beta": "pnpm build && standard-version --prerelease beta",

@@ -1,8 +1,10 @@
 import * as path from "path";
 import glob from "glob"
 import esbuild from "esbuild"
+import * as fs from "fs"
 
-const pkg = require("./package.json")
+const pkg = JSON.parse(fs.readFileSync("./package.json"))
+
 const deps = [
   ...Object.keys(pkg.dependencies || {}),
   ...Object.keys(pkg.peerDependencies || {})

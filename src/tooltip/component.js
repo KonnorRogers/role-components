@@ -43,7 +43,7 @@ export class RoleTooltip extends BaseElement {
       ["pointerenter", this.show],
       ["pointerleave", this.hide],
       ["pointercancel", this.hide],
-      ["pointerout", this.hide],
+      ["pointerup", this.hide],
       ["focusin", this.show],
       ["focusout", this.hide],
       ["keydown", this.keyboardHide],

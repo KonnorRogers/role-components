@@ -3,10 +3,8 @@
 import { BaseElement, html, css } from "../base";
 
 export class RoleToolbar extends BaseElement {
-  /** @param {any[]} args */
-  constructor (...args) {
-    // @ts-expect-error
-    super(...args)
+  constructor () {
+    super()
 
     this.currentFocusIndex = 0
 
@@ -103,9 +101,13 @@ export class RoleToolbar extends BaseElement {
         }
         el.setAttribute("tabindex", "-1");
       });
-    }
 
-    this.focusCurrentElement();
+      // Let the browser decided where focus ends up.
+      this.focusCurrentElement({ focus: false });
+    } else {
+      // focus the toolbar itself if no focused element clicked.
+      this.focusCurrentElement({ focus: true });
+    }
   };
 
   /** @param {KeyboardEvent} event */
@@ -173,11 +175,14 @@ export class RoleToolbar extends BaseElement {
     this.focusCurrentElement();
   };
 
-  focusCurrentElement = () => {
+
+  focusCurrentElement = ({ focus = true } = {}) => {
     this.currentFocusElement?.setAttribute("tabindex", "0");
 
-    // @ts-expect-error
-    this.currentFocusElement?.focus?.();
+    if (focus) {
+      // @ts-expect-error
+      this.currentFocusElement?.focus?.();
+    }
   };
 
   get currentFocusElement() {

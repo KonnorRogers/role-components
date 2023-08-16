@@ -4,8 +4,8 @@
   "description": "A variety of simple components that match an aria-role",
   "type": "module",
   "source": "src/index.js",
-  "main": "dist/bundle/index.common.js",
-  "module": "dist/bundle/index.module.js",
+  "main": "bundle/index.common.js",
+  "module": "bundle/index.module.js",
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
     "start": "node esbuild.config.js --watch",
@@ -37,6 +37,7 @@
     "typescript": "^4.9.4"
   },
   "dependencies": {
-    "@floating-ui/dom": "^0.5.4"
+    "@floating-ui/dom": "^0.5.4",
+    "lit": "^2.8.0"
   }
 }

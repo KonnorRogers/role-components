@@ -1,22 +1,41 @@
 // @ts-check
 
-import { BaseElement, html, css } from "../base";
+import { BaseElement } from "../base-element.js";
+import { css, html } from "lit"
 
-export class RoleToolbar extends BaseElement {
+/**
+ * A toolbar following the W3C Toolbar pattern.
+ * https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/
+ * @customElement
+ */
+export default class RoleToolbar extends BaseElement {
+  static properties = {
+    _currentFocusIndex: {state: true},
+    currentFocusElement: {state: true},
+    _toolbarItems: {state: true}
+  }
+
   constructor () {
     super()
 
-    this.currentFocusIndex = 0
+    this._currentFocusIndex = 0
 
     /** @type Array<Element> */
-    this.toolbarItems = []
+    this._toolbarItems = []
+
+    this.addEventListener("click", this.handleClick);
+    this.addEventListener("keydown", this.handleKeyDown);
+
+    // Handles nested slot issues focusing the toolbar itself.
+    this.addEventListener("focus", this.handleClick);
+
   }
+
   /** @returns {string} */
   static get baseName() {
     return "role-toolbar";
   }
 
-  /** @returns {string} */
   static get styles() {
     return css`
       :host {
@@ -61,52 +80,37 @@ export class RoleToolbar extends BaseElement {
     return this._keydownHandlers;
   }
 
-  /** @returns {string} */
   render() {
-    return html`<div role="toolbar" class="base" part="base">
-      <slot></slot>
-    </div>`;
-  }
-
-  /** @returns {void} */
-  connectedCallback() {
-    super.connectedCallback();
-
-    this.shadowRoot
-      ?.querySelector("slot:not([name])")
-      ?.addEventListener("slotchange", this.updateToolbarItems);
-    this.updateToolbarItems();
-
-    this.addEventListener("click", this.handleClick);
-    this.addEventListener("keydown", this.handleKeyDown);
-
-    // Handles nested slot issues focusing the toolbar itself.
-    this.addEventListener("focus", this.handleClick);
+    return html`
+      <div role="toolbar" class="base" part="base">
+        <slot @slotchange=${this.updateToolbarItems}></slot>
+      </div>
+    `;
   }
 
   /** @param {Event} event */
   handleClick = (event) => {
 
-    const target = event.composedPath?.()[0] || event.target;
-
-    if (!(target instanceof Element)) return
-
-    const focusedElement = target.closest(`[data-role='toolbar-item']`);
+    const focusedElement = event.composedPath().find((el) => {
+      // @ts-expect-error
+      const role = el?.getAttribute?.('data-role') || ""
+      return role.includes('toolbar-item')
+    });
 
     if (focusedElement) {
-      this.toolbarItems.forEach((el, index) => {
+      this._toolbarItems.forEach((el, index) => {
         if (el === focusedElement) {
-          this.currentFocusIndex = index;
+          this._currentFocusIndex = index;
           return;
         }
         el.setAttribute("tabindex", "-1");
       });
 
       // Let the browser decided where focus ends up.
-      this.focusCurrentElement({ focus: false });
+      this.setTabIndex({ focus: false });
     } else {
       // focus the toolbar itself if no focused element clicked.
-      this.focusCurrentElement({ focus: true });
+      this.setTabIndex({ focus: true });
     }
   };
 
@@ -131,52 +135,46 @@ export class RoleToolbar extends BaseElement {
     }
   };
 
-  get orientation() {
-    return this.getAttribute("orientation") === "vertical"
-      ? "vertical"
-      : "horizontal";
-  }
-
   /** @param {Event} _event */
   focusNext = (_event) => {
     this.currentFocusElement?.setAttribute("tabindex", "-1");
-    this.currentFocusIndex += 1;
+    this._currentFocusIndex += 1;
 
-    if (this.currentFocusIndex >= this.toolbarItems.length) {
+    if (this._currentFocusIndex >= this._toolbarItems.length) {
       this.focusFirst();
       return;
     }
 
-    this.focusCurrentElement();
+    this.setTabIndex();
   };
 
   /** @param {Event} _event */
   focusPrevious = (_event) => {
     this.currentFocusElement?.setAttribute("tabindex", "-1");
-    this.currentFocusIndex -= 1;
+    this._currentFocusIndex -= 1;
 
-    if (this.currentFocusIndex < 0) {
+    if (this._currentFocusIndex < 0) {
       this.focusLast();
       return;
     }
 
-    this.focusCurrentElement();
+    this.setTabIndex();
   };
 
   focusFirst = () => {
-    this.currentFocusIndex = 0;
-    this.focusCurrentElement();
+    this._currentFocusIndex = 0;
+    this.setTabIndex();
   };
 
   focusLast = () => {
-    if (this.toolbarItems == null) return
+    if (this._toolbarItems == null) return
 
-    this.currentFocusIndex = this.toolbarItems.length - 1;
-    this.focusCurrentElement();
+    this._currentFocusIndex = this._toolbarItems.length - 1;
+    this.setTabIndex();
   };
 
 
-  focusCurrentElement = ({ focus = true } = {}) => {
+  setTabIndex = ({ focus = true } = {}) => {
     this.currentFocusElement?.setAttribute("tabindex", "0");
 
     if (focus) {
@@ -186,15 +184,20 @@ export class RoleToolbar extends BaseElement {
   };
 
   get currentFocusElement() {
-    if (this.toolbarItems == null) return
+    if (this._toolbarItems == null) return
 
-    return this.toolbarItems[this.currentFocusIndex];
+    return this._toolbarItems[this._currentFocusIndex];
   }
 
-  updateToolbarItems = () => {
-    const slot = this.shadowQuery("slot")
-
-    if (!(slot instanceof HTMLSlotElement)) return
+  /**
+   * @param {Event} evt - triggered by a slot change event.
+   */
+  updateToolbarItems = (evt) => {
+    /**
+     * @type {HTMLSlotElement}
+     */
+    // @ts-expect-error
+    const slot = evt.target
 
     /** @type {Element[]} */
     const items = slot
@@ -202,20 +205,14 @@ export class RoleToolbar extends BaseElement {
       .filter((el) => {
         return el instanceof HTMLElement && el.dataset.role?.match(/toolbar-item/);
       });
-    this.toolbarItems = items
-    this.currentFocusIndex = this.toolbarItems.findIndex(
+    this._toolbarItems = items
+    this._currentFocusIndex = this._toolbarItems.findIndex(
       (el) => el.getAttribute("tabindex") === "0"
     );
 
-    if (this.currentFocusIndex === -1) {
-      this.currentFocusIndex = 0;
+    if (this._currentFocusIndex === -1) {
+      this._currentFocusIndex = 0;
       this.currentFocusElement?.setAttribute("tabindex", "0");
     }
   };
-
-  /** @returns {void} */
-  disconnectedCallback() {}
-
-  /** @returns {void} */
-  adoptedCallback() {}
 }

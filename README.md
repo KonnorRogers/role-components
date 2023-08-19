@@ -25,5 +25,3 @@ Tooltip.define()
 import Tooltip from "role-components/exports/tooltip/tooltip.js"
 Tooltip.define("my-tooltip")
 ```
-
-

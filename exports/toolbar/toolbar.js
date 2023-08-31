@@ -11,7 +11,6 @@ import { css, html } from "lit"
 export default class RoleToolbar extends BaseElement {
   static properties = {
     _currentFocusIndex: {state: true},
-    currentFocusElement: {state: true},
     _toolbarItems: {state: true}
   }
 
@@ -28,7 +27,13 @@ export default class RoleToolbar extends BaseElement {
 
     // Handles nested slot issues focusing the toolbar itself.
     this.addEventListener("focus", this.handleClick);
+  }
 
+  willUpdate (changedProperties) {
+    if (changedProperties.has("_toolbarItems")) {
+      this.updateToolbarItems()
+    }
+    super.willUpdate(changedProperties)
   }
 
   /** @returns {string} */
@@ -190,14 +195,17 @@ export default class RoleToolbar extends BaseElement {
   }
 
   /**
-   * @param {Event} evt - triggered by a slot change event.
+   * @param {undefined | null | Event} [evt] - triggered by a slot change event.
    */
   updateToolbarItems = (evt) => {
+    if (evt) console.log("slotchange evt")
     /**
      * @type {HTMLSlotElement}
      */
     // @ts-expect-error
-    const slot = evt.target
+    const slot = evt?.target || this.shadowRoot.querySelector("slot")
+
+    if (slot == null) return
 
     /** @type {Element[]} */
     const items = slot

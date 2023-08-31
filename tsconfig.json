@@ -8,10 +8,12 @@
     "target": "ESNext",
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "nodenext",
+    "module": "nodenext",
     "lib": ["ESNext", "DOM"],
     "declaration": true,
     "emitDeclarationOnly": true,
     "allowJs": true,
+    "checkJs": true,
     "verbatimModuleSyntax": true
   }
 }

@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 - Remove build step. Publish untranspiled files.
 - Move to Lit for rendering
-- Move around file locations. Switch to default exports.
+- Move around file locations. `/dist/` is now `/exports/` Switch to default exports.
 - Added an exportmap to package.json
 
 ### [1.1.5](https://github.com/KonnorRogers/role-components/compare/v1.1.4...v1.1.5) (2023-04-18)

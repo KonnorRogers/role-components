@@ -12,7 +12,6 @@ import {
 
 import { css, html } from "lit"
 
-
 /**
  * Due to accessibility reasons with aria-describedby, the tooltip must be the same
  *   document / shadowRoot as the item being described by the tooltip.
@@ -77,7 +76,6 @@ export default class RoleTooltip extends BaseElement {
     `;
   }
 
-
   constructor() {
     super();
 
@@ -90,7 +88,7 @@ export default class RoleTooltip extends BaseElement {
     /**
      * @type {Element[]}
      */
-    this._tooltipAnchors = [];
+    this.tooltipAnchors = [];
 
     /**
      * @type {ShadowRoot | Document | undefined}
@@ -117,14 +115,20 @@ export default class RoleTooltip extends BaseElement {
       ["focusout", this.hide],
       ["keydown", this.keyboardHide],
     ];
-
-    this.attachListeners()
   }
 
   connectedCallback () {
     super.connectedCallback()
 
+    this.updateAnchors()
+
     this.attachListeners()
+  }
+
+  updateAnchors () {
+    if (this.rootElement) {
+      this.tooltipAnchors = Array.from(this.rootElement.querySelectorAll(this.query)) || []
+    }
   }
 
   disconnectedCallback () {
@@ -164,16 +168,6 @@ export default class RoleTooltip extends BaseElement {
     this.requestUpdate("rootElement", oldVal)
   }
 
-
-  get tooltipAnchors() {
-    if (this.rootElement) {
-      this._tooltipAnchors = Array.from(this.rootElement.querySelectorAll(this.query));
-    } else {
-      this._tooltipAnchors = []
-    }
-    return this._tooltipAnchors;
-  }
-
   render() {
     return html`
       <div part="base" class="base">
@@ -208,9 +202,13 @@ export default class RoleTooltip extends BaseElement {
   attachListeners() {
     this.listeners.forEach(([event, listener]) => {
       // Remove listeners. Do it in the same loop for perf stuff.
-      this._tooltipAnchors.forEach((el) =>
+
+      // In case there's old anchors
+      this.tooltipAnchors.forEach((el) =>
         el.removeEventListener(event, listener)
       );
+
+      // Attach to new anchors
       this.tooltipAnchors.forEach((el) => el.addEventListener(event, listener));
     });
   }
@@ -221,7 +219,8 @@ export default class RoleTooltip extends BaseElement {
    */
   removeListeners() {
     this.listeners.forEach(([event, listener]) => {
-      this._tooltipAnchors.forEach((el) =>
+      // don't recompute anchors.
+      this.tooltipAnchors.forEach((el) =>
         el.removeEventListener(event, listener)
       );
     });

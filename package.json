@@ -8,8 +8,9 @@
   "exports": {
     ".": "./exports/index.js",
     "./package.json": "./package.json",
-    "./exports/*": "./exports/*/*.js",
-    "./types/*": "./types/*/*.d.ts"
+    "./exports/*.js": "./exports/*.js",
+    "./exports/*": "./exports/*",
+    "./types/*": "./types/*.d.ts"
   },
   "type": "module",
   "files": [
@@ -20,7 +21,7 @@
   ],
   "scripts": {
     "start": "web-dev-server",
-    "build": "rm -rf ./exports/**/*.d.ts ./internal/**/*.d.ts && tsc",
+    "build": "rimraf -g \"./exports/**/*.d.ts\" && tsc",
     "deploy:patch": "npm run build && npm version patch && npm publish && git push --follow-tags",
     "deploy:minor": "npm run build && npm version minor && npm publish && git push --follow-tags",
     "deploy:major": "npm run build && npm version major && npm publish && git push --follow-tags",
@@ -41,9 +42,10 @@
     "access": "public"
   },
   "devDependencies": {
-    "@web/dev-server": "^0.3.0",
+    "@web/dev-server": "^0.3.1",
     "@web/dev-server-esbuild": "^0.4.1",
-    "typescript": "^5.1.6"
+    "rimraf": "^5.0.1",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.5.1",

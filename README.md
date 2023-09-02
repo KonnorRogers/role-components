@@ -15,7 +15,7 @@ npm install role-components
 import "role-components"
 
 // Auto-registering
-import "role-components/exports/tooltip/register.js"
+import "role-components/exports/tooltip/tooltip-register.js"
 
 // Manual-Registering
 import Tooltip from "role-components/exports/tooltip/tooltip.js"

@@ -1,3 +1,3 @@
 // @ts-check
-export { default as RoleToolbar } from "./toolbar/register-toolbar.js";
-export { default as RoleTooltip } from "./tooltip/register-tooltip.js";
+export { default as RoleToolbar } from "./toolbar/toolbar-register.js";
+export { default as RoleTooltip } from "./tooltip/tooltip-register.js";

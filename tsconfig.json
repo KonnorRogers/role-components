@@ -1,28 +1,19 @@
 {
-  "include": ["./src"],
-  "exclude": ["./dist"],
+  "include": [
+    "exports/**/*.js",
+    "types/**/*.d.ts"
+  ],
   "compilerOptions": {
-    "baseUrl": ".",
-    "esModuleInterop": true,
-    "importHelpers": true,
-    "experimentalDecorators": true,
-    "lib": ["ESNext", "dom", "dom.iterable"],
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "sourceMap": true,
     "strict": true,
     "target": "ESNext",
     "allowSyntheticDefaultImports": true,
+    "moduleResolution": "nodenext",
+    "module": "nodenext",
+    "lib": ["ESNext", "DOM"],
     "declaration": true,
-    "declarationDir": "dist/",
     "emitDeclarationOnly": true,
-
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitReturns": true,
-    "noPropertyAccessFromIndexSignature": false,
-    "noUncheckedIndexedAccess": false,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "allowJs": true
+    "allowJs": true,
+    "checkJs": true,
+    "verbatimModuleSyntax": true
   }
 }

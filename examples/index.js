@@ -1,1 +1,1 @@
-import "../dist/bundle/index.module.js"
+import "../exports/index.js"

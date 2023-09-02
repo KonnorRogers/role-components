@@ -29,6 +29,9 @@ export default class RoleToolbar extends BaseElement {
     this.addEventListener("focus", this.handleClick);
   }
 
+  /**
+   * @param {import("lit").PropertyValues<this>} changedProperties
+   */
   willUpdate (changedProperties) {
     if (changedProperties.has("_toolbarItems")) {
       this.updateToolbarItems()

@@ -56,6 +56,7 @@ export default class RoleListbox extends BaseElement {
     _searchBufferDebounce: { state: true },
     options: { state: true },
     currentActiveOption: { state: true },
+    rangeStartOption: { state: true },
   };
 
   static styles = [
@@ -87,6 +88,11 @@ export default class RoleListbox extends BaseElement {
      * @type {HTMLElement[]}
      */
     this.selectedOptions = [];
+
+    /**
+     * @type {null | HTMLElement}
+     */
+    this.rangeStartOption = null
 
     /**
      * @type {boolean}
@@ -215,8 +221,8 @@ export default class RoleListbox extends BaseElement {
     if (changedProperties.has("currentActiveOption")) {
       const previousActiveOption = changedProperties.get("currentActiveOption");
 
-      if (previousActiveOption) {
-        if (this.currentActiveOption !== previousActiveOption) {
+      if (this.currentActiveOption !== previousActiveOption) {
+        if (previousActiveOption) {
           this.removeFocus(previousActiveOption);
 
           if (!this.multiSelect) {
@@ -291,7 +297,6 @@ export default class RoleListbox extends BaseElement {
     if (!option) return;
 
     this.currentActiveOption = option;
-    this.focusCurrent();
 
     if (this.multiSelect) {
       if (evt.shiftKey) {
@@ -300,7 +305,10 @@ export default class RoleListbox extends BaseElement {
         this.toggleSelected(option);
       }
     }
+
+    this.focusCurrent();
   }
+
 
   /**
    * @param {Event} evt
@@ -326,6 +334,16 @@ export default class RoleListbox extends BaseElement {
   }
 
   /**
+   * Reset range when shiftKey goes up
+   * @param {KeyboardEvent} evt
+   */
+  handleKeyUp (evt) {
+    if (evt.key === "Shift") {
+      this.rangeStartOption = this.currentActiveOption
+    }
+  }
+
+  /**
    * @param {KeyboardEvent} evt
    */
   handleKeyDown(evt) {
@@ -339,6 +357,11 @@ export default class RoleListbox extends BaseElement {
       arrowUp: "ArrowUp",
       space: " ",
     };
+
+    if (evt.key === "Shift") {
+      this.rangeStartOption = this.currentActiveOption
+      return
+    }
 
     /**
      * Internal search buffer stuff
@@ -379,11 +402,7 @@ export default class RoleListbox extends BaseElement {
         // Select from start -> focus
         if (evt.key === "Home") {
           evt.preventDefault();
-          this.options
-            .slice(0, this.currentActiveOptionIndex)
-            .forEach((opt) => {
-              this.select(opt);
-            });
+          this.selectFromStartToCurrent()
           return;
         }
 
@@ -391,11 +410,7 @@ export default class RoleListbox extends BaseElement {
         // Select from focus -> end
         if (evt.key === "End") {
           evt.preventDefault();
-          this.options
-            .slice(this.currentActiveOptionIndex, this.options.length - 1)
-            .forEach((opt) => {
-              this.select(opt);
-            });
+          this.selectFromCurrentToEnd()
           return;
         }
       }
@@ -415,10 +430,9 @@ export default class RoleListbox extends BaseElement {
       if (shiftKeyPressed) {
         // Shift + Space. Selects from last selected item to currently focused item
         if (evt.key === " ") {
-          if (this.selectFromPreviousToCurrent() === true) {
-            evt.preventDefault()
-            return
-          }
+          evt.preventDefault()
+          this.selectFromPreviousToCurrent()
+          return
         }
         // Shift + DownArrow
         if (evt.key === "ArrowDown") {
@@ -461,6 +475,44 @@ export default class RoleListbox extends BaseElement {
     }
   }
 
+  selectFromRangeStartToCurrent () {
+    const rangeStartOption = this.rangeStartOption
+    const currentActiveOptionIndex = this.currentActiveOptionIndex
+
+    const rangeStartIndex = this.options.findIndex((el) => {
+      return el === rangeStartOption
+    })
+
+    // @TODO: fix this
+    if (rangeStartIndex > currentActiveOptionIndex) {
+      return
+    }
+
+    this.selectFromCurrentToEnd()
+  }
+
+  /**
+   * @param {number} [startIndex=0]
+   */
+  selectFromStartToCurrent (startIndex = 0) {
+    this.options
+      .slice(startIndex, this.currentActiveOptionIndex)
+      .forEach((opt) => {
+        this.select(opt);
+      });
+  }
+
+  /**
+   * @param {number} [endIndex=this.options.length-1]
+   */
+  selectFromCurrentToEnd (endIndex = this.options.length - 1) {
+    this.options
+      .slice(this.currentActiveOptionIndex, endIndex)
+      .forEach((opt) => {
+        this.select(opt);
+      });
+  }
+
   focusElementFromSearchBuffer() {
     const searchBuffer = this._searchBuffer;
 
@@ -477,47 +529,38 @@ export default class RoleListbox extends BaseElement {
 
   /**
    * Selects all options from the previousSelectedOption to the currentActiveOption
-   * @returns {boolean} - used for event.preventDefault()
    */
   selectFromPreviousToCurrent () {
-    if (this.currentActiveOptionIndex === 0) {
-      if (this.currentActiveOption) {
-        this.select(this.currentActiveOption)
-      }
-      return true
-    }
-    /**
-      * @type {HTMLElement | null}
-      */
-    let previousSelectedOption = null;
+    const prev = this.rangeStartOption
+    const curr = this.currentActiveOption
 
-    const options = this.options;
+    console.log({ prev, curr })
 
-    for (let i = options.length - 1; i >= 0; i--) {
-      const curr = options[i];
-
-      if (this.isSelected(curr)) {
-        previousSelectedOption = curr;
-        break;
-      }
+    if (prev == null) {
+      this.selectFromStartToCurrent()
+      return
     }
 
-    if (previousSelectedOption) {
-      const previousSelectedIndex = options.findIndex(
-        (opt) => opt === previousSelectedOption,
-      );
 
-      if (previousSelectedIndex >= 0) {
-        this.options
-          .slice(previousSelectedIndex, this.currentActiveOptionIndex + 1)
-          .forEach((el) => {
-            this.select(el);
-          });
-        return true;
+
+    let start = false
+    let end = false
+
+    for (const option of this.options) {
+      if (prev === option) {
+        start = true
+      }
+
+      if (start === true && end === false) {
+        this.select(option)
+      } else {
+        this.deselect(option)
+      }
+
+      if (option === curr) {
+        end = true;
       }
     }
-
-    return false
   }
 
   /**

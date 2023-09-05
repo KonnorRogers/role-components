@@ -20,9 +20,10 @@
     "LICENSE"
   ],
   "scripts": {
+    "setup": "pnpm install && cd docs && pnpm install",
     "start": "web-dev-server",
     "build": "rimraf -g \"./{exports,internal}/**/*.d.ts\" && tsc",
-    "build:docs": "cd docs && ",
+    "build:docs": "cd docs && pnpm run build",
     "start:docs": "cd docs && overmind start -f Procfile.dev",
     "deploy:patch": "npm run build && npm version patch && npm publish && git push --follow-tags",
     "deploy:minor": "npm run build && npm version minor && npm publish && git push --follow-tags",

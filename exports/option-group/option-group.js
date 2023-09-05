@@ -9,7 +9,15 @@ export default class OptionGroup extends BaseElement {
     role: { reflect: true },
   };
 
-  static styles = [hostStyles, css``];
+  static styles = [hostStyles, css`
+    [part~="label"] {
+      padding: 8px;
+      font-weight: bold;
+      color: black;
+      background-color: rgba(0, 0, 0, 0.05);
+      display: block;
+    }
+  `];
 
   constructor() {
     super();

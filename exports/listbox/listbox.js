@@ -37,7 +37,6 @@ export default class RoleListbox extends BaseElement {
       reflect: true,
       type: Boolean,
     },
-    focusOnHover: { attribute: "focus-on-hover", reflect: true },
 
     // Maps to aria-multiselectable
     multiSelect: { reflect: true, type: Boolean, attribute: "multi-select" },
@@ -135,12 +134,6 @@ export default class RoleListbox extends BaseElement {
      */
     this.currentActiveOption = null;
 
-    /**
-     * Generally used for combobox. This causes the hovered option element to be focused by the listbox.
-     * @type {boolean}
-     */
-    this.focusOnHover = false;
-
     this.attributeFilter = [
       "aria-current",
       "selected",
@@ -170,6 +163,7 @@ export default class RoleListbox extends BaseElement {
 
     this.addEventListener("keydown", this.handleKeyDown);
     this.addEventListener("click", this.handleOptionClick);
+    this.addEventListener("pointerover", this.handleOptionHover);
 
     this.addEventListener("focusin", this.handleFocusIn);
   }
@@ -206,14 +200,6 @@ export default class RoleListbox extends BaseElement {
       this.role = "listbox";
     }
 
-    if (changedProperties.has("focusOnHover")) {
-      if (this.focusOnHover) {
-        this.addEventListener("pointermove", this.handleOptionClick);
-      } else {
-        this.removeEventListener("pointermove", this.handleOptionClick);
-      }
-    }
-
     if (changedProperties.has("multiSelect")) {
       if (this.multiSelect === true) {
         this.setAttribute("aria-multiselectable", "true");
@@ -226,10 +212,10 @@ export default class RoleListbox extends BaseElement {
       const previousActiveOption = changedProperties.get("currentActiveOption");
 
       if (previousActiveOption) {
-        this.removeFocus(previousActiveOption);
+        if (this.currentActiveOption !== previousActiveOption) {
+          this.removeFocus(previousActiveOption);
 
-        if (!this.multiSelect) {
-          if (this.currentActiveOption !== previousActiveOption) {
+          if (!this.multiSelect) {
             this.deselect(previousActiveOption);
           }
         }
@@ -306,6 +292,25 @@ export default class RoleListbox extends BaseElement {
     if (this.multiSelect) {
       this.toggleSelected(option);
     }
+  }
+
+  /**
+   * @param {Event} evt
+   */
+  handleOptionHover(evt) {
+    const path = evt.composedPath();
+
+    const option = /** @type {HTMLElement | null} */ (
+      path.find((el) => {
+        return (
+          /** @type {HTMLElement} */ (el).getAttribute?.("role") === "option"
+        );
+      })
+    );
+
+    if (!option) return;
+
+    this.scrollOptionIntoView(option)
   }
 
   get currentActiveOptionIndex() {
@@ -600,9 +605,7 @@ export default class RoleListbox extends BaseElement {
    * @return {void}
    */
   scrollOptionIntoView(selectedOption) {
-    requestAnimationFrame(() => {
-      selectedOption.scrollIntoView({ behavior: "auto", block: "nearest" });
-    });
+    selectedOption.scrollIntoView({ block: "nearest" });
   }
 
   /**
@@ -661,12 +664,17 @@ export default class RoleListbox extends BaseElement {
 
     const currentSelectedOption = selectedOptions[0];
 
+    if (currentSelectedOption) {
+      this.scrollOptionIntoView(currentSelectedOption)
+    }
+
     if (!this.multiSelect) {
       selectedOptions.forEach((optionEl) => {
-        if (optionEl === currentSelectedOption) return;
+        if (optionEl === currentSelectedOption) {
+          return;
+        }
 
         this.removeFocus(optionEl);
-        this.scrollOptionIntoView(optionEl);
         this.deselect(optionEl);
       });
       return;
@@ -687,6 +695,8 @@ export default class RoleListbox extends BaseElement {
         this.removeFocus(option);
       }
     });
+
+    this.currentActiveOption = currentActiveOption
   }
 
   /**

@@ -1,0 +1,34 @@
+baseurl: "" # OPTIONAL: the subpath of your site, e.g. /blog
+url: "" # the base hostname & protocol for your site, e.g. https://example.com
+destination: output
+
+development:
+  url: "localhost:4000"
+
+template_engine: erb
+permalink: pretty
+
+collections:
+  documentation:
+    output: true
+
+defaults:
+  - scope:
+      path: "images"
+    values:
+      image: true
+
+  - scope:
+      path: "_documentation"
+    values:
+      layout: doc
+      permalink: /:categories/:slug
+      category_order: 0
+      doc_order: 0
+
+  - scope:
+      path: "_documentation/components"
+    values:
+      layout: doc
+      category: components
+      category_order: 10

@@ -20,7 +20,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "setup": "pnpm install && cd docs && pnpm install",
+    "setup": "pnpm install && cd docs && bundle install && pnpm install",
     "start": "web-dev-server",
     "build": "rimraf -g \"./{exports,internal}/**/*.d.ts\" && tsc",
     "build:docs": "cd docs && pnpm run build",

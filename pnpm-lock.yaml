@@ -12,8 +12,8 @@ dependencies:
     specifier: ^2.8.0
     version: 2.8.0
   web-component-define:
-    specifier: ^2.0.10
-    version: 2.0.10
+    specifier: ^2.0.11
+    version: 2.0.11
 
 devDependencies:
   '@web/dev-server':
@@ -1637,8 +1637,8 @@ packages:
     engines: {node: '>= 0.8'}
     dev: true
 
-  /web-component-define@2.0.10:
-    resolution: {integrity: sha512-gwkjTFdG8eE8fxI4+RZUCQRy06SSSkCyLpQ1YSCsA+z8ZLlnmqLX/3B3WD2ZraVRtyje3hLXS8bxL8CK1/bZYQ==}
+  /web-component-define@2.0.11:
+    resolution: {integrity: sha512-oMOngNGL5k55NyaQNnPz0UnV5QtPuESvSuxpBgmHHfNjb8sgVm4akAFq7HO4I5bhGHX8Of+0XnUZ3whBo0chgw==}
     dependencies:
       '@lit/reactive-element': 1.6.3
       '@open-wc/dedupe-mixin': 1.4.0

@@ -1,5 +1,8 @@
 // @ts-check
 import { BaseElement } from "../base-element.js";
+import { hostStyles } from "../styles/host-styles.js";
+
+import { css, html } from "lit"
 
 import {
   arrow,
@@ -9,8 +12,6 @@ import {
   offset,
   autoUpdate,
 } from "@floating-ui/dom";
-
-import { css, html } from "lit"
 
 /**
  * Due to accessibility reasons with aria-describedby, the tooltip must be the same
@@ -41,39 +42,41 @@ export default class RoleTooltip extends BaseElement {
   }
 
   static get styles() {
-    return css`
-      :host {
-        --background-color: #222;
-        --arrow-size: 8px;
-      }
+    return [
+      hostStyles,
+      css`
+        :host {
+          --background-color: #222;
+          --arrow-size: 8px;
+        }
 
-      .base {
-        display: none;
-        position: absolute;
-        left: 0px;
-        top: 0px;
-        max-width: calc(100vw - 10px);
-        padding: 0.4em 0.6em;
-        background: var(--background-color);
-        color: white;
-        border-radius: 4px;
-        font-size: 0.9em;
-        pointer-events: none;
-        z-index: 1;
-      }
+        .base {
+          display: none;
+          position: absolute;
+          left: 0px;
+          top: 0px;
+          max-width: calc(100vw - 10px);
+          padding: 0.4em 0.6em;
+          background: var(--background-color);
+          color: white;
+          border-radius: 4px;
+          font-size: 0.9em;
+          pointer-events: none;
+          z-index: 1;
+        }
 
-      :host([hoist]) .base {
-        position: fixed;
-      }
+        :host([hoist]) .base {
+          position: fixed;
+        }
 
-      .arrow {
-        position: absolute;
-        background: var(--background-color);
-        width: var(--arrow-size);
-        height: var(--arrow-size);
-        transform: rotate(45deg);
-      }
-    `;
+        .arrow {
+          position: absolute;
+          background: var(--background-color);
+          width: var(--arrow-size);
+          height: var(--arrow-size);
+          transform: rotate(45deg);
+        }
+    `];
   }
 
   constructor() {

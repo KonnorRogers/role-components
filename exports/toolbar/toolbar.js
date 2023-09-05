@@ -2,6 +2,7 @@
 
 import { BaseElement } from "../base-element.js";
 import { css, html } from "lit"
+import { hostStyles } from "../styles/host-styles.js";
 
 /**
  * A toolbar following the W3C Toolbar pattern.
@@ -10,6 +11,8 @@ import { css, html } from "lit"
  */
 export default class RoleToolbar extends BaseElement {
   static properties = {
+    orientation: { reflect: true },
+    ariaOrientation: { reflect: true },
     _currentFocusIndex: {state: true},
     _toolbarItems: {state: true}
   }
@@ -21,6 +24,11 @@ export default class RoleToolbar extends BaseElement {
 
     /** @type Array<Element> */
     this._toolbarItems = []
+
+    /**
+     * @type {"vertical" | "horizontal"}
+     */
+    this.orientation = "horizontal"
 
     this.addEventListener("click", this.handleClick);
     this.addEventListener("keydown", this.handleKeyDown);
@@ -36,6 +44,11 @@ export default class RoleToolbar extends BaseElement {
     if (changedProperties.has("_toolbarItems")) {
       this.updateToolbarItems()
     }
+
+    if (changedProperties.has("orientation")) {
+      this.ariaOrientation = this.orientation
+    }
+
     super.willUpdate(changedProperties)
   }
 
@@ -45,29 +58,28 @@ export default class RoleToolbar extends BaseElement {
   }
 
   static get styles() {
-    return css`
-      :host {
-        display: block;
-      }
+    return [
+      hostStyles,
+      css`
+        .base {
+          display: flex;
+          max-width: 100%;
+          padding: 0.4rem 0.6rem;
+          border-radius: 4px;
+          border: 2px solid transparent;
+          gap: 4px;
+          overflow: auto;
+        }
 
-      .base {
-        display: flex;
-        max-width: 100%;
-        padding: 0.4rem 0.6rem;
-        border-radius: 4px;
-        border: 2px solid transparent;
-        gap: 4px;
-        overflow: auto;
-      }
+        :host([orientation="vertical"]) .base {
+          flex-direction: column;
+        }
 
-      :host([orientation="vertical"]) .base {
-        flex-direction: column;
-      }
-
-      :host(:focus-within) .base {
-        border-color: #005a9c;
-      }
-    `;
+        :host(:focus-within) .base {
+          border-color: var(--role-border-focus-color);
+        }
+      `
+    ];
   }
 
   /**
@@ -97,7 +109,7 @@ export default class RoleToolbar extends BaseElement {
   }
 
   /** @param {Event} event */
-  handleClick = (event) => {
+  handleClick(event) {
 
     const focusedElement = event.composedPath().find((el) => {
       // @ts-expect-error
@@ -123,7 +135,7 @@ export default class RoleToolbar extends BaseElement {
   };
 
   /** @param {KeyboardEvent} event */
-  handleKeyDown = (event) => {
+  handleKeyDown (event) {
     const key = event.key?.toLowerCase();
 
     if (
@@ -139,12 +151,12 @@ export default class RoleToolbar extends BaseElement {
 
     if (Object.keys(this.keydownHandlers).includes(key)) {
       event.preventDefault();
-      this.keydownHandlers[key](event);
+      this.keydownHandlers[key].call(this, event);
     }
   };
 
   /** @param {Event} _event */
-  focusNext = (_event) => {
+  focusNext (_event) {
     this.currentFocusElement?.setAttribute("tabindex", "-1");
     this._currentFocusIndex += 1;
 
@@ -157,7 +169,7 @@ export default class RoleToolbar extends BaseElement {
   };
 
   /** @param {Event} _event */
-  focusPrevious = (_event) => {
+  focusPrevious (_event) {
     this.currentFocusElement?.setAttribute("tabindex", "-1");
     this._currentFocusIndex -= 1;
 
@@ -169,12 +181,12 @@ export default class RoleToolbar extends BaseElement {
     this.setTabIndex();
   };
 
-  focusFirst = () => {
+  focusFirst () {
     this._currentFocusIndex = 0;
     this.setTabIndex();
   };
 
-  focusLast = () => {
+  focusLast () {
     if (this._toolbarItems == null) return
 
     this._currentFocusIndex = this._toolbarItems.length - 1;
@@ -182,7 +194,7 @@ export default class RoleToolbar extends BaseElement {
   };
 
 
-  setTabIndex = ({ focus = true } = {}) => {
+  setTabIndex ({ focus = true } = {}) {
     this.currentFocusElement?.setAttribute("tabindex", "0");
 
     if (focus) {
@@ -200,8 +212,8 @@ export default class RoleToolbar extends BaseElement {
   /**
    * @param {undefined | null | Event} [evt] - triggered by a slot change event.
    */
-  updateToolbarItems = (evt) => {
-    if (evt) console.log("slotchange evt")
+  updateToolbarItems (evt) {
+    console.log("updating")
     /**
      * @type {HTMLSlotElement}
      */

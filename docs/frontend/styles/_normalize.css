@@ -195,3 +195,12 @@ blockquote {
   padding: 0.75rem;
   background-color: var(--sl-color-neutral-50);
 }
+
+details summary {
+  padding: 0.4rem;
+  cursor: pointer;
+}
+
+details summary:hover {
+  background-color: var(--sl-color-neutral-50);
+}

@@ -70,17 +70,18 @@ When a multi-select listbox receives focus:
   <role-option value="10">Option 10</role-option>
   <role-option value="Flamingo">Flamingo</role-option>
 </role-listbox>
-<% end.chomp.html_safe %>
+<% end.html_safe %>
 
-<sl-details>
-  <span slot="summary">Source Code</span>
-  <%= markdownify do %>
-  ```html
-  <%= html %>
-  ```
-  <% end %>
+<details>
+  <summary>Source Code</summary>
 
-</sl-details>
+<%= markdownify do %>
+```html
+<%= html %>
+```
+<% end %>
+
+</details>
 
 <%= html %>
 
@@ -100,16 +101,18 @@ When a multi-select listbox receives focus:
   <role-option value="10">Option 10</role-option>
   <role-option value="Flamingo">Flamingo</role-option>
 </role-listbox>
-<% end.chomp.html_safe %>
+<% end.html_safe %>
 
-<sl-details>
-  <span slot="summary">Source Code</span>
-  <%= markdownify do %>
-  ```html
-  <%= html %>
-  ```
-  <% end %>
-</sl-details>
+<details>
+  <summary>Source Code</summary>
+
+<%= markdownify do %>
+```html
+<%= html %>
+```
+<% end %>
+
+</details>
 
 <%= html %>
 
@@ -144,16 +147,18 @@ When a multi-select listbox receives focus:
     <role-option value="falcon">Falcon</role-option>
   </role-option-group>
 </role-listbox>
-<% end.chomp.html_safe %>
+<% end.html_safe %>
 
-<sl-details>
-  <span slot="summary">Source Code</span>
-  <%= markdownify do %>
-  ```html
-  <%= html %>
-  ```
-  <% end %>
-</sl-details>
+<details>
+  <summary>Source Code</summary>
+
+<%= markdownify do %>
+```html
+<%= html %>
+```
+<% end %>
+
+</details>
 
 <%= html %>
 
@@ -172,16 +177,18 @@ When a multi-select listbox receives focus:
   <role-option value="9">Option 9</role-option>
   <role-option value="10">Option 10</role-option>
 </role-listbox>
-<% end.chomp.html_safe %>
+<% end.html_safe %>
 
-<sl-details>
-  <span slot="summary">Source Code</span>
-  <%= markdownify do %>
-  ```html
-  <%= html %>
-  ```
-  <% end %>
-</sl-details>
+<details>
+  <summary>Source Code</summary>
+
+<%= markdownify do %>
+```html
+<%= html %>
+```
+<% end %>
+
+</details>
 
 <%= html %>
 
@@ -215,15 +222,17 @@ When a multi-select listbox receives focus:
     <role-option value="falcon">Falcon</role-option>
   </role-option-group>
 </role-listbox>
-<% end.chomp.html_safe %>
+<% end.html_safe %>
 
-<sl-details>
-  <span slot="summary">Source Code</span>
-  <%= markdownify do %>
-  ```html
-  <%= html %>
-  ```
-  <% end %>
-</sl-details>
+<details>
+  <summary>Source Code</summary>
+
+<%= markdownify do %>
+```html
+<%= html %>
+```
+<% end %>
+
+</details>
 
 <%= html %>

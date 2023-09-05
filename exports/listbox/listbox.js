@@ -300,7 +300,7 @@ export default class RoleListbox extends BaseElement {
 
     if (this.multiSelect) {
       if (evt.shiftKey) {
-        this.selectFromPreviousToCurrent()
+        this.selectFromRangeStartToCurrent()
       } else {
         this.toggleSelected(option);
       }
@@ -431,20 +431,20 @@ export default class RoleListbox extends BaseElement {
         // Shift + Space. Selects from last selected item to currently focused item
         if (evt.key === " ") {
           evt.preventDefault()
-          this.selectFromPreviousToCurrent()
+          this.selectFromClosestSelectedToCurrent()
           return
         }
         // Shift + DownArrow
         if (evt.key === "ArrowDown") {
           this.focusNext();
-          if (this.currentActiveOption) this.select(this.currentActiveOption);
+          this.selectFromRangeStartToCurrent()
           return;
         }
 
         // Shift + UpArrow
         if (evt.key === "ArrowUp") {
           this.focusPrevious();
-          if (this.currentActiveOption) this.select(this.currentActiveOption);
+          this.selectFromRangeStartToCurrent()
           return;
         }
       }
@@ -475,20 +475,82 @@ export default class RoleListbox extends BaseElement {
     }
   }
 
+  /**
+   * Finds the closest selected option prior to the current option
+   */
+  selectFromClosestSelectedToCurrent () {
+    let currentActiveOptionIndex = this.currentActiveOptionIndex
+
+    let prevSelectedIndex = 0
+
+    for (let i = currentActiveOptionIndex; i >= 0; i--) {
+      const curr = this.options[i]
+
+      if (this.isSelected(curr)) {
+        prevSelectedIndex = i
+        break;
+      }
+    }
+
+    /**
+     * We don't need to de-select previous items. Just from rangeStart -> currentIndex
+     * So lets slice from prev -> current
+     */
+    this.options.slice(prevSelectedIndex, currentActiveOptionIndex + 1).forEach((opt) => {
+      this.select(opt)
+    })
+  }
+
+  /**
+   *
+   */
   selectFromRangeStartToCurrent () {
     const rangeStartOption = this.rangeStartOption
+    const currentActiveOption = this.currentActiveOption
+
+
+    if (currentActiveOption == null) return
+
     const currentActiveOptionIndex = this.currentActiveOptionIndex
+
+    if (rangeStartOption == null) {
+      this.selectRange({ from: 0, to: currentActiveOptionIndex })
+    }
+
+    if (rangeStartOption === currentActiveOption) {
+      this.select(currentActiveOption)
+      return
+    }
+
 
     const rangeStartIndex = this.options.findIndex((el) => {
       return el === rangeStartOption
     })
 
-    // @TODO: fix this
-    if (rangeStartIndex > currentActiveOptionIndex) {
+    if (rangeStartIndex === -1) {
       return
     }
 
-    this.selectFromCurrentToEnd()
+    if (rangeStartIndex > currentActiveOptionIndex) {
+      this.selectRange({ from: currentActiveOptionIndex, to: rangeStartIndex })
+      return
+    }
+
+    this.selectRange({ from: rangeStartIndex, to: currentActiveOptionIndex })
+  }
+
+  /**
+   * Selects all options in a range and deselects all options not in the range
+   * @param {Range} options
+   */
+  selectRange ({ from, to }) {
+    this.options.forEach((opt, index) => {
+      if (index >= from && index <= to) {
+        this.select(opt)
+      } else {
+        this.deselect(opt)
+      }
+    })
   }
 
   /**
@@ -496,7 +558,7 @@ export default class RoleListbox extends BaseElement {
    */
   selectFromStartToCurrent (startIndex = 0) {
     this.options
-      .slice(startIndex, this.currentActiveOptionIndex)
+      .slice(startIndex, this.currentActiveOptionIndex + 1)
       .forEach((opt) => {
         this.select(opt);
       });
@@ -524,42 +586,6 @@ export default class RoleListbox extends BaseElement {
     if (matchedEl && this.currentActiveOption !== matchedEl) {
       this.currentActiveOption = matchedEl;
       this.focusCurrent();
-    }
-  }
-
-  /**
-   * Selects all options from the previousSelectedOption to the currentActiveOption
-   */
-  selectFromPreviousToCurrent () {
-    const prev = this.rangeStartOption
-    const curr = this.currentActiveOption
-
-    console.log({ prev, curr })
-
-    if (prev == null) {
-      this.selectFromStartToCurrent()
-      return
-    }
-
-
-
-    let start = false
-    let end = false
-
-    for (const option of this.options) {
-      if (prev === option) {
-        start = true
-      }
-
-      if (start === true && end === false) {
-        this.select(option)
-      } else {
-        this.deselect(option)
-      }
-
-      if (option === curr) {
-        end = true;
-      }
     }
   }
 

@@ -1,7 +1,7 @@
 // @ts-check
 
 import { BaseElement } from "../base-element.js";
-import { css, html } from "lit"
+import { css, html } from "lit";
 import { hostStyles } from "../styles/host-styles.js";
 import { stringMap } from "../../internal/string-map.js";
 
@@ -9,14 +9,14 @@ import { stringMap } from "../../internal/string-map.js";
  * @customElement
  */
 export default class RoleOption extends BaseElement {
-  static baseName = "role-option"
+  static baseName = "role-option";
 
   static properties = {
     selected: { reflect: true, type: Boolean },
     ariaCurrent: { reflect: true, attribute: "aria-current" },
     role: { reflect: true },
     value: {},
-  }
+  };
 
   static styles = [
     hostStyles,
@@ -42,34 +42,33 @@ export default class RoleOption extends BaseElement {
         align-items: center;
         gap: 4px;
       }
-    `
-  ]
+    `,
+  ];
 
-  constructor () {
-    super()
-    this.role = "option"
+  constructor() {
+    super();
+    this.role = "option";
 
     /**
      * aria-selected is preferred for single-select listboxes / comboboxes
      * @type {boolean}
      */
-    this.selected = false
+    this.selected = false;
 
     /**
      * @type {boolean}
      */
-    this.hasFocus = false
+    this.hasFocus = false;
 
     /**
      * @type {null | string}
      */
-    this.value = null
-
+    this.value = null;
   }
 
-  handleSlotChange () {
+  handleSlotChange() {
     if (!this.hasAttribute("value") || this.value == null) {
-      this.value = this.innerText
+      this.value = this.innerText;
     }
   }
 
@@ -77,31 +76,31 @@ export default class RoleOption extends BaseElement {
    * @override
    * @param {import("lit").PropertyValues<this>} changedProperties
    */
-  willUpdate (changedProperties) {
+  willUpdate(changedProperties) {
     if (changedProperties.has("role")) {
-      changedProperties.set("role", "option")
-      this.role = "option"
+      changedProperties.set("role", "option");
+      this.role = "option";
     }
 
     if (changedProperties.has("selected")) {
-      this.setAttribute("aria-selected", this.selected.toString())
+      this.setAttribute("aria-selected", this.selected.toString());
     }
 
     if (changedProperties.has("value")) {
       if (!this.hasAttribute("value") || this.value == null) {
-        this.value = this.innerText.split(/\s/).join("_")
+        this.value = this.innerText.split(/\s/).join("_");
       }
 
       if (this.value.match(/\s/)) {
-        console.warn("role-option had white space. Replacing with `_`")
-        this.value.split(/ /).join("_")
+        console.warn("role-option had white space. Replacing with `_`");
+        this.value.split(/ /).join("_");
       }
     }
 
-    super.willUpdate(changedProperties)
+    super.willUpdate(changedProperties);
   }
 
-  render () {
+  render() {
     return html`
       <div
         part=${stringMap({
@@ -110,12 +109,9 @@ export default class RoleOption extends BaseElement {
           "base--active": this.ariaCurrent === "true",
         })}
       >
-        <slot name="checkmark" ?invisible=${!this.selected}>
-          ✓
-        </slot>
+        <slot name="checkmark" ?invisible=${!this.selected}> ✓ </slot>
         <slot @slotchange=${this.handleSlotChange}></slot>
       </div>
-    `
+    `;
   }
 }
-

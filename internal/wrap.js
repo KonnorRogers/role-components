@@ -6,14 +6,14 @@
  * @param {number} max
  * @return {number}
  */
-export function wrap (min, current, max) {
+export function wrap(min, current, max) {
   if (current > max) {
-    return min
+    return min;
   }
 
   if (current < min) {
-    return max
+    return max;
   }
 
-  return current
+  return current;
 }

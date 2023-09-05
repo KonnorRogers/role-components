@@ -1,7 +1,7 @@
 // @ts-check
 
 import { BaseElement } from "../base-element.js";
-import { css, html } from "lit"
+import { css, html } from "lit";
 import { hostStyles } from "../styles/host-styles.js";
 
 /**
@@ -13,22 +13,22 @@ export default class RoleToolbar extends BaseElement {
   static properties = {
     orientation: { reflect: true },
     ariaOrientation: { reflect: true },
-    _currentFocusIndex: {state: true},
-    _toolbarItems: {state: true}
-  }
+    _currentFocusIndex: { state: true },
+    _toolbarItems: { state: true },
+  };
 
-  constructor () {
-    super()
+  constructor() {
+    super();
 
-    this._currentFocusIndex = 0
+    this._currentFocusIndex = 0;
 
     /** @type Array<Element> */
-    this._toolbarItems = []
+    this._toolbarItems = [];
 
     /**
      * @type {"vertical" | "horizontal"}
      */
-    this.orientation = "horizontal"
+    this.orientation = "horizontal";
 
     this.addEventListener("click", this.handleClick);
     this.addEventListener("keydown", this.handleKeyDown);
@@ -40,16 +40,16 @@ export default class RoleToolbar extends BaseElement {
   /**
    * @param {import("lit").PropertyValues<this>} changedProperties
    */
-  willUpdate (changedProperties) {
+  willUpdate(changedProperties) {
     if (changedProperties.has("_toolbarItems")) {
-      this.updateToolbarItems()
+      this.updateToolbarItems();
     }
 
     if (changedProperties.has("orientation")) {
-      this.ariaOrientation = this.orientation
+      this.ariaOrientation = this.orientation;
     }
 
-    super.willUpdate(changedProperties)
+    super.willUpdate(changedProperties);
   }
 
   /** @returns {string} */
@@ -78,7 +78,7 @@ export default class RoleToolbar extends BaseElement {
         :host(:focus-within) .base {
           border-color: var(--role-border-focus-color);
         }
-      `
+      `,
     ];
   }
 
@@ -110,11 +110,10 @@ export default class RoleToolbar extends BaseElement {
 
   /** @param {Event} event */
   handleClick(event) {
-
     const focusedElement = event.composedPath().find((el) => {
       // @ts-expect-error
-      const role = el?.getAttribute?.('data-role') || ""
-      return role.includes('toolbar-item')
+      const role = el?.getAttribute?.("data-role") || "";
+      return role.includes("toolbar-item");
     });
 
     if (focusedElement) {
@@ -132,10 +131,10 @@ export default class RoleToolbar extends BaseElement {
       // focus the toolbar itself if no focused element clicked.
       this.setTabIndex({ focus: true });
     }
-  };
+  }
 
   /** @param {KeyboardEvent} event */
-  handleKeyDown (event) {
+  handleKeyDown(event) {
     const key = event.key?.toLowerCase();
 
     if (
@@ -153,10 +152,10 @@ export default class RoleToolbar extends BaseElement {
       event.preventDefault();
       this.keydownHandlers[key].call(this, event);
     }
-  };
+  }
 
   /** @param {Event} _event */
-  focusNext (_event) {
+  focusNext(_event) {
     this.currentFocusElement?.setAttribute("tabindex", "-1");
     this._currentFocusIndex += 1;
 
@@ -166,10 +165,10 @@ export default class RoleToolbar extends BaseElement {
     }
 
     this.setTabIndex();
-  };
+  }
 
   /** @param {Event} _event */
-  focusPrevious (_event) {
+  focusPrevious(_event) {
     this.currentFocusElement?.setAttribute("tabindex", "-1");
     this._currentFocusIndex -= 1;
 
@@ -179,32 +178,31 @@ export default class RoleToolbar extends BaseElement {
     }
 
     this.setTabIndex();
-  };
+  }
 
-  focusFirst () {
+  focusFirst() {
     this._currentFocusIndex = 0;
     this.setTabIndex();
-  };
+  }
 
-  focusLast () {
-    if (this._toolbarItems == null) return
+  focusLast() {
+    if (this._toolbarItems == null) return;
 
     this._currentFocusIndex = this._toolbarItems.length - 1;
     this.setTabIndex();
-  };
+  }
 
-
-  setTabIndex ({ focus = true } = {}) {
+  setTabIndex({ focus = true } = {}) {
     this.currentFocusElement?.setAttribute("tabindex", "0");
 
     if (focus) {
       // @ts-expect-error
       this.currentFocusElement?.focus?.();
     }
-  };
+  }
 
   get currentFocusElement() {
-    if (this._toolbarItems == null) return
+    if (this._toolbarItems == null) return;
 
     return this._toolbarItems[this._currentFocusIndex];
   }
@@ -212,30 +210,30 @@ export default class RoleToolbar extends BaseElement {
   /**
    * @param {undefined | null | Event} [evt] - triggered by a slot change event.
    */
-  updateToolbarItems (evt) {
-    console.log("updating")
+  updateToolbarItems(evt) {
+    console.log("updating");
     /**
      * @type {HTMLSlotElement}
      */
     // @ts-expect-error
-    const slot = evt?.target || this.shadowRoot.querySelector("slot")
+    const slot = evt?.target || this.shadowRoot.querySelector("slot");
 
-    if (slot == null) return
+    if (slot == null) return;
 
     /** @type {Element[]} */
-    const items = slot
-      .assignedElements({ flatten: true })
-      .filter((el) => {
-        return el instanceof HTMLElement && el.dataset.role?.match(/toolbar-item/);
-      });
-    this._toolbarItems = items
+    const items = slot.assignedElements({ flatten: true }).filter((el) => {
+      return (
+        el instanceof HTMLElement && el.dataset.role?.match(/toolbar-item/)
+      );
+    });
+    this._toolbarItems = items;
     this._currentFocusIndex = this._toolbarItems.findIndex(
-      (el) => el.getAttribute("tabindex") === "0"
+      (el) => el.getAttribute("tabindex") === "0",
     );
 
     if (this._currentFocusIndex === -1) {
       this._currentFocusIndex = 0;
       this.currentFocusElement?.setAttribute("tabindex", "0");
     }
-  };
+  }
 }

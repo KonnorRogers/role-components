@@ -3,4 +3,4 @@ import RoleListbox from "./listbox.js";
 
 export default RoleListbox;
 
-RoleListbox.define()
+RoleListbox.define();

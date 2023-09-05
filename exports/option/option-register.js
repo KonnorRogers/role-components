@@ -3,4 +3,4 @@ import RoleOption from "./option.js";
 
 export default RoleOption;
 
-RoleOption.define()
+RoleOption.define();

@@ -1,4 +1,3 @@
-
 /**
  * Detects if on a macOS device so we can properly bind things like metaKey
  * https://developer.mozilla.org/en-US/docs/Web/API/Navigator/platform
@@ -8,5 +7,5 @@ export function isMacOs() {
   return (
     navigator.platform.startsWith("Mac") ||
     navigator.platform.startsWith("iPhone")
-  )
+  );
 }

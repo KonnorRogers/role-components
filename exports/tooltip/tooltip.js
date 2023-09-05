@@ -2,7 +2,7 @@
 import { BaseElement } from "../base-element.js";
 import { hostStyles } from "../styles/host-styles.js";
 
-import { css, html } from "lit"
+import { css, html } from "lit";
 
 import {
   arrow,
@@ -32,8 +32,8 @@ export default class RoleTooltip extends BaseElement {
       rootElement: { state: true },
       role: { reflect: true },
       inert: { reflect: true, type: Boolean },
-      placement: { reflect: true }
-    }
+      placement: { reflect: true },
+    };
   }
 
   /** @returns {string} */
@@ -76,7 +76,8 @@ export default class RoleTooltip extends BaseElement {
           height: var(--arrow-size);
           transform: rotate(45deg);
         }
-    `];
+      `,
+    ];
   }
 
   constructor() {
@@ -84,9 +85,9 @@ export default class RoleTooltip extends BaseElement {
 
     // Needed by floating-ui
     // @ts-expect-error
-    if (window.process == null) window.process = {}
+    if (window.process == null) window.process = {};
     // @ts-expect-error
-    if (window.process.env == null) window.process.env = "development"
+    if (window.process.env == null) window.process.env = "development";
 
     /**
      * @type {Element[]}
@@ -96,15 +97,15 @@ export default class RoleTooltip extends BaseElement {
     /**
      * @type {ShadowRoot | Document | undefined}
      */
-    this._rootElement = undefined
+    this._rootElement = undefined;
 
-    this.role = "tooltip"
-    this.inert = true
+    this.role = "tooltip";
+    this.inert = true;
 
     /**
      * @type {import("@floating-ui/dom").Placement}
      */
-    this.placement = "top"
+    this.placement = "top";
 
     /**
      * @type {Array<[keyof GlobalEventHandlersEventMap, (evt: Event | KeyboardEvent) => void]>}
@@ -120,44 +121,45 @@ export default class RoleTooltip extends BaseElement {
     ];
   }
 
-  connectedCallback () {
-    super.connectedCallback()
+  connectedCallback() {
+    super.connectedCallback();
 
-    this.updateAnchors()
+    this.updateAnchors();
 
-    this.attachListeners()
+    this.attachListeners();
   }
 
-  updateAnchors () {
+  updateAnchors() {
     if (this.rootElement) {
-      this.tooltipAnchors = Array.from(this.rootElement.querySelectorAll(this.query)) || []
+      this.tooltipAnchors =
+        Array.from(this.rootElement.querySelectorAll(this.query)) || [];
     }
   }
 
-  disconnectedCallback () {
-    super.disconnectedCallback()
+  disconnectedCallback() {
+    super.disconnectedCallback();
 
-    this.removeListeners()
+    this.removeListeners();
   }
 
   /**
    * @type {string}
    */
-  get query () {
+  get query() {
     return `[aria-describedby~='${this.id}']`;
   }
 
   /** @returns {ShadowRoot | Document | undefined} */
   get rootElement() {
     if (this._rootElement == null) {
-      const oldVal = this._rootElement
+      const oldVal = this._rootElement;
 
       /**
-      * @type {ShadowRoot | Document | undefined}
-      */
+       * @type {ShadowRoot | Document | undefined}
+       */
       // @ts-expect-error
       this._rootElement = this.getRootNode() || document;
-      this.requestUpdate("rootElement", oldVal)
+      this.requestUpdate("rootElement", oldVal);
     }
 
     return this._rootElement;
@@ -168,7 +170,7 @@ export default class RoleTooltip extends BaseElement {
     const oldVal = this._rootElement;
 
     this._rootElement = newVal;
-    this.requestUpdate("rootElement", oldVal)
+    this.requestUpdate("rootElement", oldVal);
   }
 
   render() {
@@ -184,19 +186,20 @@ export default class RoleTooltip extends BaseElement {
    * @param {Parameters<import("lit").LitElement["update"]>} args
    * @return {ReturnType<import("lit").LitElement["update"]>}
    */
-  update (...args) {
-    const [changedProperties] = args
+  update(...args) {
+    const [changedProperties] = args;
 
-    const shouldUpdateProperties = ["id", "tooltipAnchors", "rootElement"]
-    const shouldReattachListeners = shouldUpdateProperties.some((str) => changedProperties.has(str))
+    const shouldUpdateProperties = ["id", "tooltipAnchors", "rootElement"];
+    const shouldReattachListeners = shouldUpdateProperties.some((str) =>
+      changedProperties.has(str),
+    );
 
     if (shouldReattachListeners) {
-      this.attachListeners()
+      this.attachListeners();
     }
 
-    super.update(...args)
+    super.update(...args);
   }
-
 
   /**
    * Used for re-initialized event listeners
@@ -208,7 +211,7 @@ export default class RoleTooltip extends BaseElement {
 
       // In case there's old anchors
       this.tooltipAnchors.forEach((el) =>
-        el.removeEventListener(event, listener)
+        el.removeEventListener(event, listener),
       );
 
       // Attach to new anchors
@@ -224,7 +227,7 @@ export default class RoleTooltip extends BaseElement {
     this.listeners.forEach(([event, listener]) => {
       // don't recompute anchors.
       this.tooltipAnchors.forEach((el) =>
-        el.removeEventListener(event, listener)
+        el.removeEventListener(event, listener),
       );
     });
   }
@@ -239,7 +242,10 @@ export default class RoleTooltip extends BaseElement {
    * @returns {void}
    */
   show = (eventOrElement) => {
-    if (eventOrElement instanceof Event && eventOrElement.currentTarget instanceof Element) {
+    if (
+      eventOrElement instanceof Event &&
+      eventOrElement.currentTarget instanceof Element
+    ) {
       eventOrElement = eventOrElement.currentTarget;
     }
 
@@ -247,7 +253,7 @@ export default class RoleTooltip extends BaseElement {
      * @type {Element}
      */
     // @ts-expect-error
-    const target = eventOrElement
+    const target = eventOrElement;
 
     this.willShow = true;
 
@@ -265,9 +271,9 @@ export default class RoleTooltip extends BaseElement {
     window.requestAnimationFrame(() => {
       if (this.willShow === true) return;
 
-      const base = this.base
+      const base = this.base;
 
-      if (!base) return
+      if (!base) return;
 
       base.style.display = "none";
     });
@@ -277,7 +283,9 @@ export default class RoleTooltip extends BaseElement {
    * @param {Event | KeyboardEvent} event
    */
   keyboardHide = (event) => {
-    if (!("key" in event)) { return }
+    if (!("key" in event)) {
+      return;
+    }
     if (event.key != null && event.key.toLowerCase() === "escape") {
       event.preventDefault();
       this.hide();
@@ -292,12 +300,12 @@ export default class RoleTooltip extends BaseElement {
     const arrowEl = this.arrow;
     const base = this.base;
 
-    if (base == null) return
-    if (arrowEl == null) return
+    if (base == null) return;
+    if (arrowEl == null) return;
 
     base.style.display = "unset";
 
-    const placement = this.placement || "top"
+    const placement = this.placement || "top";
 
     this.cleanup = autoUpdate(target, base, () => {
       computePosition(target, base, {
@@ -315,16 +323,17 @@ export default class RoleTooltip extends BaseElement {
           top: `${y}px`,
         });
 
-        const arrowX = middlewareData.arrow?.x
-        const arrowY = middlewareData.arrow?.y
+        const arrowX = middlewareData.arrow?.x;
+        const arrowY = middlewareData.arrow?.y;
 
         // Always the opposite of the placement the user provides.
-        const staticSide = {
-          top: "bottom",
-          right: "left",
-          bottom: "top",
-          left: "right",
-        }[placement.split("-")[0]] || "top";
+        const staticSide =
+          {
+            top: "bottom",
+            right: "left",
+            bottom: "top",
+            left: "right",
+          }[placement.split("-")[0]] || "top";
 
         Object.assign(arrowEl.style, {
           left: arrowX != null ? `${arrowX}px` : "",
@@ -337,10 +346,9 @@ export default class RoleTooltip extends BaseElement {
     });
   }
 
-
- /**
-  * @return {HTMLElement | null | undefined}
-  */
+  /**
+   * @return {HTMLElement | null | undefined}
+   */
   get base() {
     return this.shadowRoot?.querySelector(".base");
   }

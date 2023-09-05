@@ -1,36 +1,33 @@
-import { css,html } from "lit";
+import { css, html } from "lit";
 import { BaseElement } from "../base-element.js";
 import { hostStyles } from "../styles/host-styles.js";
 
 export default class OptionGroup extends BaseElement {
-  static baseName = "role-option-group"
+  static baseName = "role-option-group";
 
   static properties = {
-    role: { reflect: true }
-  }
+    role: { reflect: true },
+  };
 
-  static styles = [
-    hostStyles,
-    css``
-  ]
+  static styles = [hostStyles, css``];
 
-  constructor () {
-    super()
-    this.role = "group"
+  constructor() {
+    super();
+    this.role = "group";
   }
 
   /**
    * @param {import("lit").PropertyValues<this>} changedProperties
    */
-  willUpdate (changedProperties) {
+  willUpdate(changedProperties) {
     if (changedProperties.has("role")) {
-      this.role = "group"
+      this.role = "group";
     }
 
-    super.willUpdate(changedProperties)
+    super.willUpdate(changedProperties);
   }
 
-  render () {
+  render() {
     return html`
       <div part="base">
         <div part="label">
@@ -38,7 +35,6 @@ export default class OptionGroup extends BaseElement {
         </div>
         <slot></slot>
       </div>
-    `
-
+    `;
   }
 }

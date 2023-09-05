@@ -21,12 +21,16 @@ export default class RoleOption extends BaseElement {
   static styles = [
     hostStyles,
     css`
+      :host {
+        user-select: none;
+      }
       /** use :where() to lower specificity for aria-selected **/
       :host(:where(:hover)) [part~="base"] {
         background-color: lightgray;
       }
 
       [part~="base"] {
+        user-select: none;
         cursor: pointer;
         padding: 0.4em 0.6em;
         border: 2px solid transparent;

@@ -10,6 +10,10 @@ import { SelectedEvent } from "../events/selected-event.js";
 import { isMacOs } from "../../internal/is-mac-os.js";
 
 /**
+ * @typedef {{ from: number, to: number }} Range
+ */
+
+/**
  * A toolbar following the W3C Listbox pattern.
  * https://www.w3.org/WAI/ARIA/apg/patterns/listbox/
  * Single-select "select follows focus" model.
@@ -163,7 +167,7 @@ export default class RoleListbox extends BaseElement {
 
     this.addEventListener("keydown", this.handleKeyDown);
     this.addEventListener("click", this.handleOptionClick);
-    this.addEventListener("pointerover", this.handleOptionHover);
+    this.addEventListener("pointermove", this.handleOptionHover);
 
     this.addEventListener("focusin", this.handleFocusIn);
   }
@@ -271,7 +275,7 @@ export default class RoleListbox extends BaseElement {
   }
 
   /**
-   * @param {Event} evt
+   * @param {PointerEvent} evt
    */
   handleOptionClick(evt) {
     const path = evt.composedPath();
@@ -290,7 +294,11 @@ export default class RoleListbox extends BaseElement {
     this.focusCurrent();
 
     if (this.multiSelect) {
-      this.toggleSelected(option);
+      if (evt.shiftKey) {
+        this.selectFromPreviousToCurrent()
+      } else {
+        this.toggleSelected(option);
+      }
     }
   }
 
@@ -407,36 +415,9 @@ export default class RoleListbox extends BaseElement {
       if (shiftKeyPressed) {
         // Shift + Space. Selects from last selected item to currently focused item
         if (evt.key === " ") {
-          /**
-           * @type {HTMLElement | null}
-           */
-          let previousSelectedOption = null;
-
-          const options = this.options;
-
-          for (let i = options.length - 1; i > 0; i--) {
-            const curr = options[i];
-
-            if (this.isSelected(curr)) {
-              previousSelectedOption = curr;
-              break;
-            }
-          }
-
-          if (previousSelectedOption) {
-            const previousSelectedIndex = options.findIndex(
-              (opt) => opt === previousSelectedOption,
-            );
-
-            if (previousSelectedIndex >= 0) {
-              evt.preventDefault();
-              this.options
-                .slice(previousSelectedIndex, this.currentActiveOptionIndex + 1)
-                .forEach((el) => {
-                  this.select(el);
-                });
-              return;
-            }
+          if (this.selectFromPreviousToCurrent() === true) {
+            evt.preventDefault()
+            return
           }
         }
         // Shift + DownArrow
@@ -492,6 +473,51 @@ export default class RoleListbox extends BaseElement {
       this.currentActiveOption = matchedEl;
       this.focusCurrent();
     }
+  }
+
+  /**
+   * Selects all options from the previousSelectedOption to the currentActiveOption
+   * @returns {boolean} - used for event.preventDefault()
+   */
+  selectFromPreviousToCurrent () {
+    if (this.currentActiveOptionIndex === 0) {
+      if (this.currentActiveOption) {
+        this.select(this.currentActiveOption)
+      }
+      return true
+    }
+    /**
+      * @type {HTMLElement | null}
+      */
+    let previousSelectedOption = null;
+
+    const options = this.options;
+
+    for (let i = options.length - 1; i >= 0; i--) {
+      const curr = options[i];
+
+      if (this.isSelected(curr)) {
+        previousSelectedOption = curr;
+        break;
+      }
+    }
+
+    if (previousSelectedOption) {
+      const previousSelectedIndex = options.findIndex(
+        (opt) => opt === previousSelectedOption,
+      );
+
+      if (previousSelectedIndex >= 0) {
+        this.options
+          .slice(previousSelectedIndex, this.currentActiveOptionIndex + 1)
+          .forEach((el) => {
+            this.select(el);
+          });
+        return true;
+      }
+    }
+
+    return false
   }
 
   /**
@@ -664,11 +690,11 @@ export default class RoleListbox extends BaseElement {
 
     const currentSelectedOption = selectedOptions[0];
 
-    if (currentSelectedOption) {
-      this.scrollOptionIntoView(currentSelectedOption)
-    }
-
     if (!this.multiSelect) {
+      if (currentSelectedOption) {
+        this.scrollOptionIntoView(currentSelectedOption)
+      }
+
       selectedOptions.forEach((optionEl) => {
         if (optionEl === currentSelectedOption) {
           return;

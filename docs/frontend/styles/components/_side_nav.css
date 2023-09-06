@@ -1,12 +1,12 @@
+.side-nav ul {
+  list-style-type: " ";
+}
+
 .side-nav__menu {
   margin: 0;
   padding-inline-start: 0;
   min-width: 250px;
   max-width: 100%;
-}
-
-ul.side-nav__menu li::marker {
-  content: ""
 }
 
 .side-nav__item {

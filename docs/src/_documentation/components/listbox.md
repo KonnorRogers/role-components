@@ -45,12 +45,16 @@ When a multi-select listbox receives focus:
 <% end %>
 
 - <kbd>Space</kbd>: changes the selection state of the focused option.
-- <kbd>Shift + Down Arrow</kbd>: Moves focus to and toggles the selected state of the next option.
-- <kbd>Shift + Up Arrow</kbd>: Moves focus to and toggles the selected state of the previous option.
+- <kbd>Shift + Down Arrow</kbd>: Moves focus to and toggles the selected state of the next option. Also works like a range.
+- <kbd>Shift + Up Arrow</kbd>: Moves focus to and toggles the selected state of the previous option. Also works like a range.
 - <kbd>Shift + Space</kbd>: Selects contiguous items from the most recently selected item to the focused item.
 - <kbd>Control + Shift + Home</kbd>: Selects the focused option and all options up to the first option. Optionally, moves focus to the first option.
 - <kbd>Control + Shift + End</kbd>: Selects the focused option and all options down to the last option. Optionally, moves focus to the last option.
 - <kbd>Control + A</kbd>: Selects all options in the list. Optionally, if all options are selected, it may also unselect all options.
+
+### Additional support
+
+<kbd>Shift + Click</kbd> - Selects a range from the most recently selected option to the currently clicked option. Holding shift causes the range starting point to not reset.
 
 ## Examples
 

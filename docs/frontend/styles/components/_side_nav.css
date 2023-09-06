@@ -20,7 +20,7 @@
 .side-nav__link {
   font-weight: normal;
   text-decoration: none;
-  color: var(--sl-color-neutral-700);
+  color: var(--sl-color-neutral-600);
 }
 
 .side-nav__link:is(:hover, :focus) {

@@ -221,6 +221,11 @@ export default class RoleToolbar extends BaseElement {
       (el) => el.getAttribute("tabindex") === "0"
     );
 
+    this._toolbarItems.forEach((el) => {
+      if (this._toolbarItems[this._currentFocusIndex] === el) return
+      el.setAttribute("tabindex", "-1")
+    })
+
     if (this._currentFocusIndex === -1) {
       this._currentFocusIndex = 0;
       this.currentFocusElement?.setAttribute("tabindex", "0");

@@ -10,6 +10,7 @@ import { css, html } from "lit"
  */
 export default class RoleToolbar extends BaseElement {
   static properties = {
+    orientation: { reflect: true },
     _currentFocusIndex: {state: true},
     _toolbarItems: {state: true}
   }
@@ -17,7 +18,16 @@ export default class RoleToolbar extends BaseElement {
   constructor () {
     super()
 
+    /**
+     * @type {number}
+     */
     this._currentFocusIndex = 0
+
+
+    /**
+     * @type {"vertical" | "horizontal"}
+     */
+    this.orientation = "horizontal"
 
     /** @type Array<Element> */
     this._toolbarItems = []

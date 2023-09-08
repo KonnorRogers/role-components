@@ -211,7 +211,6 @@ export default class RoleToolbar extends BaseElement {
    * @param {undefined | null | Event} [evt] - triggered by a slot change event.
    */
   updateToolbarItems = (evt) => {
-    if (evt) console.log("slotchange evt")
     /**
      * @type {HTMLSlotElement}
      */

@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.2
+
+- Fix an errant `console.log` that was left in debugging 2.0.1
+
 ## 2.0.1
 
 - Fix a regression around lazily slotted elements improperly getting assigned `tabindex="0"`

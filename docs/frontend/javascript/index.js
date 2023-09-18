@@ -57,36 +57,19 @@ Object.entries(controllers).forEach(([filename, controller]) => {
 
   }
 
+  function enhanceCodeBlocks () {
+    document.querySelectorAll(":is(.language-bash, .language-shell, .language-zsh, .language-sh, .language-console).highlighter-rouge pre.highlight > code").forEach((el) => {
+      el.innerHTML = el.innerHTML.split("\n").map((str) => {
+        return str.replace(/^(\w)/, "<span class='highlight-command-line-start'>$</span>$1")
+      }).join("\n")
+    })
+  }
+
+  document.addEventListener("turbo:load", enhanceCodeBlocks)
+  enhanceCodeBlocks()
+
+
   window.addEventListener('turbo:before-cache', preserveScroll);
   window.addEventListener('turbo:before-render', restoreScroll);
   window.addEventListener('turbo:render', restoreScroll);
 })();
-
-function handleAttachment (event) {
-  event.preventDefault()
-
-  let progress = 0
-
-  const attachment = event.attachment
-  attachment.setUploadProgress(progress)
-
-  function simulateProgress () {
-    if (progress >= 100) {
-      progress = 100
-      attachment.setUploadProgress(progress)
-      return
-    }
-
-    window.requestAnimationFrame(() => {
-      progress += 1
-      attachment.setUploadProgress(progress)
-      simulateProgress()
-    })
-  }
-
-  setTimeout(() => {
-    simulateProgress()
-  }, 10)
-}
-
-document.addEventListener("rhino-attachment-add", handleAttachment, { capture: true })

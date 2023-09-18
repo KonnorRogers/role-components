@@ -26,12 +26,11 @@ gem "bridgetown", "~> 1.1"
 
 # Uncomment to use the Inspectors API to manipulate the output
 # of your HTML or XML resources:
-# gem "nokogiri", "~> 1.13"
+gem "nokogiri", "~> 1.13"
 
 # Puma is a Rack-compatible server used by Bridgetown
 # (you can optionally limit this to the "development" group)
-gem "puma", "~> 5.6"
+gem "puma", "~> 6.0"
 
-gem "bridgetown-quick-search", "~> 1.1", :group => :bridgetown_plugins
+gem "bridgetown-quick-search", "~> 1.1"
 
-gem "nokogiri", "~> 1.13"

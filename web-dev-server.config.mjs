@@ -1,7 +1,7 @@
-import { esbuildPlugin } from "@web/dev-server-esbuild"
-export default ({
-  rootDir: '.',
+import { esbuildPlugin } from "@web/dev-server-esbuild";
+export default {
+  rootDir: ".",
   nodeResolve: true,
-  appIndex: './examples/index.html',
-  plugins: [esbuildPlugin({ target: "auto" })]
-})
+  appIndex: "./examples/index.html",
+  plugins: [esbuildPlugin({ target: "auto" })],
+};

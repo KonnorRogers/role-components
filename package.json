@@ -20,11 +20,16 @@
     "LICENSE"
   ],
   "scripts": {
+    "setup": "pnpm install && cd docs && bundle install && pnpm install",
     "start": "web-dev-server",
-    "build": "rimraf -g \"./exports/**/*.d.ts\" && tsc",
+    "build": "rimraf -g \"./{exports,internal}/**/*.d.ts\" && tsc",
+    "build:docs": "cd docs && pnpm run build",
+    "start:docs": "cd docs && overmind start -f Procfile.dev",
     "deploy:patch": "npm run build && npm version patch && npm publish && git push --follow-tags",
     "deploy:minor": "npm run build && npm version minor && npm publish && git push --follow-tags",
     "deploy:major": "npm run build && npm version major && npm publish && git push --follow-tags",
+    "lint": "prettier --check --ignore-path .gitignore .",
+    "fix": "prettier --write --ignore-path .gitignore .",
     "test": "web-test-runner"
   },
   "keywords": [
@@ -44,12 +49,13 @@
   "devDependencies": {
     "@web/dev-server": "^0.3.1",
     "@web/dev-server-esbuild": "^0.4.1",
+    "prettier": "^3.0.3",
     "rimraf": "^5.0.1",
     "typescript": "^5.2.2"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.5.1",
     "lit": "^2.8.0",
-    "web-component-define": "^2.0.10"
+    "web-component-define": "^2.0.11"
   }
 }

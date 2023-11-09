@@ -1,0 +1,9 @@
+---
+layout: doc
+---
+
+<ul>
+  <%= render(DocLinks.new(category: resource.data.category, resource: resource)) %>
+</ul>
+
+<%= yield %>

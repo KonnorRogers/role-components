@@ -1,10 +1,8 @@
 {
-  "include": [
-    "exports/**/*.js",
-    "types/**/*.d.ts"
-  ],
+  "include": ["exports/**/*.js", "internal/**/*.js", "types/**/*.d.ts"],
   "compilerOptions": {
     "strict": true,
+    "noImplicitOverride": false,
     "target": "ESNext",
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "nodenext",

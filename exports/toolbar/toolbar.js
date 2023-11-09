@@ -20,7 +20,15 @@ export default class RoleToolbar extends BaseElement {
   constructor() {
     super();
 
-    this._currentFocusIndex = 0;
+    /**
+     * @type {number}
+     */
+    this._currentFocusIndex = 0
+
+    /**
+     * @type {"vertical" | "horizontal"}
+     */
+    this.orientation = "horizontal"
 
     /** @type Array<Element> */
     this._toolbarItems = [];
@@ -211,7 +219,6 @@ export default class RoleToolbar extends BaseElement {
    * @param {undefined | null | Event} [evt] - triggered by a slot change event.
    */
   updateToolbarItems(evt) {
-    console.log("updating");
     /**
      * @type {HTMLSlotElement}
      */
@@ -230,6 +237,11 @@ export default class RoleToolbar extends BaseElement {
     this._currentFocusIndex = this._toolbarItems.findIndex(
       (el) => el.getAttribute("tabindex") === "0",
     );
+
+    this._toolbarItems.forEach((el) => {
+      if (this._toolbarItems[this._currentFocusIndex] === el) return
+      el.setAttribute("tabindex", "-1")
+    })
 
     if (this._currentFocusIndex === -1) {
       this._currentFocusIndex = 0;

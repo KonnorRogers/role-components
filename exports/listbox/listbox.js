@@ -807,7 +807,7 @@ export default class RoleListbox extends BaseElement {
   render() {
     return html`
       <label class="visually-hidden" id="listbox-label">
-        <slot name="label"> ${this.label} </slot>
+        <slot name="label">${this.label}</slot>
       </label>
 
       <div

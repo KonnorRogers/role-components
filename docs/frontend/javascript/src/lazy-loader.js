@@ -3,6 +3,21 @@ import LazyLoader from "web-component-lazy-loader";
 export default function lazyLoader() {
   return new LazyLoader({
     components: {
+      // "light-editor": {
+      //   register () {
+      //     import("light-pen/exports/light-editor-register.js")
+      //   }
+      // },
+      // "light-pen": {
+      //   register () {
+      //     import("light-pen/exports/light-pen-register.js")
+      //   }
+      // },
+      "light-preview": {
+        register () {
+          import("light-pen/exports/light-preview-register.js")
+        }
+      },
       "clipboard-copy": {
         register() {
           import("@github/clipboard-copy-element");
@@ -29,11 +44,6 @@ export default function lazyLoader() {
       "sl-button": {
         register() {
           import("@shoelace-style/shoelace/dist/components/button/button.js");
-        },
-      },
-      "sl-details": {
-        register() {
-          import("@shoelace-style/shoelace/dist/components/details/details.js");
         },
       },
       "sl-divider": {
@@ -81,6 +91,27 @@ export default function lazyLoader() {
         register() {
           import(
             "@shoelace-style/shoelace/dist/components/menu-label/menu-label.js"
+          );
+        },
+      },
+      "sl-tab": {
+        register() {
+          import(
+            "@shoelace-style/shoelace/dist/components/tab/tab.js"
+          );
+        },
+      },
+      "sl-tab-panel": {
+        register() {
+          import(
+            "@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js"
+          );
+        },
+      },
+      "sl-tab-group": {
+        register() {
+          import(
+            "@shoelace-style/shoelace/dist/components/tab-group/tab-group.js"
           );
         },
       },

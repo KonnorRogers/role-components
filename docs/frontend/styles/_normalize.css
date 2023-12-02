@@ -1,7 +1,7 @@
 html {
   box-sizing: border-box;
   height: 100%;
-  font-size: 18px;
+  font-size: 16px;
   /* letter-spacing: 0.025em; */
 }
 
@@ -40,6 +40,10 @@ input, button, textarea, select {
 
 p, h1, h2, h3, h4, h5, h6 {
   overflow-wrap: break-word;
+}
+
+.flow > * + * {
+  margin-block-start: var(--flow-space, 1em);
 }
 
 body {
@@ -96,7 +100,7 @@ p {
 }
 
 p, li {
-  line-height: 1.5;
+  line-height: 1.8;
 }
 
 li {
@@ -138,8 +142,6 @@ kr-layout::part(skip-link) {
   display: inline;
   padding: 0.25em;
   margin: -0.25em;
-  line-height: 1.2;
-  transition: all 0.2s;
 }
 
 kr-layout::part(skip-link):is(:hover),
@@ -193,14 +195,5 @@ blockquote {
   border-inline-start: 4px solid var(--divider-color);
   margin-inline-start: 0.5rem;
   padding: 0.75rem;
-  background-color: var(--sl-color-neutral-50);
-}
-
-details summary {
-  padding: 0.4rem;
-  cursor: pointer;
-}
-
-details summary:hover {
   background-color: var(--sl-color-neutral-50);
 }

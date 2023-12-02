@@ -1,0 +1,2278 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "exports/base-element.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "BaseElement",
+          "members": [
+            {
+              "kind": "method",
+              "name": "debounce",
+              "parameters": [
+                {
+                  "name": "callback",
+                  "type": {
+                    "text": "(...args: any[]) => any"
+                  }
+                },
+                {
+                  "name": "options",
+                  "type": {
+                    "text": "{ key: any, wait: number }"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "ReturnType<typeof setTimeout>"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "addEventListener",
+              "parameters": [
+                {
+                  "name": "type",
+                  "type": {
+                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
+                  }
+                },
+                {
+                  "name": "callback",
+                  "type": {
+                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
+                  }
+                },
+                {
+                  "name": "options",
+                  "optional": true,
+                  "type": {
+                    "text": "boolean | AddEventListenerOptions"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "removeEventListener",
+              "parameters": [
+                {
+                  "name": "args",
+                  "type": {
+                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "__eventMap__",
+              "type": {
+                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "__debounceMap__",
+              "type": {
+                "text": "null | Map<any, ReturnType<typeof setTimeout>>"
+              },
+              "default": "null"
+            }
+          ],
+          "mixins": [
+            {
+              "name": "DefineableMixin",
+              "package": "web-component-define"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "BaseElement",
+          "declaration": {
+            "name": "BaseElement",
+            "module": "exports/base-element.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/index.js",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RoleListbox",
+          "declaration": {
+            "name": "default",
+            "module": "\"./listbox/listbox-register.js\""
+          }
+        },
+        {
+          "kind": "js",
+          "name": "RoleOptionGroup",
+          "declaration": {
+            "name": "default",
+            "module": "\"./option-group/option-group-register.js\""
+          }
+        },
+        {
+          "kind": "js",
+          "name": "RoleOption",
+          "declaration": {
+            "name": "default",
+            "module": "\"./option/option-register.js\""
+          }
+        },
+        {
+          "kind": "js",
+          "name": "RoleToolbar",
+          "declaration": {
+            "name": "default",
+            "module": "\"./toolbar/toolbar-register.js\""
+          }
+        },
+        {
+          "kind": "js",
+          "name": "RoleTooltip",
+          "declaration": {
+            "name": "default",
+            "module": "\"./tooltip/tooltip-register.js\""
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/combobox/combobox-register.js",
+      "declarations": [],
+      "exports": []
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/combobox/combobox.js",
+      "declarations": [],
+      "exports": []
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/events/base-event.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "BaseEvent",
+          "superclass": {
+            "name": "Event",
+            "module": "exports/events/base-event.js"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "BaseEvent",
+          "declaration": {
+            "name": "BaseEvent",
+            "module": "exports/events/base-event.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/events/selected-event.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "SelectedEvent",
+          "members": [
+            {
+              "kind": "field",
+              "name": "selectedElement",
+              "type": {
+                "text": "HTMLElement"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "BaseEvent",
+            "module": "/exports/events/base-event.js"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "SelectedEvent",
+          "declaration": {
+            "name": "SelectedEvent",
+            "module": "exports/events/selected-event.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/listbox/listbox-register.js",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "RoleListbox",
+            "module": "exports/listbox/listbox-register.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/listbox/listbox.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "A toolbar following the W3C Listbox pattern.\nhttps://www.w3.org/WAI/ARIA/apg/patterns/listbox/\nSingle-select \"select follows focus\" model.\nMulti-select implements the recommendation here: https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboard_interaction\n  Shift + Down Arrow: Moves focus to and toggles the selected state of the next option.\n  Shift + Up Arrow: Moves focus to and toggles the selected state of the previous option.\n  Shift + Space: Selects contiguous items from the most recently selected item to the focused item.\n  Control + Shift + Home: Selects the focused option and all options up to the first option. Optionally, moves focus to the first option.\n  Control + Shift + End: Selects the focused option and all options down to the last option.\n  Control + A: Selects all\n\n  The currently hovered / focus option has [aria-current=\"true\"]\n  A selected option has [aria-selected=\"true\"]",
+          "name": "RoleListbox",
+          "members": [
+            {
+              "kind": "field",
+              "name": "baseName",
+              "type": {
+                "text": "string"
+              },
+              "static": true,
+              "default": "\"role-listbox\""
+            },
+            {
+              "kind": "method",
+              "name": "setFocus",
+              "parameters": [
+                {
+                  "name": "option",
+                  "type": {
+                    "text": "HTMLElement"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "removeFocus",
+              "parameters": [
+                {
+                  "name": "option",
+                  "type": {
+                    "text": "HTMLElement"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "baseElement",
+              "type": {
+                "text": "HTMLElement | null | undefined"
+              },
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "click",
+              "type": {
+                "text": "HTMLButtonElement[\"click\"]"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "focus",
+              "parameters": [
+                {
+                  "name": "options"
+                }
+              ],
+              "type": {
+                "text": "HTMLButtonElement[\"focus\"]"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleOptionClick",
+              "parameters": [
+                {
+                  "name": "evt",
+                  "type": {
+                    "text": "PointerEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleOptionHover",
+              "parameters": [
+                {
+                  "name": "evt",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "currentActiveOptionIndex",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "handleKeyUp",
+              "parameters": [
+                {
+                  "name": "evt",
+                  "type": {
+                    "text": "KeyboardEvent"
+                  }
+                }
+              ],
+              "description": "Reset range when shiftKey goes up"
+            },
+            {
+              "kind": "method",
+              "name": "handleKeyDown",
+              "parameters": [
+                {
+                  "name": "evt",
+                  "type": {
+                    "text": "KeyboardEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "selectFromClosestSelectedToCurrent",
+              "description": "Finds the closest selected option prior to the current option"
+            },
+            {
+              "kind": "method",
+              "name": "selectFromRangeStartToCurrent"
+            },
+            {
+              "kind": "method",
+              "name": "selectRange",
+              "parameters": [
+                {
+                  "name": "{ from, to }"
+                },
+                {
+                  "name": "options",
+                  "type": {
+                    "text": "Range"
+                  }
+                }
+              ],
+              "description": "Selects all options in a range and deselects all options not in the range"
+            },
+            {
+              "kind": "method",
+              "name": "selectFromStartToCurrent",
+              "parameters": [
+                {
+                  "name": "startIndex",
+                  "default": "0",
+                  "optional": true,
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "selectFromCurrentToEnd",
+              "parameters": [
+                {
+                  "name": "endIndex",
+                  "default": "this.options.length - 1",
+                  "optional": true,
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "focusElementFromSearchBuffer"
+            },
+            {
+              "kind": "method",
+              "name": "select",
+              "parameters": [
+                {
+                  "name": "selectedElement",
+                  "type": {
+                    "text": "HTMLElement"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "deselect",
+              "parameters": [
+                {
+                  "name": "selectedElement",
+                  "type": {
+                    "text": "HTMLElement"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "selectAll",
+              "description": "Mark every element with [aria-selected=\"true\"]"
+            },
+            {
+              "kind": "method",
+              "name": "deselectAll",
+              "description": "Mark every element with [aria-selected=\"false\"]"
+            },
+            {
+              "kind": "method",
+              "name": "toggleSelected",
+              "parameters": [
+                {
+                  "name": "selectedElement",
+                  "type": {
+                    "text": "HTMLElement"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "focusCurrent"
+            },
+            {
+              "kind": "method",
+              "name": "focusAt",
+              "parameters": [
+                {
+                  "name": "index",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "focusNext"
+            },
+            {
+              "kind": "method",
+              "name": "focusPrevious"
+            },
+            {
+              "kind": "method",
+              "name": "focusFirst"
+            },
+            {
+              "kind": "method",
+              "name": "focusLast"
+            },
+            {
+              "kind": "method",
+              "name": "scrollOptionIntoView",
+              "parameters": [
+                {
+                  "name": "selectedOption",
+                  "type": {
+                    "text": "HTMLElement"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleFocusIn",
+              "parameters": [
+                {
+                  "name": "_evt",
+                  "type": {
+                    "text": "FocusEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleFocusOut"
+            },
+            {
+              "kind": "method",
+              "name": "isSelected",
+              "parameters": [
+                {
+                  "name": "el",
+                  "type": {
+                    "text": "HTMLElement"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "updateOptions"
+            },
+            {
+              "kind": "method",
+              "name": "assignRandomId",
+              "parameters": [
+                {
+                  "name": "el",
+                  "type": {
+                    "text": "HTMLElement"
+                  }
+                }
+              ],
+              "description": "Users dont always provide ids on elements, and we need to make sure the id isn't already taken."
+            },
+            {
+              "kind": "field",
+              "name": "selectedOptions",
+              "type": {
+                "text": "HTMLElement[]"
+              },
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "rangeStartOption",
+              "privacy": "public",
+              "type": {
+                "text": "null | HTMLElement"
+              },
+              "default": "null",
+              "attribute": "rangeStartOption"
+            },
+            {
+              "kind": "field",
+              "name": "wrapSelection",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "wrap-selection",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "role",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"listbox\"",
+              "attribute": "role",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "attribute": "label",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "searchBufferDelay",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "description": "Delay before the search buffer returns to an empty string",
+              "default": "1000",
+              "attribute": "search-buffer-delay",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "options",
+              "privacy": "public",
+              "type": {
+                "text": "HTMLElement[]"
+              },
+              "default": "[]",
+              "attribute": "options"
+            },
+            {
+              "kind": "field",
+              "name": "multiSelect",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Allows multiple selections",
+              "default": "false",
+              "attribute": "multi-select",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "currentActiveOption",
+              "privacy": "public",
+              "type": {
+                "text": "null | HTMLElement"
+              },
+              "default": "null",
+              "attribute": "currentActiveOption"
+            },
+            {
+              "kind": "field",
+              "name": "attributeFilter",
+              "type": {
+                "text": "array"
+              },
+              "default": "[\n      \"aria-current\",\n      \"selected\",\n      \"aria-selected\",\n      \"role\",\n    ]"
+            },
+            {
+              "kind": "field",
+              "name": "optionObserver",
+              "description": "Monitors its DOM for new nodes and assigns them to `this.options`",
+              "type": {
+                "text": "MutationObserver"
+              },
+              "default": "new MutationObserver((mutations) => {\n      for (const { attributeName } of mutations) {\n        if (attributeName == null) continue;\n\n        if (this.attributeFilter.includes(attributeName)) {\n          this.debounce(() => this.updateOptions(), {\n            wait: 10,\n            key: this.updateOptions,\n          });\n        }\n\n        // We really care about the mutations, we just need to know if things are updating.\n        break;\n      }\n    })"
+            },
+            {
+              "kind": "field",
+              "name": "_hasFocused",
+              "privacy": "public",
+              "attribute": "_hasFocused"
+            },
+            {
+              "kind": "field",
+              "name": "_searchBuffer",
+              "privacy": "public",
+              "attribute": "_searchBuffer",
+              "ignore": true,
+              "type": {
+                "text": "string"
+              },
+              "description": "Internal buffer for searching the listbox.",
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "_searchBufferDebounce",
+              "privacy": "public",
+              "attribute": "_searchBufferDebounce",
+              "ignore": true,
+              "type": {
+                "text": "null | ReturnType<typeof setTimeout>"
+              },
+              "description": "timeoutId to clear the search buffer",
+              "default": "null"
+            },
+            {
+              "kind": "method",
+              "name": "debounce",
+              "parameters": [
+                {
+                  "name": "callback",
+                  "type": {
+                    "text": "(...args: any[]) => any"
+                  }
+                },
+                {
+                  "name": "options",
+                  "type": {
+                    "text": "{ key: any, wait: number }"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "ReturnType<typeof setTimeout>"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "addEventListener",
+              "parameters": [
+                {
+                  "name": "type",
+                  "type": {
+                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
+                  }
+                },
+                {
+                  "name": "callback",
+                  "type": {
+                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
+                  }
+                },
+                {
+                  "name": "options",
+                  "optional": true,
+                  "type": {
+                    "text": "boolean | AddEventListenerOptions"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "removeEventListener",
+              "parameters": [
+                {
+                  "name": "args",
+                  "type": {
+                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "__eventMap__",
+              "type": {
+                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "__debounceMap__",
+              "type": {
+                "text": "null | Map<any, ReturnType<typeof setTimeout>>"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "fieldName": "label"
+            },
+            {
+              "name": "role",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"listbox\"",
+              "fieldName": "role"
+            },
+            {
+              "name": "wrap-selection",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "wrapSelection"
+            },
+            {
+              "name": "multi-select",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Allows multiple selections",
+              "default": "false",
+              "fieldName": "multiSelect"
+            },
+            {
+              "name": "search-buffer-delay",
+              "type": {
+                "text": "number"
+              },
+              "description": "Delay before the search buffer returns to an empty string",
+              "default": "1000",
+              "fieldName": "searchBufferDelay"
+            },
+            {
+              "name": "_hasFocused",
+              "fieldName": "_hasFocused"
+            },
+            {
+              "name": "_searchBuffer",
+              "fieldName": "_searchBuffer"
+            },
+            {
+              "name": "_searchBufferDebounce",
+              "fieldName": "_searchBufferDebounce"
+            },
+            {
+              "name": "options",
+              "type": {
+                "text": "HTMLElement[]"
+              },
+              "default": "[]",
+              "fieldName": "options"
+            },
+            {
+              "name": "currentActiveOption",
+              "type": {
+                "text": "null | HTMLElement"
+              },
+              "default": "null",
+              "fieldName": "currentActiveOption"
+            },
+            {
+              "name": "rangeStartOption",
+              "type": {
+                "text": "null | HTMLElement"
+              },
+              "default": "null",
+              "fieldName": "rangeStartOption"
+            }
+          ],
+          "superclass": {
+            "name": "BaseElement",
+            "module": "/exports/base-element.js"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "RoleListbox",
+            "module": "exports/listbox/listbox.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/option/option-register.js",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "RoleOption",
+            "module": "exports/option/option-register.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/option/option.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "RoleOption",
+          "members": [
+            {
+              "kind": "field",
+              "name": "baseName",
+              "type": {
+                "text": "string"
+              },
+              "static": true,
+              "default": "\"role-option\""
+            },
+            {
+              "kind": "method",
+              "name": "handleSlotChange"
+            },
+            {
+              "kind": "field",
+              "name": "role",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"option\"",
+              "attribute": "role",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "selected",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "aria-selected is preferred for single-select listboxes / comboboxes",
+              "default": "false",
+              "attribute": "selected",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "hasFocus",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "privacy": "public",
+              "type": {
+                "text": "null | string"
+              },
+              "default": "null",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "ariaCurrent",
+              "privacy": "public",
+              "attribute": "aria-current",
+              "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "debounce",
+              "parameters": [
+                {
+                  "name": "callback",
+                  "type": {
+                    "text": "(...args: any[]) => any"
+                  }
+                },
+                {
+                  "name": "options",
+                  "type": {
+                    "text": "{ key: any, wait: number }"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "ReturnType<typeof setTimeout>"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "addEventListener",
+              "parameters": [
+                {
+                  "name": "type",
+                  "type": {
+                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
+                  }
+                },
+                {
+                  "name": "callback",
+                  "type": {
+                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
+                  }
+                },
+                {
+                  "name": "options",
+                  "optional": true,
+                  "type": {
+                    "text": "boolean | AddEventListenerOptions"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "removeEventListener",
+              "parameters": [
+                {
+                  "name": "args",
+                  "type": {
+                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "__eventMap__",
+              "type": {
+                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "__debounceMap__",
+              "type": {
+                "text": "null | Map<any, ReturnType<typeof setTimeout>>"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "selected",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "aria-selected is preferred for single-select listboxes / comboboxes",
+              "default": "false",
+              "fieldName": "selected"
+            },
+            {
+              "name": "aria-current",
+              "fieldName": "ariaCurrent"
+            },
+            {
+              "name": "role",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"option\"",
+              "fieldName": "role"
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "null | string"
+              },
+              "default": "null",
+              "fieldName": "value"
+            }
+          ],
+          "superclass": {
+            "name": "BaseElement",
+            "module": "/exports/base-element.js"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "RoleOption",
+            "module": "exports/option/option.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/styles/host-styles.js",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "hostStyles",
+          "default": "css`\n  :host {\n    --role-background-hover-color: #005a9c;\n    --role-border-focus-color: #005a9c;\n    display: block;\n  }\n\n  *,\n  *:after,\n  *:before {\n    box-sizing: border-box;\n  }\n\n  [hidden] {\n    display: none !important;\n  }\n\n  [invisible] {\n    visibility: hidden !important;\n  }\n\n  .visually-hidden:not(:focus-within):not(:active) {\n    clip: rect(0 0 0 0);\n    clip-path: inset(50%);\n    height: 1px;\n    overflow: hidden;\n    position: absolute;\n    white-space: nowrap;\n    width: 1px;\n  }\n`"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "hostStyles",
+          "declaration": {
+            "name": "hostStyles",
+            "module": "exports/styles/host-styles.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/option-group/option-group-register.js",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "RoleOptionGroup",
+            "module": "exports/option-group/option-group-register.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/option-group/option-group.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "OptionGroup",
+          "members": [
+            {
+              "kind": "field",
+              "name": "baseName",
+              "type": {
+                "text": "string"
+              },
+              "static": true,
+              "default": "\"role-option-group\""
+            },
+            {
+              "kind": "field",
+              "name": "role",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"group\"",
+              "attribute": "role",
+              "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "debounce",
+              "parameters": [
+                {
+                  "name": "callback",
+                  "type": {
+                    "text": "(...args: any[]) => any"
+                  }
+                },
+                {
+                  "name": "options",
+                  "type": {
+                    "text": "{ key: any, wait: number }"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "ReturnType<typeof setTimeout>"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "addEventListener",
+              "parameters": [
+                {
+                  "name": "type",
+                  "type": {
+                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
+                  }
+                },
+                {
+                  "name": "callback",
+                  "type": {
+                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
+                  }
+                },
+                {
+                  "name": "options",
+                  "optional": true,
+                  "type": {
+                    "text": "boolean | AddEventListenerOptions"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "removeEventListener",
+              "parameters": [
+                {
+                  "name": "args",
+                  "type": {
+                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "__eventMap__",
+              "type": {
+                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "__debounceMap__",
+              "type": {
+                "text": "null | Map<any, ReturnType<typeof setTimeout>>"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "role",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"group\"",
+              "fieldName": "role"
+            }
+          ],
+          "superclass": {
+            "name": "BaseElement",
+            "module": "/exports/base-element.js"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "OptionGroup",
+            "module": "exports/option-group/option-group.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/toolbar/toolbar-register.js",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "RoleToolbar",
+            "module": "exports/toolbar/toolbar-register.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/toolbar/toolbar.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "A toolbar following the W3C Toolbar pattern.\nhttps://www.w3.org/WAI/ARIA/apg/patterns/toolbar/",
+          "name": "RoleToolbar",
+          "members": [
+            {
+              "kind": "field",
+              "name": "baseName",
+              "static": true,
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "keydownHandlers",
+              "return": {
+                "type": {
+                  "text": "Record<string, (event: Event) => void>"
+                }
+              },
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "handleClick",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleKeyDown",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "KeyboardEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "focusNext",
+              "parameters": [
+                {
+                  "name": "_event",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "focusPrevious",
+              "parameters": [
+                {
+                  "name": "_event",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "focusFirst"
+            },
+            {
+              "kind": "method",
+              "name": "focusLast"
+            },
+            {
+              "kind": "method",
+              "name": "setTabIndex",
+              "parameters": [
+                {
+                  "name": "{ focus = true }",
+                  "default": "{}"
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "currentFocusElement",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "updateToolbarItems",
+              "parameters": [
+                {
+                  "name": "evt",
+                  "description": "triggered by a slot change event.",
+                  "optional": true,
+                  "type": {
+                    "text": "undefined | null | Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "_currentFocusIndex",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "_currentFocusIndex"
+            },
+            {
+              "kind": "field",
+              "name": "orientation",
+              "privacy": "public",
+              "type": {
+                "text": "\"vertical\" | \"horizontal\""
+              },
+              "default": "\"horizontal\"",
+              "attribute": "orientation",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "_toolbarItems",
+              "privacy": "public",
+              "type": {
+                "text": "Array<Element>"
+              },
+              "default": "[]",
+              "attribute": "_toolbarItems"
+            },
+            {
+              "kind": "field",
+              "name": "ariaOrientation",
+              "privacy": "public",
+              "attribute": "ariaOrientation",
+              "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "debounce",
+              "parameters": [
+                {
+                  "name": "callback",
+                  "type": {
+                    "text": "(...args: any[]) => any"
+                  }
+                },
+                {
+                  "name": "options",
+                  "type": {
+                    "text": "{ key: any, wait: number }"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "ReturnType<typeof setTimeout>"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "addEventListener",
+              "parameters": [
+                {
+                  "name": "type",
+                  "type": {
+                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
+                  }
+                },
+                {
+                  "name": "callback",
+                  "type": {
+                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
+                  }
+                },
+                {
+                  "name": "options",
+                  "optional": true,
+                  "type": {
+                    "text": "boolean | AddEventListenerOptions"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "removeEventListener",
+              "parameters": [
+                {
+                  "name": "args",
+                  "type": {
+                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "__eventMap__",
+              "type": {
+                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "__debounceMap__",
+              "type": {
+                "text": "null | Map<any, ReturnType<typeof setTimeout>>"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "orientation",
+              "type": {
+                "text": "\"vertical\" | \"horizontal\""
+              },
+              "default": "\"horizontal\"",
+              "fieldName": "orientation"
+            },
+            {
+              "name": "ariaOrientation",
+              "fieldName": "ariaOrientation"
+            },
+            {
+              "name": "_currentFocusIndex",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "_currentFocusIndex"
+            },
+            {
+              "name": "_toolbarItems",
+              "type": {
+                "text": "Array<Element>"
+              },
+              "default": "[]",
+              "fieldName": "_toolbarItems"
+            }
+          ],
+          "superclass": {
+            "name": "BaseElement",
+            "module": "/exports/base-element.js"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "RoleToolbar",
+            "module": "exports/toolbar/toolbar.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/tooltip/tooltip-register.js",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "RoleTooltip",
+            "module": "exports/tooltip/tooltip-register.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/tooltip/tooltip.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "Due to accessibility reasons with aria-describedby, the tooltip must be the same\n  document / shadowRoot as the item being described by the tooltip.",
+          "name": "RoleTooltip",
+          "cssProperties": [
+            {
+              "name": "--background-color",
+              "default": "#222"
+            },
+            {
+              "name": "--arrow-size",
+              "default": "8px"
+            }
+          ],
+          "slots": [
+            {
+              "description": "default slot",
+              "name": ""
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "baseName",
+              "static": true,
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "updateAnchors"
+            },
+            {
+              "kind": "field",
+              "name": "query",
+              "type": {
+                "text": "string"
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "rootElement",
+              "privacy": "public",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "attribute": "rootElement"
+            },
+            {
+              "kind": "method",
+              "name": "attachListeners",
+              "description": "Used for re-initialized event listeners",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "removeListeners",
+              "description": "Used for cleaning up",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "arrow",
+              "return": {
+                "type": {
+                  "text": "HTMLElement | undefined | null"
+                }
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "show",
+              "parameters": [
+                {
+                  "name": "eventOrElement",
+                  "type": {
+                    "text": "Event|Element"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hide",
+              "parameters": [
+                {
+                  "name": "_event",
+                  "optional": true,
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "keyboardHide",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "Event | KeyboardEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "computeTooltipPosition",
+              "parameters": [
+                {
+                  "name": "target",
+                  "type": {
+                    "text": "Element"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "base",
+              "return": {
+                "type": {
+                  "text": "HTMLElement | null | undefined"
+                }
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "tooltipAnchors",
+              "privacy": "public",
+              "type": {
+                "text": "Element[]"
+              },
+              "default": "[]",
+              "attribute": "tooltipAnchors"
+            },
+            {
+              "kind": "field",
+              "name": "_rootElement",
+              "type": {
+                "text": "ShadowRoot | Document | undefined"
+              },
+              "default": "undefined"
+            },
+            {
+              "kind": "field",
+              "name": "role",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"tooltip\"",
+              "attribute": "role",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "inert",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true",
+              "attribute": "inert",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "placement",
+              "privacy": "public",
+              "type": {
+                "text": "Placement"
+              },
+              "default": "\"top\"",
+              "attribute": "placement",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "listeners",
+              "type": {
+                "text": "Array<[keyof GlobalEventHandlersEventMap, (evt: Event | KeyboardEvent) => void]>"
+              },
+              "default": "[\n      [\"pointerenter\", this.show],\n      [\"pointerleave\", this.hide],\n      [\"pointercancel\", this.hide],\n      [\"pointerup\", this.hide],\n      [\"focusin\", this.show],\n      [\"focusout\", this.hide],\n      [\"keydown\", this.keyboardHide],\n    ]"
+            },
+            {
+              "kind": "field",
+              "name": "id",
+              "privacy": "public",
+              "attribute": "id",
+              "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "debounce",
+              "parameters": [
+                {
+                  "name": "callback",
+                  "type": {
+                    "text": "(...args: any[]) => any"
+                  }
+                },
+                {
+                  "name": "options",
+                  "type": {
+                    "text": "{ key: any, wait: number }"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "ReturnType<typeof setTimeout>"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "addEventListener",
+              "parameters": [
+                {
+                  "name": "type",
+                  "type": {
+                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
+                  }
+                },
+                {
+                  "name": "callback",
+                  "type": {
+                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
+                  }
+                },
+                {
+                  "name": "options",
+                  "optional": true,
+                  "type": {
+                    "text": "boolean | AddEventListenerOptions"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "removeEventListener",
+              "parameters": [
+                {
+                  "name": "args",
+                  "type": {
+                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "__eventMap__",
+              "type": {
+                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "__debounceMap__",
+              "type": {
+                "text": "null | Map<any, ReturnType<typeof setTimeout>>"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "id",
+              "fieldName": "id"
+            },
+            {
+              "name": "tooltipAnchors",
+              "type": {
+                "text": "Element[]"
+              },
+              "default": "[]",
+              "fieldName": "tooltipAnchors"
+            },
+            {
+              "name": "rootElement",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "fieldName": "rootElement"
+            },
+            {
+              "name": "role",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"tooltip\"",
+              "fieldName": "role"
+            },
+            {
+              "name": "inert",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true",
+              "fieldName": "inert"
+            },
+            {
+              "name": "placement",
+              "type": {
+                "text": "Placement"
+              },
+              "default": "\"top\"",
+              "fieldName": "placement"
+            }
+          ],
+          "superclass": {
+            "name": "BaseElement",
+            "module": "/exports/base-element.js"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "RoleTooltip",
+            "module": "exports/tooltip/tooltip.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "internal/clamp.js",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "clamp",
+          "parameters": [
+            {
+              "name": "min",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "current",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "max",
+              "type": {
+                "text": "number"
+              }
+            }
+          ],
+          "description": "If current > max, return max\nIf current < min, return min",
+          "return": {
+            "type": {
+              "text": "number"
+            }
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "clamp",
+          "declaration": {
+            "name": "clamp",
+            "module": "internal/clamp.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "internal/is-mac-os.js",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "isMacOs",
+          "description": "Detects if on a macOS device so we can properly bind things like metaKey\nhttps://developer.mozilla.org/en-US/docs/Web/API/Navigator/platform\n> But there is one case where, among the options you could use, navigator.platform may be the least-bad option: When you need to show users advice about whether the modifier key for keyboard shortcuts is the ⌘ command key (found on Apple systems) rather than the ⌃ control key (on non-Apple systems):"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "isMacOs",
+          "declaration": {
+            "name": "isMacOs",
+            "module": "internal/is-mac-os.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "internal/string-map.js",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "stringMap",
+          "parameters": [
+            {
+              "name": "obj",
+              "type": {
+                "text": "Record<string, unknown>"
+              }
+            }
+          ],
+          "return": {
+            "type": {
+              "text": "string"
+            }
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "stringMap",
+          "declaration": {
+            "name": "stringMap",
+            "module": "internal/string-map.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "internal/uuid.js",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "uuidv4",
+          "description": "uuid generator for attaching unique ids to attachments that need uploading.",
+          "return": {
+            "type": {
+              "text": "string"
+            }
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "uuidv4",
+          "declaration": {
+            "name": "uuidv4",
+            "module": "internal/uuid.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "internal/wrap.js",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "wrap",
+          "parameters": [
+            {
+              "name": "min",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "current",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "max",
+              "type": {
+                "text": "number"
+              }
+            }
+          ],
+          "description": "If current > max, return min\nIf current < min, return max",
+          "return": {
+            "type": {
+              "text": "number"
+            }
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "wrap",
+          "declaration": {
+            "name": "wrap",
+            "module": "internal/wrap.js"
+          }
+        }
+      ]
+    }
+  ]
+}

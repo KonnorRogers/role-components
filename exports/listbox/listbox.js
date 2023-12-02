@@ -51,12 +51,12 @@ export default class RoleListbox extends BaseElement {
     },
 
     // Properties
-    _hasFocused: { state: true },
-    _searchBuffer: { state: true },
-    _searchBufferDebounce: { state: true },
-    options: { state: true },
-    currentActiveOption: { state: true },
-    rangeStartOption: { state: true },
+    _hasFocused: { attribute: false, state: true },
+    _searchBuffer: { attribute: false, state: true },
+    _searchBufferDebounce: { attribute: false, state: true },
+    options: { attribute: false, state: true },
+    currentActiveOption: { attribute: false, state: true },
+    rangeStartOption: { attribute: false, state: true },
   };
 
   static styles = [
@@ -580,7 +580,7 @@ export default class RoleListbox extends BaseElement {
 
     const matchedEl = this.options.find((el) => {
       // Native select only matches by case in-equal innerText.
-      return el.innerText.toLowerCase().match(new RegExp("^" + searchBuffer));
+      return el.innerText.toLowerCase().match(new RegExp("^" + searchBuffer.replaceAll(/\\/g, "\\\\")));
     });
 
     if (matchedEl && this.currentActiveOption !== matchedEl) {

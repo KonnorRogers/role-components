@@ -60,183 +60,129 @@ When a multi-select listbox receives focus:
 
 ### Single Select listbox
 
-<% html = capture do %>
-<role-listbox style="height: 200px">
-  <role-option value="1">Option 1</role-option>
-  <role-option value="2">Option 2</role-option>
-  <role-option value="3">Option 3</role-option>
-  <role-option value="4">Option 4</role-option>
-  <role-option value="5">Option 5</role-option>
-  <role-option value="6">Option 6</role-option>
-  <role-option value="7">Option 7</role-option>
-  <role-option value="8">Option 8</role-option>
-  <role-option value="9">Option 9</role-option>
-  <role-option value="10">Option 10</role-option>
-  <role-option value="Flamingo">Flamingo</role-option>
-</role-listbox>
-<% end.html_safe %>
+<light-preview preview-mode="shadow-dom">
+  <template slot="code">
+    <role-listbox style="height: 200px">
+      <role-option value="1">Option 1</role-option>
+      <role-option value="2">Option 2</role-option>
+      <role-option value="3">Option 3</role-option>
+      <role-option value="4">Option 4</role-option>
+      <role-option value="5">Option 5</role-option>
+      <role-option value="6">Option 6</role-option>
+      <role-option value="7">Option 7</role-option>
+      <role-option value="8">Option 8</role-option>
+      <role-option value="9">Option 9</role-option>
+      <role-option value="10">Option 10</role-option>
+      <role-option value="Flamingo">Flamingo</role-option>
+    </role-listbox>
+  </template>
+</light-preview>
 
-<details>
-  <summary>Source Code</summary>
-
-<%= markdownify do %>
-```html
-<%= html %>
-```
-<% end %>
-
-</details>
-
-<%= html %>
 
 ### Single Select listbox with wrapping on first / last items
 
-<% html = capture do %>
-<role-listbox wrap-selection style="height: 200px">
-  <role-option value="1">Option 1</role-option>
-  <role-option value="2">Option 2</role-option>
-  <role-option value="3">Option 3</role-option>
-  <role-option value="4">Option 4</role-option>
-  <role-option value="5">Option 5</role-option>
-  <role-option value="6">Option 6</role-option>
-  <role-option value="7">Option 7</role-option>
-  <role-option value="8">Option 8</role-option>
-  <role-option value="9">Option 9</role-option>
-  <role-option value="10">Option 10</role-option>
-  <role-option value="Flamingo">Flamingo</role-option>
-</role-listbox>
-<% end.html_safe %>
-
-<details>
-  <summary>Source Code</summary>
-
-<%= markdownify do %>
-```html
-<%= html %>
-```
-<% end %>
-
-</details>
-
-<%= html %>
+<light-preview preview-mode="shadow-dom">
+  <template slot="code">
+    <role-listbox wrap-selection style="height: 200px">
+      <role-option value="1">Option 1</role-option>
+      <role-option value="2">Option 2</role-option>
+      <role-option value="3">Option 3</role-option>
+      <role-option value="4">Option 4</role-option>
+      <role-option value="5">Option 5</role-option>
+      <role-option value="6">Option 6</role-option>
+      <role-option value="7">Option 7</role-option>
+      <role-option value="8">Option 8</role-option>
+      <role-option value="9">Option 9</role-option>
+      <role-option value="10">Option 10</role-option>
+      <role-option value="Flamingo">Flamingo</role-option>
+    </role-listbox>
+  </template>
+</light-preview>
 
 
 ### Single Select listbox with groups
 
-<% html = capture do %>
-<role-listbox style="height: 200px">
-  <role-option-group>
-    <span slot="label">Land</span>
+<light-preview preview-mode="shadow-dom">
+  <template slot="code">
+    <role-listbox style="height: 200px">
+      <role-option-group>
+        <span slot="label">Land</span>
 
-    <role-option value="dog">Dog</role-option>
-    <role-option value="cat">Cat</role-option>
-    <role-option value="moose">Moose</role-option>
-    <role-option value="goose">Goose</role-option>
-    <role-option value="spider_monkey">Spider Monkey</role-option>
-  </role-option-group>
+        <role-option value="dog">Dog</role-option>
+        <role-option value="cat">Cat</role-option>
+        <role-option value="moose">Moose</role-option>
+        <role-option value="goose">Goose</role-option>
+        <role-option value="spider_monkey">Spider Monkey</role-option>
+      </role-option-group>
 
-  <role-option-group>
-    <span slot="label">Water</span>
+      <role-option-group>
+        <span slot="label">Water</span>
 
-    <role-option value="rock_lobster">Rock Lobster</role-option>
-    <role-option value="snapping_turtle">Snapping Turtle</role-option>
-    <role-option value="nessy">Nessy</role-option>
-  </role-option-group>
+        <role-option value="rock_lobster">Rock Lobster</role-option>
+        <role-option value="snapping_turtle">Snapping Turtle</role-option>
+        <role-option value="nessy">Nessy</role-option>
+      </role-option-group>
 
-  <role-option-group>
-    <span slot="label">Air</span>
+      <role-option-group>
+        <span slot="label">Air</span>
 
-    <role-option value="dragon">Dragon</role-option>
-    <role-option value="winged_horse">Winged Horse</role-option>
-    <role-option value="falcon">Falcon</role-option>
-  </role-option-group>
-</role-listbox>
-<% end.html_safe %>
-
-<details>
-  <summary>Source Code</summary>
-
-<%= markdownify do %>
-```html
-<%= html %>
-```
-<% end %>
-
-</details>
-
-<%= html %>
+        <role-option value="dragon">Dragon</role-option>
+        <role-option value="winged_horse">Winged Horse</role-option>
+        <role-option value="falcon">Falcon</role-option>
+      </role-option-group>
+    </role-listbox>
+  </template>
+</light-preview>
 
 ### Multi-Select listbox
 
-<% html = capture do %>
-<role-listbox multi-select style="height: 200px">
-  <role-option value="1">Option 1</role-option>
-  <role-option value="2">Option 2</role-option>
-  <role-option value="3">Option 3</role-option>
-  <role-option value="4">Option 4</role-option>
-  <role-option value="5">Option 5</role-option>
-  <role-option value="6">Option 6</role-option>
-  <role-option value="7">Option 7</role-option>
-  <role-option value="8">Option 8</role-option>
-  <role-option value="9">Option 9</role-option>
-  <role-option value="10">Option 10</role-option>
-</role-listbox>
-<% end.html_safe %>
-
-<details>
-  <summary>Source Code</summary>
-
-<%= markdownify do %>
-```html
-<%= html %>
-```
-<% end %>
-
-</details>
-
-<%= html %>
+<light-preview preview-mode="shadow-dom">
+  <template slot="code">
+    <role-listbox multi-select style="height: 200px">
+      <role-option value="1">Option 1</role-option>
+      <role-option value="2">Option 2</role-option>
+      <role-option value="3">Option 3</role-option>
+      <role-option value="4">Option 4</role-option>
+      <role-option value="5">Option 5</role-option>
+      <role-option value="6">Option 6</role-option>
+      <role-option value="7">Option 7</role-option>
+      <role-option value="8">Option 8</role-option>
+      <role-option value="9">Option 9</role-option>
+      <role-option value="10">Option 10</role-option>
+    </role-listbox>
+  </template>
+</light-preview>
 
 ### Multi Select listbox with groups
 
-<% html = capture do %>
-<role-listbox multi-select style="height: 200px">
-  <role-option-group>
-    <span slot="label">Land</span>
+<light-preview preview-mode="shadow-dom">
+  <template slot="code">
+    <role-listbox multi-select style="height: 200px">
+      <role-option-group>
+        <span slot="label">Land</span>
 
-    <role-option value="dog">Dog</role-option>
-    <role-option value="cat">Cat</role-option>
-    <role-option value="moose">Moose</role-option>
-    <role-option value="goose">Goose</role-option>
-    <role-option value="spider_monkey">Spider Monkey</role-option>
-  </role-option-group>
+        <role-option value="dog">Dog</role-option>
+        <role-option value="cat">Cat</role-option>
+        <role-option value="moose">Moose</role-option>
+        <role-option value="goose">Goose</role-option>
+        <role-option value="spider_monkey">Spider Monkey</role-option>
+      </role-option-group>
 
-  <role-option-group>
-    <span slot="label">Water</span>
+      <role-option-group>
+        <span slot="label">Water</span>
 
-    <role-option value="rock_lobster">Rock Lobster</role-option>
-    <role-option value="snapping_turtle">Snapping Turtle</role-option>
-    <role-option value="nessy">Nessy</role-option>
-  </role-option-group>
+        <role-option value="rock_lobster">Rock Lobster</role-option>
+        <role-option value="snapping_turtle">Snapping Turtle</role-option>
+        <role-option value="nessy">Nessy</role-option>
+      </role-option-group>
 
-  <role-option-group>
-    <span slot="label">Air</span>
+      <role-option-group>
+        <span slot="label">Air</span>
 
-    <role-option value="dragon">Dragon</role-option>
-    <role-option value="winged_horse">Winged Horse</role-option>
-    <role-option value="falcon">Falcon</role-option>
-  </role-option-group>
-</role-listbox>
-<% end.html_safe %>
-
-<details>
-  <summary>Source Code</summary>
-
-<%= markdownify do %>
-```html
-<%= html %>
-```
-<% end %>
-
-</details>
-
-<%= html %>
+        <role-option value="dragon">Dragon</role-option>
+        <role-option value="winged_horse">Winged Horse</role-option>
+        <role-option value="falcon">Falcon</role-option>
+      </role-option-group>
+    </role-listbox>
+  </template>
+</light-preview>

@@ -4,12 +4,12 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.metadata.myvariable }}.
 
-title: Role Components
+title: Minimal components for fulfilling an aria-role
 logo: "Role Components"
-slogan: Simple components that map to aria roles
+slogan: Minimal components for fulfilling an aria-role
 email: konnor5456@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
-  Simple components that map to aria roles
+  Minimal components for fulfilling an aria-role
 github_url: https://github.com/konnorrogers/role-components
 default_branch: main
 doc_location: docs/src

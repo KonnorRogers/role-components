@@ -1,8 +1,6 @@
 import "../styles/index.css"
 import { Application } from "@hotwired/stimulus"
 
-import "role-components"
-
 // Shoelace
 import { setBasePath } from "@shoelace-style/shoelace/dist/utilities/base-path.js";
 
@@ -11,10 +9,11 @@ import LazyLoader from "./src/lazy-loader.js"
 import * as Turbo from "@hotwired/turbo"
 window.Turbo = Turbo
 import "./src/layout.js"
-
+import "role-components"
+//
 LazyLoader()
-
-setBasePath("/shoelace-assets")
+//
+setBasePath((process.env.BASE_PATH || "") + "/shoelace-assets")
 
 // Import all JavaScript & CSS files from src/_components
 import components from "bridgetownComponents/**/*.{js,jsx,js.rb,css}"
@@ -32,6 +31,10 @@ Object.entries(controllers).forEach(([filename, controller]) => {
     Stimulus.register(identifier, controller.default)
   }
 })
+
+if (window.Prism) {
+  window.Prism.manual = true
+}
 
 ;(() => {
   if (!window.scrollPositions) {
@@ -57,19 +60,8 @@ Object.entries(controllers).forEach(([filename, controller]) => {
 
   }
 
-  function enhanceCodeBlocks () {
-    document.querySelectorAll(":is(.language-bash, .language-shell, .language-zsh, .language-sh, .language-console).highlighter-rouge pre.highlight > code").forEach((el) => {
-      el.innerHTML = el.innerHTML.split("\n").map((str) => {
-        return str.replace(/^(\w)/, "<span class='highlight-command-line-start'>$</span>$1")
-      }).join("\n")
-    })
-  }
-
-  document.addEventListener("turbo:load", enhanceCodeBlocks)
-  enhanceCodeBlocks()
-
-
   window.addEventListener('turbo:before-cache', preserveScroll);
   window.addEventListener('turbo:before-render', restoreScroll);
   window.addEventListener('turbo:render', restoreScroll);
 })();
+

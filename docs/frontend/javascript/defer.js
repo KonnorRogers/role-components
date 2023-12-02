@@ -1,7 +1,8 @@
 import "../styles/defer.css"
+import { BridgetownNinjaKeys } from "@konnorr/bridgetown-quick-search/ninja-keys.js"
 
 ;(window.requestIdleCallback || window.setTimeout)(async () => {
-  const { BridgetownNinjaKeys } = await import("@konnorr/bridgetown-quick-search/ninja-keys.js")
+  // const { BridgetownNinjaKeys } = await import("@konnorr/bridgetown-quick-search/ninja-keys.js")
 
   /** @type {import("konnors-ninja-keys").INinjaAction[]} */
   const staticData = [
@@ -47,7 +48,7 @@ import "../styles/defer.css"
     }
 
     createData() {
-      this.results = this.showResultsForQuery(this._search).reverse()
+      this.results = this.showResultsForQuery(this._search || "*").reverse()
 
       this.results.forEach((result) => {
         result.icon = `<sl-icon name="link-45deg"></sl-icon>`
@@ -57,23 +58,6 @@ import "../styles/defer.css"
         ...this.staticData,
         ...this.results,
       ]
-    }
-
-    transformResult (result) {
-      let { id, title, categories, url, content, collection } = result
-
-      if (url.endsWith(".json")) {
-        return
-      }
-
-      return {
-        id,
-        title,
-        section: collection.name,
-        href: url,
-        // content
-      }
-
     }
 
     open () {

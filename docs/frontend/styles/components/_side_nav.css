@@ -9,6 +9,10 @@
   max-width: 100%;
 }
 
+ul.side-nav__menu li::marker {
+  content: ""
+}
+
 .side-nav__item {
   padding: 8px;
   max-width: 100%;
@@ -20,7 +24,7 @@
 .side-nav__link {
   font-weight: normal;
   text-decoration: none;
-  color: var(--sl-color-neutral-600);
+  color: var(--sl-color-neutral-700);
 }
 
 .side-nav__link:is(:hover, :focus) {

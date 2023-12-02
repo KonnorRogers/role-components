@@ -4,6 +4,9 @@ destination: output
 
 development:
   url: "localhost:4000"
+# production:
+#   url: "https://konnorrogers.github.io"
+#   base_path: "/light-pen"
 
 template_engine: erb
 permalink: pretty
@@ -27,8 +30,19 @@ defaults:
       doc_order: 0
 
   - scope:
+      path: "_documentation/guides"
+    values:
+      category: guides
+      category_order: 10
+
+  - scope:
       path: "_documentation/components"
     values:
-      layout: doc
       category: components
-      category_order: 10
+      category_order: 20
+
+  - scope:
+      path: "_documentation/references"
+    values:
+      category: references
+      category_order: 30

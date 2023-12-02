@@ -1,2 +1,3 @@
 bridgetown: bin/bridgetown start --skip-frontend
 esbuild: pnpm run esbuild-dev
+custom_elements_manifest: cd .. && npm run watch:cem

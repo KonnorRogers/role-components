@@ -4,6 +4,24 @@ permalink: /components/listbox/
 layout: doc
 ---
 
+<light-preview preview-mode="shadow-dom">
+  <template slot="code">
+    <role-listbox style="height: 200px;">
+      <role-option value="1">Option 1</role-option>
+      <role-option value="2">Option 2</role-option>
+      <role-option value="3">Option 3</role-option>
+      <role-option value="4">Option 4</role-option>
+      <role-option value="5">Option 5</role-option>
+      <role-option value="6">Option 6</role-option>
+      <role-option value="7">Option 7</role-option>
+      <role-option value="8">Option 8</role-option>
+      <role-option value="9">Option 9</role-option>
+      <role-option value="10">Option 10</role-option>
+      <role-option value="Flamingo">Flamingo</role-option>
+    </role-listbox>
+  </template>
+</light-preview>
+
 ## Description
 
 This is a listbox! It supports:
@@ -24,8 +42,6 @@ When a single-select listbox receives focus:
 - If none of the options are selected before the listbox receives focus, the first option does not receive focus. The first option is not automatically selected.
 - If an option is selected before the listbox receives focus, focus is set on the selected option.
 
-<sl-divider></sl-divider>
-
 - <kbd>Down Arrow</kbd>: Moves focus to the next option. Selection moves with focus.
 - <kbd>Up Arrow</kbd>: Moves focus to the previous option. Selection moves with focus.
 - <kbd>Home</kbd>: Moves focus to first option. Selection moves with focus.
@@ -39,9 +55,9 @@ When a multi-select listbox receives focus:
 - If one or more options are selected before the listbox receives focus, focus is set on the first option in the list that is selected.
 
 <%= render Alert.new(type: "info") do %>
-  The keyboard shortcuts in a single select listbox are also supported in a multi-select listbox.
+  The keyboard shortcuts supported in a single select listbox are also supported in a multi-select listbox.
 
-  The <kbd>Control</kbd> key also supports <kbd>Command</kbd> on MacOS.
+  The <kbd>Control</kbd> key and <kbd>Command</kbd> behave the same on MacOS.
 <% end %>
 
 - <kbd>Space</kbd>: changes the selection state of the focused option.
@@ -62,7 +78,7 @@ When a multi-select listbox receives focus:
 
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
-    <role-listbox style="height: 200px">
+    <role-listbox style="height: 200px;">
       <role-option value="1">Option 1</role-option>
       <role-option value="2">Option 2</role-option>
       <role-option value="3">Option 3</role-option>
@@ -83,7 +99,7 @@ When a multi-select listbox receives focus:
 
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
-    <role-listbox wrap-selection style="height: 200px">
+    <role-listbox wrap-selection style="height: 200px;">
       <role-option value="1">Option 1</role-option>
       <role-option value="2">Option 2</role-option>
       <role-option value="3">Option 3</role-option>
@@ -104,7 +120,7 @@ When a multi-select listbox receives focus:
 
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
-    <role-listbox style="height: 200px">
+    <role-listbox style="height: 200px;">
       <role-option-group>
         <span slot="label">Land</span>
 
@@ -138,7 +154,7 @@ When a multi-select listbox receives focus:
 
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
-    <role-listbox multi-select style="height: 200px">
+    <role-listbox multi-select style="height: 200px;">
       <role-option value="1">Option 1</role-option>
       <role-option value="2">Option 2</role-option>
       <role-option value="3">Option 3</role-option>
@@ -157,7 +173,7 @@ When a multi-select listbox receives focus:
 
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
-    <role-listbox multi-select style="height: 200px">
+    <role-listbox multi-select style="height: 200px;">
       <role-option-group>
         <span slot="label">Land</span>
 

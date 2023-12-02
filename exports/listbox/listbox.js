@@ -14,20 +14,28 @@ import { isMacOs } from "../../internal/is-mac-os.js";
  */
 
 /**
- * A toolbar following the W3C Listbox pattern.
- * https://www.w3.org/WAI/ARIA/apg/patterns/listbox/
- * Single-select "select follows focus" model.
- * Multi-select implements the recommendation here: https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboard_interaction
- *   Shift + Down Arrow: Moves focus to and toggles the selected state of the next option.
- *   Shift + Up Arrow: Moves focus to and toggles the selected state of the previous option.
- *   Shift + Space: Selects contiguous items from the most recently selected item to the focused item.
- *   Control + Shift + Home: Selects the focused option and all options up to the first option. Optionally, moves focus to the first option.
- *   Control + Shift + End: Selects the focused option and all options down to the last option.
- *   Control + A: Selects all
-
- *   The currently hovered / focus option has [aria-current="true"]
- *   A selected option has [aria-selected="true"]
+ * A listbox following the W3C Listbox pattern.
+ *
+ * <https://www.w3.org/WAI/ARIA/apg/patterns/listbox/>
+ *
+ *
+ * `Single-select` listbox uses the "select follows focus" model.
+ *
+ *
+ * `Multi-select` listbox implements the keyboard recommendations here: <https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboard_interaction>
+ *
+ *   - <kbd>Shift + Down Arrow</kbd>: Moves focus to and toggles the selected state of the next option.
+ *   - <kbd>Shift + Up Arrow</kbd>: Moves focus to and toggles the selected state of the previous option.
+ *   - <kbd>Shift + Space</kbd>: Selects contiguous items from the most recently selected item to the focused item.
+ *   - <kbd>Control + Shift + Home</kbd>: Selects the focused option and all options up to the first option. Optionally, moves focus to the first option.
+ *   - <kbd>Control + Shift + End</kbd>: Selects the focused option and all options down to the last option.
+ *   - <kbd>Control + a</kbd>: Selects all
+ *
+ *   The currently hovered / focus `<role-option>` has `[aria-current="true"]`
+ *
+ *   The currently selected `<role-option>` has `[aria-selected="true"]`
  * @customElement
+ * @tagname role-listbox
  */
 export default class RoleListbox extends BaseElement {
   static baseName = "role-listbox";

@@ -26,7 +26,7 @@ class Builders::ComponentGenerator < SiteBuilder
       resources = site.collections.documentation.resources
 
       resources.each do |resource|
-        component_name = File.basename(resource.relative_path.basename, ".md").to_s
+        component_name = "role-" + File.basename(resource.relative_path.basename, ".md").to_s
 
         metadata = elements[component_name]
         next if metadata.nil?

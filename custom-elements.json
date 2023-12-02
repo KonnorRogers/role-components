@@ -261,7 +261,7 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "A toolbar following the W3C Listbox pattern.\nhttps://www.w3.org/WAI/ARIA/apg/patterns/listbox/\nSingle-select \"select follows focus\" model.\nMulti-select implements the recommendation here: https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboard_interaction\n  Shift + Down Arrow: Moves focus to and toggles the selected state of the next option.\n  Shift + Up Arrow: Moves focus to and toggles the selected state of the previous option.\n  Shift + Space: Selects contiguous items from the most recently selected item to the focused item.\n  Control + Shift + Home: Selects the focused option and all options up to the first option. Optionally, moves focus to the first option.\n  Control + Shift + End: Selects the focused option and all options down to the last option.\n  Control + A: Selects all\n\n  The currently hovered / focus option has [aria-current=\"true\"]\n  A selected option has [aria-selected=\"true\"]",
+          "description": "A listbox following the W3C Listbox pattern.\n\n<https://www.w3.org/WAI/ARIA/apg/patterns/listbox/>\n\n\n`Single-select` listbox uses the \"select follows focus\" model.\n\n\n`Multi-select` listbox implements the keyboard recommendations here: <https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboard_interaction>\n\n  - <kbd>Shift + Down Arrow</kbd>: Moves focus to and toggles the selected state of the next option.\n  - <kbd>Shift + Up Arrow</kbd>: Moves focus to and toggles the selected state of the previous option.\n  - <kbd>Shift + Space</kbd>: Selects contiguous items from the most recently selected item to the focused item.\n  - <kbd>Control + Shift + Home</kbd>: Selects the focused option and all options up to the first option. Optionally, moves focus to the first option.\n  - <kbd>Control + Shift + End</kbd>: Selects the focused option and all options down to the last option.\n  - <kbd>Control + a</kbd>: Selects all\n\n  The currently hovered / focus `<role-option>` has `[aria-current=\"true\"]`\n\n  The currently selected `<role-option>` has `[aria-selected=\"true\"]`",
           "name": "RoleListbox",
           "members": [
             {
@@ -595,8 +595,7 @@
               "type": {
                 "text": "null | HTMLElement"
               },
-              "default": "null",
-              "attribute": "rangeStartOption"
+              "default": "null"
             },
             {
               "kind": "field",
@@ -650,8 +649,7 @@
               "type": {
                 "text": "HTMLElement[]"
               },
-              "default": "[]",
-              "attribute": "options"
+              "default": "[]"
             },
             {
               "kind": "field",
@@ -672,8 +670,7 @@
               "type": {
                 "text": "null | HTMLElement"
               },
-              "default": "null",
-              "attribute": "currentActiveOption"
+              "default": "null"
             },
             {
               "kind": "field",
@@ -695,14 +692,12 @@
             {
               "kind": "field",
               "name": "_hasFocused",
-              "privacy": "public",
-              "attribute": "_hasFocused"
+              "privacy": "public"
             },
             {
               "kind": "field",
               "name": "_searchBuffer",
               "privacy": "public",
-              "attribute": "_searchBuffer",
               "ignore": true,
               "type": {
                 "text": "string"
@@ -714,7 +709,6 @@
               "kind": "field",
               "name": "_searchBufferDebounce",
               "privacy": "public",
-              "attribute": "_searchBufferDebounce",
               "ignore": true,
               "type": {
                 "text": "null | ReturnType<typeof setTimeout>"
@@ -871,42 +865,186 @@
               "description": "Delay before the search buffer returns to an empty string",
               "default": "1000",
               "fieldName": "searchBufferDelay"
-            },
+            }
+          ],
+          "superclass": {
+            "name": "BaseElement",
+            "module": "/exports/base-element.js"
+          },
+          "tagName": "role-listbox",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "RoleListbox",
+            "module": "exports/listbox/listbox.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/option-group/option-group-register.js",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "RoleOptionGroup",
+            "module": "exports/option-group/option-group-register.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/option-group/option-group.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "OptionGroup",
+          "members": [
             {
-              "name": "_hasFocused",
-              "fieldName": "_hasFocused"
-            },
-            {
-              "name": "_searchBuffer",
-              "fieldName": "_searchBuffer"
-            },
-            {
-              "name": "_searchBufferDebounce",
-              "fieldName": "_searchBufferDebounce"
-            },
-            {
-              "name": "options",
+              "kind": "field",
+              "name": "baseName",
               "type": {
-                "text": "HTMLElement[]"
+                "text": "string"
               },
-              "default": "[]",
-              "fieldName": "options"
+              "static": true,
+              "default": "\"role-option-group\""
             },
             {
-              "name": "currentActiveOption",
+              "kind": "field",
+              "name": "role",
+              "privacy": "public",
               "type": {
-                "text": "null | HTMLElement"
+                "text": "string"
+              },
+              "default": "\"group\"",
+              "attribute": "role",
+              "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "debounce",
+              "parameters": [
+                {
+                  "name": "callback",
+                  "type": {
+                    "text": "(...args: any[]) => any"
+                  }
+                },
+                {
+                  "name": "options",
+                  "type": {
+                    "text": "{ key: any, wait: number }"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "ReturnType<typeof setTimeout>"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "addEventListener",
+              "parameters": [
+                {
+                  "name": "type",
+                  "type": {
+                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
+                  }
+                },
+                {
+                  "name": "callback",
+                  "type": {
+                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
+                  }
+                },
+                {
+                  "name": "options",
+                  "optional": true,
+                  "type": {
+                    "text": "boolean | AddEventListenerOptions"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "removeEventListener",
+              "parameters": [
+                {
+                  "name": "args",
+                  "type": {
+                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "__eventMap__",
+              "type": {
+                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
               },
               "default": "null",
-              "fieldName": "currentActiveOption"
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
             },
             {
-              "name": "rangeStartOption",
+              "kind": "field",
+              "name": "__debounceMap__",
               "type": {
-                "text": "null | HTMLElement"
+                "text": "null | Map<any, ReturnType<typeof setTimeout>>"
               },
               "default": "null",
-              "fieldName": "rangeStartOption"
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "role",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"group\"",
+              "fieldName": "role"
             }
           ],
           "superclass": {
@@ -920,8 +1058,8 @@
           "kind": "js",
           "name": "default",
           "declaration": {
-            "name": "RoleListbox",
-            "module": "exports/listbox/listbox.js"
+            "name": "OptionGroup",
+            "module": "exports/option-group/option-group.js"
           }
         }
       ]
@@ -1162,205 +1300,6 @@
           "declaration": {
             "name": "RoleOption",
             "module": "exports/option/option.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "exports/styles/host-styles.js",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "hostStyles",
-          "default": "css`\n  :host {\n    --role-background-hover-color: #005a9c;\n    --role-border-focus-color: #005a9c;\n    display: block;\n  }\n\n  *,\n  *:after,\n  *:before {\n    box-sizing: border-box;\n  }\n\n  [hidden] {\n    display: none !important;\n  }\n\n  [invisible] {\n    visibility: hidden !important;\n  }\n\n  .visually-hidden:not(:focus-within):not(:active) {\n    clip: rect(0 0 0 0);\n    clip-path: inset(50%);\n    height: 1px;\n    overflow: hidden;\n    position: absolute;\n    white-space: nowrap;\n    width: 1px;\n  }\n`"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "hostStyles",
-          "declaration": {
-            "name": "hostStyles",
-            "module": "exports/styles/host-styles.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "exports/option-group/option-group-register.js",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "RoleOptionGroup",
-            "module": "exports/option-group/option-group-register.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "exports/option-group/option-group.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "OptionGroup",
-          "members": [
-            {
-              "kind": "field",
-              "name": "baseName",
-              "type": {
-                "text": "string"
-              },
-              "static": true,
-              "default": "\"role-option-group\""
-            },
-            {
-              "kind": "field",
-              "name": "role",
-              "privacy": "public",
-              "type": {
-                "text": "string"
-              },
-              "default": "\"group\"",
-              "attribute": "role",
-              "reflects": true
-            },
-            {
-              "kind": "method",
-              "name": "debounce",
-              "parameters": [
-                {
-                  "name": "callback",
-                  "type": {
-                    "text": "(...args: any[]) => any"
-                  }
-                },
-                {
-                  "name": "options",
-                  "type": {
-                    "text": "{ key: any, wait: number }"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "ReturnType<typeof setTimeout>"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "addEventListener",
-              "parameters": [
-                {
-                  "name": "type",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
-                  }
-                },
-                {
-                  "name": "callback",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
-                  }
-                },
-                {
-                  "name": "options",
-                  "optional": true,
-                  "type": {
-                    "text": "boolean | AddEventListenerOptions"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "removeEventListener",
-              "parameters": [
-                {
-                  "name": "args",
-                  "type": {
-                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "__eventMap__",
-              "type": {
-                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
-              },
-              "default": "null",
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "__debounceMap__",
-              "type": {
-                "text": "null | Map<any, ReturnType<typeof setTimeout>>"
-              },
-              "default": "null",
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            }
-          ],
-          "attributes": [
-            {
-              "name": "role",
-              "type": {
-                "text": "string"
-              },
-              "default": "\"group\"",
-              "fieldName": "role"
-            }
-          ],
-          "superclass": {
-            "name": "BaseElement",
-            "module": "/exports/base-element.js"
-          }
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "OptionGroup",
-            "module": "exports/option-group/option-group.js"
           }
         }
       ]
@@ -1683,6 +1622,27 @@
           "declaration": {
             "name": "RoleToolbar",
             "module": "exports/toolbar/toolbar.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/styles/host-styles.js",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "hostStyles",
+          "default": "css`\n  :host {\n    --role-background-hover-color: #005a9c;\n    --role-border-focus-color: #005a9c;\n    display: block;\n  }\n\n  *,\n  *:after,\n  *:before {\n    box-sizing: border-box;\n  }\n\n  [hidden] {\n    display: none !important;\n  }\n\n  [invisible] {\n    visibility: hidden !important;\n  }\n\n  .visually-hidden:not(:focus-within):not(:active) {\n    clip: rect(0 0 0 0);\n    clip-path: inset(50%);\n    height: 1px;\n    overflow: hidden;\n    position: absolute;\n    white-space: nowrap;\n    width: 1px;\n  }\n`"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "hostStyles",
+          "declaration": {
+            "name": "hostStyles",
+            "module": "exports/styles/host-styles.js"
           }
         }
       ]

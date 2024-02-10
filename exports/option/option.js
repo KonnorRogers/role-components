@@ -7,6 +7,7 @@ import { stringMap } from "../../internal/string-map.js";
 
 /**
  * @customElement
+ * @tagname role-option
  */
 export default class RoleOption extends BaseElement {
   static baseName = "role-option";

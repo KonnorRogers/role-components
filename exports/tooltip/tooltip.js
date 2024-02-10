@@ -17,9 +17,13 @@ import {
  * Due to accessibility reasons with aria-describedby, the tooltip must be the same
  *   document / shadowRoot as the item being described by the tooltip.
  * @customElement
+ * @tagname role-tooltip
  * @example
+ *   ```js
  *   <role-tooltip id="my-tooltip">I'm a tooltip!</role-tooltip>
  *   <button aria-describedby="my-tooltip">Button</button>
+ *   ```
+ *
  * @slot - default slot
  * @cssprop [--background-color=#222]
  * @cssprop [--arrow-size=8px]

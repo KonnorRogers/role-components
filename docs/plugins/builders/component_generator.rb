@@ -26,14 +26,18 @@ class Builders::ComponentGenerator < SiteBuilder
       resources = site.collections.documentation.resources
 
       resources.each do |resource|
-        component_name = "role-" + File.basename(resource.relative_path.basename, ".md").to_s
+        base_name = File.basename(resource.relative_path.basename, ".md").to_s
+        component_name = "role-" + base_name
 
         metadata = elements[component_name]
         next if metadata.nil?
 
         resource.data.merge!({
           "summary" => metadata.summary,
-          "description" => metadata.description
+          "description" => metadata.description,
+          "title" => base_name.titleize,
+          "permalink" => "/components/#{base_name}/",
+          "layout" => "doc"
         })
 
         path = metadata.parent_module.path

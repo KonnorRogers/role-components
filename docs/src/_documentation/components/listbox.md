@@ -1,7 +1,4 @@
 ---
-title: Listbox
-permalink: /components/listbox/
-layout: doc
 ---
 
 <light-preview preview-mode="shadow-dom">

@@ -8,6 +8,7 @@ import { hostStyles } from "../styles/host-styles.js";
  * A toolbar following the W3C Toolbar pattern.
  * https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/
  * @customElement
+ * @tagname role-toolbar
  */
 export default class RoleToolbar extends BaseElement {
   static properties = {

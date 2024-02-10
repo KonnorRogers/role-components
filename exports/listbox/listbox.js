@@ -75,8 +75,8 @@ export default class RoleListbox extends BaseElement {
       :host(:focus-within) [part~="base"],
       :host(:focus-visible) [part~="base"] {
         outline: transparent;
-        border-color: blue;
-        box-shadow: 0px 0px 3px 4px rgba(0, 0, 255, 0.2);
+        border-color: dodgerblue;
+        box-shadow: 0px 0px 2px 3px lightblue;
       }
 
       [part~="base"] {

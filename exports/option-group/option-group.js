@@ -2,6 +2,11 @@ import { css, html } from "lit";
 import { BaseElement } from "../base-element.js";
 import { hostStyles } from "../styles/host-styles.js";
 
+
+/**
+ * @customElement
+ * @tagname role-option-group
+ */
 export default class OptionGroup extends BaseElement {
   static baseName = "role-option-group";
 

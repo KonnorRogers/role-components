@@ -4,6 +4,7 @@ import { hostStyles } from "../styles/host-styles.js";
 
 import { css, html } from "lit";
 
+import { offsetParent } from 'composed-offset-position';
 import {
   arrow,
   computePosition,
@@ -11,6 +12,7 @@ import {
   shift,
   offset,
   autoUpdate,
+  platform,
 } from "@floating-ui/dom";
 
 /**
@@ -111,17 +113,21 @@ export default class RoleTooltip extends BaseElement {
      */
     this.placement = "top";
 
+    const show = this.eventHandler.get(this.show)
+    const hide = this.eventHandler.get(this.hide)
+    const keyboardHide = this.eventHandler.get(this.keyboardHide)
+
     /**
      * @type {Array<[keyof GlobalEventHandlersEventMap, (evt: Event | KeyboardEvent) => void]>}
      */
     this.listeners = [
-      ["pointerenter", this.show],
-      ["pointerleave", this.hide],
-      ["pointercancel", this.hide],
-      ["pointerup", this.hide],
-      ["focusin", this.show],
-      ["focusout", this.hide],
-      ["keydown", this.keyboardHide],
+      ["pointerenter", show],
+      ["pointerleave", hide],
+      ["pointercancel", hide],
+      ["pointerup", hide],
+      ["focusin", show],
+      ["focusout", hide],
+      ["keydown", keyboardHide],
     ];
   }
 
@@ -311,16 +317,33 @@ export default class RoleTooltip extends BaseElement {
 
     const placement = this.placement || "top";
 
+    const strategy = this.hasAttribute("hoist") ? "fixed" : "absolute"
+    //
+    // Use custom positioning logic if the strategy is absolute. Otherwise, fall back to the default logic.
+    //
+    // More info: https://github.com/shoelace-style/shoelace/issues/1135
+    //
+    const getOffsetParent =
+      strategy === 'absolute'
+        ? (element) => platform.getOffsetParent(element, offsetParent)
+        : platform.getOffsetParent;
+
+
     this.cleanup = autoUpdate(target, base, () => {
       computePosition(target, base, {
         placement,
         middleware: [
           offset(6),
-          flip(),
+          flip({
+          }),
           shift({ padding: 5 }),
           arrow({ element: arrowEl }),
         ],
-        strategy: this.hasAttribute("hoist") ? "fixed" : "absolute",
+        strategy,
+        platform: {
+          ...platform,
+          getOffsetParent
+        }
       }).then(({ x, y, middlewareData, placement }) => {
         Object.assign(base.style, {
           left: `${x}px`,
@@ -342,8 +365,6 @@ export default class RoleTooltip extends BaseElement {
         Object.assign(arrowEl.style, {
           left: arrowX != null ? `${arrowX}px` : "",
           top: arrowY != null ? `${arrowY}px` : "",
-          right: "",
-          bottom: "",
           [staticSide]: "-4px",
         });
       });

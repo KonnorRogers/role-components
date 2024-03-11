@@ -65,6 +65,7 @@ export default class RoleListbox extends BaseElement {
     options: { attribute: false, state: true },
     currentActiveOption: { attribute: false, state: true },
     rangeStartOption: { attribute: false, state: true },
+    tabIndex: { reflect: true, attribute: "tabindex", type: Number }
   };
 
   static styles = [
@@ -110,7 +111,14 @@ export default class RoleListbox extends BaseElement {
     /**
      * @type {string}
      */
-    this.role = "listbox";
+    this.role = "presentation";
+
+
+    /**
+     * @type {number}
+     */
+    this.tabIndex = 0
+
 
     /**
      * @type {string}
@@ -155,6 +163,7 @@ export default class RoleListbox extends BaseElement {
     this.attributeFilter = [
       "aria-current",
       "selected",
+      "current",
       "aria-selected",
       "role",
     ];
@@ -179,11 +188,10 @@ export default class RoleListbox extends BaseElement {
       }
     });
 
-    this.addEventListener("keydown", this.handleKeyDown);
-    this.addEventListener("click", this.handleOptionClick);
-    this.addEventListener("pointermove", this.handleOptionHover);
-
-    this.addEventListener("focusin", this.handleFocusIn);
+    this.addEventListener("keydown", this.eventHandler.get(this.handleKeyDown));
+    this.addEventListener("click", this.eventHandler.get(this.handleOptionClick));
+    this.addEventListener("pointermove", this.eventHandler.get(this.handleOptionHover))
+    this.addEventListener("focusin", this.eventHandler.get(this.handleFocusIn));
   }
 
   /**
@@ -192,7 +200,6 @@ export default class RoleListbox extends BaseElement {
    */
   connectedCallback() {
     super.connectedCallback();
-
     this.debounce(() => this.updateOptions(), {
       wait: 10,
       key: this.updateOptions,
@@ -248,6 +255,7 @@ export default class RoleListbox extends BaseElement {
    */
   setFocus(option) {
     option.setAttribute("aria-current", "true");
+    option.current = true;
   }
 
   /**
@@ -255,13 +263,15 @@ export default class RoleListbox extends BaseElement {
    */
   removeFocus(option) {
     option.setAttribute("aria-current", "false");
+    option.current = false;
   }
 
   /**
    * @type {HTMLElement | null | undefined}
    */
   get baseElement() {
-    return this.shadowRoot?.querySelector("[part~='base']");
+    // return this.shadowRoot?.querySelector("[part~='base']");
+    return this
   }
 
   /**
@@ -273,18 +283,7 @@ export default class RoleListbox extends BaseElement {
 
     if (baseElement) {
       baseElement.focus();
-    }
-  }
-
-  /**
-   * @override
-   * @type HTMLButtonElement["focus"]
-   */
-  focus(options) {
-    const baseElement = this.baseElement;
-
-    if (baseElement) {
-      baseElement.focus(options);
+      // baseElement.click();
     }
   }
 
@@ -500,6 +499,9 @@ export default class RoleListbox extends BaseElement {
       }
     }
 
+
+    if (this.multiSelect) { return }
+
     /**
      * We don't need to de-select previous items. Just from rangeStart -> currentIndex
      * So lets slice from prev -> current
@@ -598,15 +600,15 @@ export default class RoleListbox extends BaseElement {
   }
 
   /**
-   * @param {HTMLElement} selectedElement
+   * @param {HTMLOptionElement} selectedElement
    */
   select(selectedElement) {
     this.selectedOptions = this.selectedOptions.concat(selectedElement);
-    selectedElement.setAttribute("selected", "");
+    selectedElement.selected = true;
 
     // We don't want to override normal HTMLOptionElement semantics.
     if (!(selectedElement instanceof HTMLOptionElement)) {
-      selectedElement.setAttribute("aria-selected", "true");
+      /** @type {HTMLElement} */ (selectedElement).setAttribute("aria-selected", "true");
     }
 
     const event = new SelectedEvent("role-selected", { selectedElement });
@@ -614,10 +616,10 @@ export default class RoleListbox extends BaseElement {
   }
 
   /**
-   * @param {HTMLElement} selectedElement
+   * @param {HTMLOptionElement} selectedElement
    */
   deselect(selectedElement) {
-    selectedElement.removeAttribute("selected");
+    selectedElement.selected = false;
     selectedElement.setAttribute("aria-selected", "false");
   }
 
@@ -735,12 +737,12 @@ export default class RoleListbox extends BaseElement {
   handleFocusOut() {}
 
   /**
-   * @param {HTMLElement} el
+   * @param {HTMLElement & { selected: boolean }} el
    * @return {boolean}
    */
   isSelected(el) {
     return (
-      el.getAttribute("aria-selected") === "true" ||
+      el.selected === true || el.getAttribute("aria-selected") === "true" ||
       (el instanceof HTMLOptionElement && el.hasAttribute("selected"))
     );
   }
@@ -789,7 +791,7 @@ export default class RoleListbox extends BaseElement {
     let currentActiveOption = null;
 
     this.options.forEach((option) => {
-      const isActiveOption = option.getAttribute("aria-current") === "true";
+      const isActiveOption = option.current === true || option.getAttribute("aria-current") === "true";
       if (!currentActiveOption && isActiveOption) {
         currentActiveOption = option;
       }
@@ -820,9 +822,8 @@ export default class RoleListbox extends BaseElement {
 
       <div
         part="base"
-        tabindex="1"
-        role="region"
-        aria-labelledby="listbox-label"
+        role="group"
+        tabindex="-1"
       >
         <slot></slot>
       </div>

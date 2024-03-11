@@ -27,9 +27,10 @@
     "@hotwired/turbo": "^7.3.0",
     "@konnorr/bridgetown-quick-search": "^3.8.0",
     "@shoelace-style/shoelace": "^2.7.0",
-    "light-pen": "^2.1.0",
-    "role-components": "link:../",
+    "bridgetown-quick-search": "2.0.0",
+    "light-pen": "^3.0.2",
     "lit": "^2.8.0",
+    "role-components": "link:../",
     "web-component-lazy-loader": "^1.0.1"
   }
 }

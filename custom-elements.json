@@ -35,59 +35,12 @@
               }
             },
             {
-              "kind": "method",
-              "name": "addEventListener",
-              "parameters": [
-                {
-                  "name": "type",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
-                  }
-                },
-                {
-                  "name": "callback",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
-                  }
-                },
-                {
-                  "name": "options",
-                  "optional": true,
-                  "type": {
-                    "text": "boolean | AddEventListenerOptions"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              }
-            },
-            {
-              "kind": "method",
-              "name": "removeEventListener",
-              "parameters": [
-                {
-                  "name": "args",
-                  "type": {
-                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
-                }
-              }
-            },
-            {
               "kind": "field",
-              "name": "__eventMap__",
+              "name": "eventHandler",
               "type": {
-                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
+                "text": "EventHandler<this>"
               },
-              "default": "null"
+              "default": "new EventHandler(this)"
             },
             {
               "kind": "field",
@@ -314,18 +267,6 @@
             },
             {
               "kind": "method",
-              "name": "focus",
-              "parameters": [
-                {
-                  "name": "options"
-                }
-              ],
-              "type": {
-                "text": "HTMLButtonElement[\"focus\"]"
-              }
-            },
-            {
-              "kind": "method",
               "name": "handleOptionClick",
               "parameters": [
                 {
@@ -442,7 +383,7 @@
                 {
                   "name": "selectedElement",
                   "type": {
-                    "text": "HTMLElement"
+                    "text": "HTMLOptionElement"
                   }
                 }
               ]
@@ -454,7 +395,7 @@
                 {
                   "name": "selectedElement",
                   "type": {
-                    "text": "HTMLElement"
+                    "text": "HTMLOptionElement"
                   }
                 }
               ]
@@ -553,7 +494,7 @@
                 {
                   "name": "el",
                   "type": {
-                    "text": "HTMLElement"
+                    "text": "HTMLElement & { selected: boolean }"
                   }
                 }
               ],
@@ -615,8 +556,19 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"listbox\"",
+              "default": "\"presentation\"",
               "attribute": "role",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "tabIndex",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "tabindex",
               "reflects": true
             },
             {
@@ -678,7 +630,7 @@
               "type": {
                 "text": "array"
               },
-              "default": "[\n      \"aria-current\",\n      \"selected\",\n      \"aria-selected\",\n      \"role\",\n    ]"
+              "default": "[\n      \"aria-current\",\n      \"selected\",\n      \"current\",\n      \"aria-selected\",\n      \"role\",\n    ]"
             },
             {
               "kind": "field",
@@ -744,67 +696,12 @@
               }
             },
             {
-              "kind": "method",
-              "name": "addEventListener",
-              "parameters": [
-                {
-                  "name": "type",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
-                  }
-                },
-                {
-                  "name": "callback",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
-                  }
-                },
-                {
-                  "name": "options",
-                  "optional": true,
-                  "type": {
-                    "text": "boolean | AddEventListenerOptions"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "removeEventListener",
-              "parameters": [
-                {
-                  "name": "args",
-                  "type": {
-                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
               "kind": "field",
-              "name": "__eventMap__",
+              "name": "eventHandler",
               "type": {
-                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
+                "text": "EventHandler<this>"
               },
-              "default": "null",
+              "default": "new EventHandler(this)",
               "inheritedFrom": {
                 "name": "BaseElement",
                 "module": "exports/base-element.js"
@@ -837,7 +734,7 @@
               "type": {
                 "text": "string"
               },
-              "default": "\"listbox\"",
+              "default": "\"presentation\"",
               "fieldName": "role"
             },
             {
@@ -865,6 +762,14 @@
               "description": "Delay before the search buffer returns to an empty string",
               "default": "1000",
               "fieldName": "searchBufferDelay"
+            },
+            {
+              "name": "tabindex",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "tabIndex"
             }
           ],
           "superclass": {
@@ -948,6 +853,18 @@
             },
             {
               "kind": "field",
+              "name": "current",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "aria-current to show the currently focused option",
+              "default": "false",
+              "attribute": "current",
+              "reflects": true
+            },
+            {
+              "kind": "field",
               "name": "hasFocus",
               "type": {
                 "text": "boolean"
@@ -969,6 +886,13 @@
               "name": "ariaCurrent",
               "privacy": "public",
               "attribute": "aria-current",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "ariaSelected",
+              "privacy": "public",
+              "attribute": "aria-selected",
               "reflects": true
             },
             {
@@ -999,67 +923,12 @@
               }
             },
             {
-              "kind": "method",
-              "name": "addEventListener",
-              "parameters": [
-                {
-                  "name": "type",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
-                  }
-                },
-                {
-                  "name": "callback",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
-                  }
-                },
-                {
-                  "name": "options",
-                  "optional": true,
-                  "type": {
-                    "text": "boolean | AddEventListenerOptions"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "removeEventListener",
-              "parameters": [
-                {
-                  "name": "args",
-                  "type": {
-                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
               "kind": "field",
-              "name": "__eventMap__",
+              "name": "eventHandler",
               "type": {
-                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
+                "text": "EventHandler<this>"
               },
-              "default": "null",
+              "default": "new EventHandler(this)",
               "inheritedFrom": {
                 "name": "BaseElement",
                 "module": "exports/base-element.js"
@@ -1089,8 +958,21 @@
               "fieldName": "selected"
             },
             {
+              "name": "current",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "aria-current to show the currently focused option",
+              "default": "false",
+              "fieldName": "current"
+            },
+            {
               "name": "aria-current",
               "fieldName": "ariaCurrent"
+            },
+            {
+              "name": "aria-selected",
+              "fieldName": "ariaSelected"
             },
             {
               "name": "role",
@@ -1200,67 +1082,12 @@
               }
             },
             {
-              "kind": "method",
-              "name": "addEventListener",
-              "parameters": [
-                {
-                  "name": "type",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
-                  }
-                },
-                {
-                  "name": "callback",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
-                  }
-                },
-                {
-                  "name": "options",
-                  "optional": true,
-                  "type": {
-                    "text": "boolean | AddEventListenerOptions"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "removeEventListener",
-              "parameters": [
-                {
-                  "name": "args",
-                  "type": {
-                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
               "kind": "field",
-              "name": "__eventMap__",
+              "name": "eventHandler",
               "type": {
-                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
+                "text": "EventHandler<this>"
               },
-              "default": "null",
+              "default": "new EventHandler(this)",
               "inheritedFrom": {
                 "name": "BaseElement",
                 "module": "exports/base-element.js"
@@ -1525,67 +1352,12 @@
               }
             },
             {
-              "kind": "method",
-              "name": "addEventListener",
-              "parameters": [
-                {
-                  "name": "type",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
-                  }
-                },
-                {
-                  "name": "callback",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
-                  }
-                },
-                {
-                  "name": "options",
-                  "optional": true,
-                  "type": {
-                    "text": "boolean | AddEventListenerOptions"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "removeEventListener",
-              "parameters": [
-                {
-                  "name": "args",
-                  "type": {
-                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
               "kind": "field",
-              "name": "__eventMap__",
+              "name": "eventHandler",
               "type": {
-                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
+                "text": "EventHandler<this>"
               },
-              "default": "null",
+              "default": "new EventHandler(this)",
               "inheritedFrom": {
                 "name": "BaseElement",
                 "module": "exports/base-element.js"
@@ -1888,7 +1660,7 @@
               "type": {
                 "text": "Array<[keyof GlobalEventHandlersEventMap, (evt: Event | KeyboardEvent) => void]>"
               },
-              "default": "[\n      [\"pointerenter\", this.show],\n      [\"pointerleave\", this.hide],\n      [\"pointercancel\", this.hide],\n      [\"pointerup\", this.hide],\n      [\"focusin\", this.show],\n      [\"focusout\", this.hide],\n      [\"keydown\", this.keyboardHide],\n    ]"
+              "default": "[\n      [\"pointerenter\", show],\n      [\"pointerleave\", hide],\n      [\"pointercancel\", hide],\n      [\"pointerup\", hide],\n      [\"focusin\", show],\n      [\"focusout\", hide],\n      [\"keydown\", keyboardHide],\n    ]"
             },
             {
               "kind": "field",
@@ -1925,67 +1697,12 @@
               }
             },
             {
-              "kind": "method",
-              "name": "addEventListener",
-              "parameters": [
-                {
-                  "name": "type",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
-                  }
-                },
-                {
-                  "name": "callback",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
-                  }
-                },
-                {
-                  "name": "options",
-                  "optional": true,
-                  "type": {
-                    "text": "boolean | AddEventListenerOptions"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "removeEventListener",
-              "parameters": [
-                {
-                  "name": "args",
-                  "type": {
-                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
               "kind": "field",
-              "name": "__eventMap__",
+              "name": "eventHandler",
               "type": {
-                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
+                "text": "EventHandler<this>"
               },
-              "default": "null",
+              "default": "new EventHandler(this)",
               "inheritedFrom": {
                 "name": "BaseElement",
                 "module": "exports/base-element.js"

@@ -14,7 +14,9 @@ export default class RoleOption extends BaseElement {
 
   static properties = {
     selected: { reflect: true, type: Boolean },
+    current: { reflect: true, type: Boolean },
     ariaCurrent: { reflect: true, attribute: "aria-current" },
+    ariaSelected: { reflect: true, attribute: "aria-selected" },
     role: { reflect: true },
     value: {},
   };
@@ -61,6 +63,12 @@ export default class RoleOption extends BaseElement {
     this.selected = false;
 
     /**
+     * aria-current to show the currently focused option
+     * @type {boolean}
+     */
+    this.current = false;
+
+    /**
      * @type {boolean}
      */
     this.hasFocus = false;
@@ -87,8 +95,11 @@ export default class RoleOption extends BaseElement {
       this.role = "option";
     }
 
-    if (changedProperties.has("selected")) {
-      this.setAttribute("aria-selected", this.selected.toString());
+    if (changedProperties.has("selected") || changedProperties.has("ariaSelected")) {
+      this.ariaSelected = this.selected.toString()
+    }
+    if (changedProperties.has("current") || changedProperties.has("ariaCurrent")) {
+      this.ariaCurrent = this.current.toString()
     }
 
     if (changedProperties.has("value")) {
@@ -111,7 +122,7 @@ export default class RoleOption extends BaseElement {
         part=${stringMap({
           base: true,
           "base--selected": this.selected,
-          "base--active": this.ariaCurrent === "true",
+          "base--active": this.current,
         })}
       >
         <slot name="checkmark" ?invisible=${!this.selected}> ✓ </slot>

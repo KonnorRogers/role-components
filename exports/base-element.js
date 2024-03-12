@@ -40,8 +40,21 @@ class EventHandler {
 /** @typedef {(...args: any[]) => any} EventHandlerFunction */
 
 export class BaseElement extends DefineableMixin(LitElement) {
+  /**
+   * @type {Record<string, typeof HTMLElement>}
+   */
+  static get dependencies () {
+    return {}
+  }
+
   constructor() {
     super();
+
+    Object.entries(/** @type {typeof BaseElement} */ (this.constructor).dependencies).forEach(([key, ctor]) => {
+      if (!customElements.get(key)) {
+        customElements.define(key, ctor)
+      }
+    })
 
     /** @type {EventHandler<this>} */
     this.eventHandler = new EventHandler(this);

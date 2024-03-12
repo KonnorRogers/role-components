@@ -32,6 +32,7 @@ test("Should properly check items in the listbox", async () => {
 
   const isSelected = (index) => {
     const options = getOptions()
+    assert.equal(options[index].id, listbox.getAttribute("aria-activedescendant"))
     assert.equal(options[index].selected, true)
     assert.equal(options[index].current, true)
     assert.equal(options[index].getAttribute("aria-selected"), "true")
@@ -107,6 +108,7 @@ test("Should properly set aria-selected and aria-checked for options in a multis
 
   const isCurrent = (index) => {
     const options = getOptions()
+    assert.equal(options[index].id, listbox.getAttribute("aria-activedescendant"))
     assert.equal(options[index].current, true)
     assert.equal(options[index].getAttribute("aria-current"), "true")
   }

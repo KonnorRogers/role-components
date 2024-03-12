@@ -11,6 +11,9 @@ dependencies:
   composed-offset-position:
     specifier: ^0.0.4
     version: 0.0.4
+  form-associated-helpers:
+    specifier: ^0.0.5
+    version: 0.0.5
   lit:
     specifier: ^2.8.0
     version: 2.8.0
@@ -2160,6 +2163,10 @@ packages:
       cross-spawn: 7.0.3
       signal-exit: 4.1.0
     dev: true
+
+  /form-associated-helpers@0.0.5:
+    resolution: {integrity: sha512-OTcCYvcDy9EJYh0p19z7ttwikBWrMURaEX5HFKvxIlmN/mIOj/YiqVTzifvgeaKPqlsoleyfzzc5qwQx1dm7fg==}
+    dev: false
 
   /fresh@0.5.2:
     resolution: {integrity: sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==}

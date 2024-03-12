@@ -78,7 +78,7 @@ test("Should properly check items in the listbox", async () => {
 // Multiselect
 test("Should properly set aria-selected and aria-checked for options in a multiselect", async () => {
   const listbox = await fixture(html`
-    <role-listbox multi-select style="height: 200px;">
+    <role-listbox multiple style="height: 200px;">
       <role-option value="1">Option 1</role-option>
       <role-option value="2">Option 2</role-option>
       <role-option value="3">Option 3</role-option>

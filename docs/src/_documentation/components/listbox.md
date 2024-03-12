@@ -151,7 +151,7 @@ When a multi-select listbox receives focus:
 
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
-    <role-listbox multi-select style="height: 200px;">
+    <role-listbox multiple style="height: 200px;">
       <role-option value="1">Option 1</role-option>
       <role-option value="2">Option 2</role-option>
       <role-option value="3">Option 3</role-option>
@@ -170,7 +170,7 @@ When a multi-select listbox receives focus:
 
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
-    <role-listbox multi-select style="height: 200px;">
+    <role-listbox multiple style="height: 200px;">
       <role-option-group>
         <span slot="label">Land</span>
 

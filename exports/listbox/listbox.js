@@ -1,13 +1,14 @@
 // @ts-check
 
 import { BaseElement } from "../base-element.js";
-import { css, html } from "lit";
+import { css, html, LitElement } from "lit";
 import { hostStyles } from "../styles/host-styles.js";
 import { wrap } from "../../internal/wrap.js";
 import { clamp } from "../../internal/clamp.js";
 import { uuidv4 } from "../../internal/uuid.js";
 import { SelectedEvent } from "../events/selected-event.js";
 import { isMacOs } from "../../internal/is-mac-os.js";
+import { LitFormAssociatedMixin } from "form-associated-helpers/exports/mixins/lit-form-associated-mixin.js";
 
 /**
  * @typedef {{ from: number, to: number }} Range
@@ -36,22 +37,28 @@ import { isMacOs } from "../../internal/is-mac-os.js";
  *   The currently selected `<role-option>` has `[aria-selected="true"]`
  * @customElement
  * @tagname role-listbox
+ * @implements HTMLSelectElement
  */
-export default class RoleListbox extends BaseElement {
+export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   static baseName = "role-listbox";
+
+  static shadowRootOptions = {...LitElement.shadowRootOptions, delegatesFocus: true }
 
   static properties = {
     // Attributes
+    autocomplete: {},
+    // Maps to aria-multiselectable
+    multiple: { reflect: true, type: Boolean },
+    selectedIndex: {},
+    length: {},
+
     label: { reflect: true },
-    role: { reflect: true },
     wrapSelection: {
       attribute: "wrap-selection",
       reflect: true,
       type: Boolean,
     },
 
-    // Maps to aria-multiselectable
-    multiSelect: { reflect: true, type: Boolean, attribute: "multi-select" },
     searchBufferDelay: {
       attribute: "search-buffer-delay",
       type: Number,
@@ -114,6 +121,14 @@ export default class RoleListbox extends BaseElement {
     this.role = "presentation";
 
 
+    // Attributes
+    this.autocomplete = "off"
+    // Maps to aria-multiselectable
+    this.multiple = false
+    // selectedIndex: {},
+    // length: {},
+
+
     /**
      * @type {number}
      */
@@ -149,11 +164,6 @@ export default class RoleListbox extends BaseElement {
      * @type {HTMLElement[]}
      */
     this.options = [];
-
-    /**
-     * Allows multiple selections
-     */
-    this.multiSelect = false;
 
     /**
      * @type {null | HTMLElement}
@@ -225,8 +235,8 @@ export default class RoleListbox extends BaseElement {
       this.role = "listbox";
     }
 
-    if (changedProperties.has("multiSelect")) {
-      if (this.multiSelect === true) {
+    if (changedProperties.has("multiple")) {
+      if (this.multiple === true) {
         this.setAttribute("aria-multiselectable", "true");
       } else {
         this.removeAttribute("aria-multiselectable");
@@ -240,7 +250,7 @@ export default class RoleListbox extends BaseElement {
         if (previousActiveOption) {
           this.removeFocus(previousActiveOption);
 
-          if (!this.multiSelect) {
+          if (!this.multiple) {
             this.deselect(previousActiveOption);
           }
         }
@@ -305,7 +315,7 @@ export default class RoleListbox extends BaseElement {
 
     this.currentActiveOption = option;
 
-    if (this.multiSelect) {
+    if (this.multiple) {
       if (evt.shiftKey) {
         this.selectFromRangeStartToCurrent()
       } else {
@@ -380,7 +390,7 @@ export default class RoleListbox extends BaseElement {
     ) {
       evt.preventDefault();
 
-      if (this.multiSelect && this._searchBuffer === "" && evt.key === " ") {
+      if (this.multiple && this._searchBuffer === "" && evt.key === " ") {
         // Mark selected
         if (this.currentActiveOption) {
           this.toggleSelected(this.currentActiveOption);
@@ -401,7 +411,7 @@ export default class RoleListbox extends BaseElement {
       return;
     }
 
-    if (this.multiSelect) {
+    if (this.multiple) {
       // Multi-select has slight different interactions so we need to check different key combos
 
       if (ctrlKeyPressed && shiftKeyPressed) {
@@ -500,7 +510,7 @@ export default class RoleListbox extends BaseElement {
     }
 
 
-    if (this.multiSelect) { return }
+    if (this.multiple) { return }
 
     /**
      * We don't need to de-select previous items. Just from rangeStart -> currentIndex
@@ -665,7 +675,7 @@ export default class RoleListbox extends BaseElement {
     );
     this.setFocus(selectedElement);
 
-    if (!this.multiSelect) {
+    if (!this.multiple) {
       this.select(selectedElement);
     }
 
@@ -677,7 +687,6 @@ export default class RoleListbox extends BaseElement {
    */
   focusAt(index) {
     if (this.wrapSelection) {
-      console.log("Wrap");
       index = wrap(0, index, this.options.length - 1);
     } else {
       index = clamp(0, index, this.options.length - 1);
@@ -769,7 +778,7 @@ export default class RoleListbox extends BaseElement {
 
     const currentSelectedOption = selectedOptions[0];
 
-    if (!this.multiSelect) {
+    if (!this.multiple) {
       if (currentSelectedOption) {
         this.scrollOptionIntoView(currentSelectedOption)
       }

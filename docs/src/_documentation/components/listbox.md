@@ -199,3 +199,24 @@ When a multi-select listbox receives focus:
     </role-listbox>
   </template>
 </light-preview>
+
+### Pre-selected options
+
+<light-preview preview-mode="shadow-dom">
+  <template slot="code">
+    <role-listbox multiple style="height: 200px;">
+        <span slot="label">Land</span>
+        <role-option selected value="dog">Dog</role-option>
+        <role-option selected value="cat">Cat</role-option>
+        <role-option selected value="moose">Moose</role-option>
+        <role-option selected value="goose">Goose</role-option>
+        <role-option value="spider_monkey">Spider Monkey</role-option>
+        <role-option value="rock_lobster">Rock Lobster</role-option>
+        <role-option value="snapping_turtle">Snapping Turtle</role-option>
+        <role-option value="nessy">Nessy</role-option>
+        <role-option value="dragon">Dragon</role-option>
+        <role-option value="winged_horse">Winged Horse</role-option>
+        <role-option value="falcon">Falcon</role-option>
+    </role-listbox>
+  </template>
+</light-preview>

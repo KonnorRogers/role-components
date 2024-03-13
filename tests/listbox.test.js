@@ -152,3 +152,6 @@ test("Should properly set aria-selected and aria-checked for options in a multis
   isNotCurrent(0)
   isSelected(0)
 })
+
+test("Should properly add selected items to form values", async () => {
+})

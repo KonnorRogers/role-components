@@ -12,8 +12,8 @@ dependencies:
     specifier: ^0.0.4
     version: 0.0.4
   form-associated-helpers:
-    specifier: ^0.0.5
-    version: 0.0.5
+    specifier: ^0.0.7
+    version: 0.0.7
   lit:
     specifier: ^2.8.0
     version: 2.8.0
@@ -1519,8 +1519,8 @@ packages:
     dev: true
     optional: true
 
-  /bare-fs@2.2.1:
-    resolution: {integrity: sha512-+CjmZANQDFZWy4PGbVdmALIwmt33aJg8qTkVjClU6X4WmZkTPBDxRHiBn7fpqEWEfF3AC2io++erpViAIQbSjg==}
+  /bare-fs@2.2.2:
+    resolution: {integrity: sha512-X9IqgvyB0/VA5OZJyb5ZstoN62AzD7YxVGog13kkfYWYqJYcK0kcqLZ6TrmH5qr4/8//ejVcX4x/a0UvaogXmA==}
     requiresBuild: true
     dependencies:
       bare-events: 2.2.1
@@ -2164,8 +2164,8 @@ packages:
       signal-exit: 4.1.0
     dev: true
 
-  /form-associated-helpers@0.0.5:
-    resolution: {integrity: sha512-OTcCYvcDy9EJYh0p19z7ttwikBWrMURaEX5HFKvxIlmN/mIOj/YiqVTzifvgeaKPqlsoleyfzzc5qwQx1dm7fg==}
+  /form-associated-helpers@0.0.7:
+    resolution: {integrity: sha512-MXmVSfwtIiZDWq75gOQ37uGTW5UwBPl6BWuvX9zaOM+EN17O41pXaldLR4b8yJI8AVy1c27U17V9OwSwLBMqmQ==}
     dev: false
 
   /fresh@0.5.2:
@@ -3493,7 +3493,7 @@ packages:
       pump: 3.0.0
       tar-stream: 3.1.7
     optionalDependencies:
-      bare-fs: 2.2.1
+      bare-fs: 2.2.2
       bare-path: 2.1.0
     dev: true
 

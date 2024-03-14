@@ -4,21 +4,22 @@ import { BaseElement } from "../base-element.js";
 import { css, html } from "lit";
 import { hostStyles } from "../styles/host-styles.js";
 import { stringMap } from "../../internal/string-map.js";
+import { LitFormAssociatedMixin } from "form-associated-helpers/exports/mixins/lit-form-associated-mixin.js";
 
 /**
  * @customElement
  * @tagname role-option
  */
-export default class RoleOption extends BaseElement {
+export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
   static baseName = "role-option";
 
   static properties = {
+    ...LitFormAssociatedMixin.formProperties,
     selected: { reflect: true, type: Boolean },
     current: { reflect: true, type: Boolean },
     ariaCurrent: { reflect: true, attribute: "aria-current" },
     ariaSelected: { reflect: true, attribute: "aria-selected" },
-    role: { reflect: true },
-    value: {},
+    tabIndex: { reflect: true, attribute: "tabindex" }
   };
 
   static styles = [
@@ -55,6 +56,9 @@ export default class RoleOption extends BaseElement {
   constructor() {
     super();
     this.role = "option";
+    this.internals.role = "option"
+
+    this.tabIndex = "-1"
 
     /**
      * aria-selected is preferred for single-select listboxes / comboboxes
@@ -76,11 +80,11 @@ export default class RoleOption extends BaseElement {
     /**
      * @type {null | string}
      */
-    this.value = null;
+    this.value = "";
   }
 
   handleSlotChange() {
-    if (!this.hasAttribute("value") || this.value == null) {
+    if (!this.hasAttribute("value") || !this.value) {
       this.value = this.innerText;
     }
   }
@@ -90,27 +94,20 @@ export default class RoleOption extends BaseElement {
    * @param {import("lit").PropertyValues<this>} changedProperties
    */
   willUpdate(changedProperties) {
-    if (changedProperties.has("role")) {
-      changedProperties.set("role", "option");
-      this.role = "option";
-    }
-
-    if (changedProperties.has("selected") || changedProperties.has("ariaSelected")) {
+    if (changedProperties.has("selected")) {
       this.ariaSelected = this.selected.toString()
+
+      if (this.selected) {
+        const closestListbox = this.closest("[role='listbox']")
+        this.name = closestListbox?.getAttribute("name") || ""
+      } else {
+        // Set name to empty if its not selected.
+        this.name = ""
+      }
     }
-    if (changedProperties.has("current") || changedProperties.has("ariaCurrent")) {
+
+    if (changedProperties.has("current")) {
       this.ariaCurrent = this.current.toString()
-    }
-
-    if (changedProperties.has("value")) {
-      if (!this.hasAttribute("value") || this.value == null) {
-        this.value = this.innerText.split(/\s/).join("_");
-      }
-
-      if (this.value.match(/\s/)) {
-        console.warn("role-option had white space. Replacing with `_`");
-        this.value.split(/ /).join("_");
-      }
     }
 
     super.willUpdate(changedProperties);

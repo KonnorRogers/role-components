@@ -154,4 +154,25 @@ test("Should properly set aria-selected and aria-checked for options in a multis
 })
 
 test("Should properly add selected items to form values", async () => {
+  const form = await fixture(html`
+    <form>
+      <role-listbox multiple style="height: 200px;">
+        <role-option selected value="1">Option 1</role-option>
+        <role-option selected value="2">Option 2</role-option>
+        <role-option selected value="3">Option 3</role-option>
+        <role-option value="4">Option 4</role-option>
+        <role-option value="5">Option 5</role-option>
+        <role-option value="6">Option 6</role-option>
+        <role-option value="7">Option 7</role-option>
+        <role-option value="8">Option 8</role-option>
+        <role-option value="9">Option 9</role-option>
+        <role-option value="10">Option 10</role-option>
+      </role-listbox>
+
+      <button id="submit">Submit</button>
+    </form>
+  `)
+
+  console.log([...new FormData(form).entries()])
+
 })

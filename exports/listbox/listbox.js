@@ -37,7 +37,7 @@ import { LitFormAssociatedMixin } from "form-associated-helpers/exports/mixins/l
  *   The currently selected `<role-option>` has `[aria-selected="true"]`
  * @customElement
  * @tagname role-listbox
- * @implements HTMLSelectElement
+ * // implements HTMLSelectElement
  */
 export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   static baseName = "role-listbox";
@@ -45,6 +45,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   static shadowRootOptions = {...LitElement.shadowRootOptions, delegatesFocus: true }
 
   static properties = {
+    ...LitFormAssociatedMixin.formProperties,
     // Attributes
     autocomplete: {},
     // Maps to aria-multiselectable
@@ -265,7 +266,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    */
   setFocus(option) {
     option.setAttribute("aria-current", "true");
-    option.current = true;
+    /** @type {import("../option/option.js").default} */ (option).current = true;
   }
 
   /**
@@ -273,7 +274,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    */
   removeFocus(option) {
     option.setAttribute("aria-current", "false");
-    option.current = false;
+    /** @type {import("../option/option.js").default} */ (option).current = false;
   }
 
   /**
@@ -610,11 +611,11 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   }
 
   /**
-   * @param {HTMLOptionElement} selectedElement
+   * @param {HTMLElement} selectedElement
    */
   select(selectedElement) {
     this.selectedOptions = this.selectedOptions.concat(selectedElement);
-    selectedElement.selected = true;
+    /** @type {HTMLOptionElement} */ (selectedElement).selected = true;
 
     // We don't want to override normal HTMLOptionElement semantics.
     if (!(selectedElement instanceof HTMLOptionElement)) {
@@ -626,10 +627,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   }
 
   /**
-   * @param {HTMLOptionElement} selectedElement
+   * @param {HTMLElement} selectedElement
    */
   deselect(selectedElement) {
-    selectedElement.selected = false;
+    /** @type {HTMLOptionElement} */ (selectedElement).selected = false;
     selectedElement.setAttribute("aria-selected", "false");
   }
 
@@ -746,14 +747,18 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   handleFocusOut() {}
 
   /**
-   * @param {HTMLElement & { selected: boolean }} el
+   * @param {HTMLElement} el
    * @return {boolean}
    */
   isSelected(el) {
-    return (
-      el.selected === true || el.getAttribute("aria-selected") === "true" ||
-      (el instanceof HTMLOptionElement && el.hasAttribute("selected"))
-    );
+    const isOption = (el instanceof HTMLOptionElement || el.getAttribute("role") === "option")
+    const isSelected =
+      (
+        /** @type {HTMLOptionElement} */ (el).selected === true
+        || el.getAttribute("aria-selected") === "true"
+        || el.hasAttribute("selected")
+      )
+    return isOption && isSelected;
   }
 
   updateOptions() {
@@ -800,7 +805,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     let currentActiveOption = null;
 
     this.options.forEach((option) => {
-      const isActiveOption = option.current === true || option.getAttribute("aria-current") === "true";
+      const isActiveOption =
+        /** @type {import("../option/option.js").default} */ (option).current === true
+        || option.getAttribute("aria-current") === "true";
+
       if (!currentActiveOption && isActiveOption) {
         currentActiveOption = option;
       }

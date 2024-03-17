@@ -18,12 +18,12 @@ export default {
 
   ],
   browsers: [
-    // playwrightLauncher({
-    //   product: 'chromium',
-    //   launchOptions: {
-    //     headless: process.env.CI
-    //   }
-    // }),
+    playwrightLauncher({
+      product: 'chromium',
+      launchOptions: {
+        headless: process.env.CI
+      }
+    }),
     playwrightLauncher({ product: 'firefox', concurrency: 1 }),
     playwrightLauncher({ product: 'webkit' })
   ],

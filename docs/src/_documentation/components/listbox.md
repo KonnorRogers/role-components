@@ -3,19 +3,21 @@
 
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
-    <role-listbox style="height: 200px;">
-      <role-option value="1">Option 1</role-option>
-      <role-option value="2">Option 2</role-option>
-      <role-option value="3">Option 3</role-option>
-      <role-option value="4">Option 4</role-option>
-      <role-option value="5">Option 5</role-option>
-      <role-option value="6">Option 6</role-option>
-      <role-option value="7">Option 7</role-option>
-      <role-option value="8">Option 8</role-option>
-      <role-option value="9">Option 9</role-option>
-      <role-option value="10">Option 10</role-option>
-      <role-option value="Flamingo">Flamingo</role-option>
-    </role-listbox>
+    <form>
+      <role-listbox style="height: 200px;">
+        <role-option selected value="1">Option 1</role-option>
+        <role-option value="2">Option 2</role-option>
+        <role-option value="3">Option 3</role-option>
+        <role-option value="4">Option 4</role-option>
+        <role-option value="5">Option 5</role-option>
+        <role-option value="6">Option 6</role-option>
+        <role-option value="7">Option 7</role-option>
+        <role-option value="8">Option 8</role-option>
+        <role-option value="9">Option 9</role-option>
+        <role-option value="10">Option 10</role-option>
+        <role-option value="Flamingo">Flamingo</role-option>
+      </role-listbox>
+    </form>
   </template>
 </light-preview>
 
@@ -147,22 +149,26 @@ When a multi-select listbox receives focus:
   </template>
 </light-preview>
 
+## Multi Select Examples
+
 ### Multi-Select listbox
 
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
-    <role-listbox multiple style="height: 200px;">
-      <role-option value="1">Option 1</role-option>
-      <role-option value="2">Option 2</role-option>
-      <role-option value="3">Option 3</role-option>
-      <role-option value="4">Option 4</role-option>
-      <role-option value="5">Option 5</role-option>
-      <role-option value="6">Option 6</role-option>
-      <role-option value="7">Option 7</role-option>
-      <role-option value="8">Option 8</role-option>
-      <role-option value="9">Option 9</role-option>
-      <role-option value="10">Option 10</role-option>
-    </role-listbox>
+    <form>
+      <role-listbox multiple style="height: 200px;" name="select">
+        <role-option selected value="1">Option 1</role-option>
+        <role-option selected value="2">Option 2</role-option>
+        <role-option selected value="3">Option 3</role-option>
+        <role-option value="4">Option 4</role-option>
+        <role-option value="5">Option 5</role-option>
+        <role-option value="6">Option 6</role-option>
+        <role-option value="7">Option 7</role-option>
+        <role-option value="8">Option 8</role-option>
+        <role-option value="9">Option 9</role-option>
+        <role-option value="10">Option 10</role-option>
+      </role-listbox>
+    </form>
   </template>
 </light-preview>
 
@@ -204,8 +210,8 @@ When a multi-select listbox receives focus:
 
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
-    <role-listbox multiple style="height: 200px;">
-        <span slot="label">Land</span>
+    <form>
+      <role-listbox name="multiple-select" multiple style="height: 200px;">
         <role-option selected value="dog">Dog</role-option>
         <role-option selected value="cat">Cat</role-option>
         <role-option selected value="moose">Moose</role-option>
@@ -217,6 +223,7 @@ When a multi-select listbox receives focus:
         <role-option value="dragon">Dragon</role-option>
         <role-option value="winged_horse">Winged Horse</role-option>
         <role-option value="falcon">Falcon</role-option>
-    </role-listbox>
+      </role-listbox>
+    </form>
   </template>
 </light-preview>

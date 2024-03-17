@@ -1,4 +1,5 @@
 // import from general testing library
+// import "element-internals-polyfill"
 import { html, fixture, assert, aTimeout } from '@open-wc/testing';
 import { sendKeys } from "@web/test-runner-commands"
 
@@ -156,7 +157,7 @@ test("Should properly set aria-selected and aria-checked for options in a multis
 test("Should properly add selected items to form values", async () => {
   const form = await fixture(html`
     <form>
-      <role-listbox multiple style="height: 200px;">
+      <role-listbox multiple name="select" style="height: 200px;">
         <role-option selected value="1">Option 1</role-option>
         <role-option selected value="2">Option 2</role-option>
         <role-option selected value="3">Option 3</role-option>
@@ -168,11 +169,99 @@ test("Should properly add selected items to form values", async () => {
         <role-option value="9">Option 9</role-option>
         <role-option value="10">Option 10</role-option>
       </role-listbox>
-
-      <button id="submit">Submit</button>
     </form>
   `)
 
-  console.log([...new FormData(form).entries()])
+  const listbox = form.querySelector("role-listbox")
+  const entries = new FormData(form)
 
+  assert.lengthOf(entries.getAll("select"), 3)
+  assert.lengthOf(listbox.value.getAll("select"), 3)
+  assert.equal(entries.getAll("select")[0], "1")
+  assert.equal(entries.getAll("select")[1], "2")
+  assert.equal(entries.getAll("select")[2], "3")
+})
+
+test("Should properly reset to default selected items", async () => {
+  const form = await fixture(html`
+    <form>
+      <role-listbox multiple name="select" style="height: 200px;">
+        <role-option selected value="1">Option 1</role-option>
+        <role-option selected value="2">Option 2</role-option>
+        <role-option selected value="3">Option 3</role-option>
+        <role-option value="4">Option 4</role-option>
+        <role-option value="5">Option 5</role-option>
+        <role-option value="6">Option 6</role-option>
+        <role-option value="7">Option 7</role-option>
+        <role-option value="8">Option 8</role-option>
+        <role-option value="9">Option 9</role-option>
+        <role-option value="10">Option 10</role-option>
+      </role-listbox>
+    </form>
+  `)
+
+  const listbox = form.querySelector("role-listbox")
+
+  let entries = new FormData(form)
+
+  assert.lengthOf(entries.getAll("select"), 3)
+  assert.lengthOf(listbox.value.getAll("select"), 3)
+  assert.equal(entries.getAll("select")[0], "1")
+  assert.equal(entries.getAll("select")[1], "2")
+  assert.equal(entries.getAll("select")[2], "3")
+  listbox.deselectAll()
+
+  await aTimeout(1)
+
+  entries = new FormData(form)
+  assert.lengthOf(listbox.value.getAll("select"), 0)
+  assert.lengthOf(entries.getAll("select"), 0)
+
+  form.reset()
+
+  await aTimeout(1)
+  entries = new FormData(form)
+  assert.lengthOf(listbox.value.getAll("select"), 3)
+  assert.lengthOf(entries.getAll("select"), 3)
+})
+
+test("Should properly select and deselect all items", async () => {
+  const form = await fixture(html`
+    <form>
+      <role-listbox multiple name="select" style="height: 200px;">
+        <role-option selected value="1">Option 1</role-option>
+        <role-option selected value="2">Option 2</role-option>
+        <role-option selected value="3">Option 3</role-option>
+        <role-option value="4">Option 4</role-option>
+        <role-option value="5">Option 5</role-option>
+        <role-option value="6">Option 6</role-option>
+        <role-option value="7">Option 7</role-option>
+        <role-option value="8">Option 8</role-option>
+        <role-option value="9">Option 9</role-option>
+        <role-option value="10">Option 10</role-option>
+      </role-listbox>
+    </form>
+  `)
+
+  const listbox = form.querySelector("role-listbox")
+
+  let entries = new FormData(form)
+
+  assert.lengthOf(entries.getAll("select"), 3)
+  assert.lengthOf(listbox.value.getAll("select"), 3)
+  listbox.selectAll()
+
+  await aTimeout(1)
+
+  entries = new FormData(form)
+  assert.lengthOf(listbox.value.getAll("select"), 10)
+  assert.lengthOf(entries.getAll("select"), 10)
+
+  listbox.deselectAll()
+
+  await aTimeout(1)
+
+  entries = new FormData(form)
+  assert.lengthOf(listbox.value.getAll("select"), 0)
+  assert.lengthOf(entries.getAll("select"), 0)
 })

@@ -3,23 +3,24 @@
 import { BaseElement } from "../base-element.js";
 import { css, html } from "lit";
 import { hostStyles } from "../styles/host-styles.js";
-import { stringMap } from "../../internal/string-map.js";
-import { LitFormAssociatedMixin } from "form-associated-helpers/exports/mixins/lit-form-associated-mixin.js";
 
 /**
  * @customElement
  * @tagname role-option
  */
-export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
+export default class RoleOption extends BaseElement {
   static baseName = "role-option";
 
   static properties = {
-    ...LitFormAssociatedMixin.formProperties,
-    selected: { reflect: true, type: Boolean },
-    current: { reflect: true, type: Boolean },
+    role: { reflect: true },
+    defaultSelected: { type: Boolean, attribute: "selected" },
+    selected: { type: Boolean },
+    current: { type: Boolean },
     ariaCurrent: { reflect: true, attribute: "aria-current" },
     ariaSelected: { reflect: true, attribute: "aria-selected" },
-    tabIndex: { reflect: true, attribute: "tabindex" }
+    tabIndex: { type: Number, reflect: true, attribute: "tabindex" },
+    label: {},
+    value: {},
   };
 
   static styles = [
@@ -40,7 +41,7 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
         border: 2px solid transparent;
       }
 
-      :host [part~="base--active"] {
+      :host([aria-current="true"]) [part~="base"] {
         background-color: lightblue;
       }
 
@@ -56,9 +57,15 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
   constructor() {
     super();
     this.role = "option";
-    this.internals.role = "option"
 
-    this.tabIndex = "-1"
+    this.internals = {}
+
+    try {
+      this.internals = this.attachInternals()
+      this.internals.role = "option"
+    } catch (_e) {}
+
+    this.tabIndex = -1
 
     /**
      * aria-selected is preferred for single-select listboxes / comboboxes
@@ -81,6 +88,11 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
      * @type {null | string}
      */
     this.value = "";
+
+    /**
+     * @type {string}
+     */
+    this.label = this.innerText
   }
 
   handleSlotChange() {
@@ -94,16 +106,20 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
    * @param {import("lit").PropertyValues<this>} changedProperties
    */
   willUpdate(changedProperties) {
+    if (changedProperties.has("label")) {
+      if (!this.label) {
+        this.label = this.innerText
+      }
+    }
+
+    if (changedProperties.has("value")) {
+      if (this.value == null) {
+        this.value = this.innerText
+      }
+    }
+
     if (changedProperties.has("selected")) {
       this.ariaSelected = this.selected.toString()
-
-      if (this.selected) {
-        const closestListbox = this.closest("[role='listbox']")
-        this.name = closestListbox?.getAttribute("name") || ""
-      } else {
-        // Set name to empty if its not selected.
-        this.name = ""
-      }
     }
 
     if (changedProperties.has("current")) {
@@ -116,11 +132,7 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
   render() {
     return html`
       <div
-        part=${stringMap({
-          base: true,
-          "base--selected": this.selected,
-          "base--active": this.current,
-        })}
+        part="base"
       >
         <slot name="checkmark" ?invisible=${!this.selected}> ✓ </slot>
         <slot @slotchange=${this.handleSlotChange}></slot>

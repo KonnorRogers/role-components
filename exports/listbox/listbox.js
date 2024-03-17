@@ -42,7 +42,7 @@ import { LitFormAssociatedMixin } from "form-associated-helpers/exports/mixins/l
 export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   static baseName = "role-listbox";
 
-  static shadowRootOptions = {...LitElement.shadowRootOptions, delegatesFocus: true }
+  // static shadowRootOptions = {...LitElement.shadowRootOptions, delegatesFocus: true }
 
   static properties = {
     ...LitFormAssociatedMixin.formProperties,
@@ -211,10 +211,9 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    */
   connectedCallback() {
     super.connectedCallback();
-    this.debounce(() => this.updateOptions(), {
-      wait: 10,
-      key: this.updateOptions,
-    });
+
+    this.updateOptions()
+    this.updateComplete.then(() => this.updateOptions())
 
     /**
      * We only care about "role" attribute changes
@@ -224,6 +223,21 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       childList: true,
       attributeFilter: this.attributeFilter,
     });
+  }
+
+  /**
+   * @override
+   */
+  formResetCallback () {
+    super.formResetCallback()
+
+    this.options.forEach((option) => {
+      const opt = /** @type {HTMLOptionElement} */ (option)
+      opt.selected = opt.defaultSelected ?? opt.hasAttribute("selected")
+    })
+
+    this.updateOptions()
+
   }
 
   /**
@@ -622,6 +636,12 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       /** @type {HTMLElement} */ (selectedElement).setAttribute("aria-selected", "true");
     }
 
+
+    this.debounce(() => this.updateOptions(), {
+      key: this.updateOptions,
+      wait: 10
+    })
+
     const event = new SelectedEvent("role-selected", { selectedElement });
     selectedElement.dispatchEvent(event);
   }
@@ -632,6 +652,14 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   deselect(selectedElement) {
     /** @type {HTMLOptionElement} */ (selectedElement).selected = false;
     selectedElement.setAttribute("aria-selected", "false");
+
+    const event = new SelectedEvent("role-deselected", { selectedElement });
+    selectedElement.dispatchEvent(event);
+
+    this.debounce(() => this.updateOptions(), {
+      wait: 1,
+      key: this.updateOptions,
+    });
   }
 
   /**
@@ -641,6 +669,8 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     for (const opt of this.options) {
       this.select(opt);
     }
+
+    this.updateOptions()
   }
 
   /**
@@ -650,6 +680,8 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     for (const opt of this.options) {
       this.deselect(opt);
     }
+
+    this.updateOptions()
   }
 
   /**
@@ -756,7 +788,6 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       (
         /** @type {HTMLOptionElement} */ (el).selected === true
         || el.getAttribute("aria-selected") === "true"
-        || el.hasAttribute("selected")
       )
     return isOption && isSelected;
   }
@@ -771,6 +802,9 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
     if (this.options.length === 0) return;
 
+    let hasSelected = false
+    const multipleFormData = new FormData()
+
     this.options.forEach((el) => {
       // Sometimes people dont provide IDs, so we can fill it for them. We need ids for aria-activedescendant.
       // Because this lives in the lightDOM, we need to make sure we don't override existing ids.
@@ -778,6 +812,16 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
       if (this.isSelected(el)) {
         selectedOptions.push(el);
+
+        const value = /** @type {HTMLOptionElement} */ (el).value
+        if (!hasSelected) {
+          this.value = value
+          hasSelected = true
+        }
+
+        if (this.multiple && this.name) {
+          multipleFormData.append(this.name, value)
+        }
       }
     });
 
@@ -819,6 +863,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     });
 
     this.currentActiveOption = currentActiveOption
+    this.value = multipleFormData
   }
 
   /**

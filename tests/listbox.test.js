@@ -265,3 +265,22 @@ test("Should properly select and deselect all items", async () => {
   assert.lengthOf(listbox.value.getAll("select"), 0)
   assert.lengthOf(entries.getAll("select"), 0)
 })
+
+
+test("Should submit the text content of option 1", async () => {
+  const form = await fixture(html`
+    <form>
+      <role-listbox multiple name="select" style="height: 200px;">
+        <role-option selected>Option 1</role-option>
+      </role-listbox>
+    </form>
+  `)
+
+  const listbox = form.querySelector("role-listbox")
+
+  let entries = new FormData(form)
+
+  assert.lengthOf(entries.getAll("select"), 1)
+  assert.lengthOf(listbox.value.getAll("select"), 1)
+  assert.equal(entries.get("select"), listbox.querySelector("role-option").textContent)
+})

@@ -4,18 +4,21 @@ All notable changes to this project will be documented in this file.
 
 ## Next
 
-- Fix a bug
+- `<role-tooltip>`: Upgraded the version `floating-ui` and added the `composed-offset-parent` polyfill.
+- `<role-option>`: minor internal refactoring and added a number of properties to be closer to a proper `<option>`.
+- `<role-listbox>`: is now form associated and has been properly tested in NVDA / VoiceOver.
+- `<role-listbox>`: Styles have been moved to the host of the element and are keyed off of `[aria-selected]` and `[aria-current]` respectively.
 
 
-## 2.0.2
+## v2.0.2
 
 - Fix an errant `console.log` that was left in debugging 2.0.1
 
-## 2.0.1
+## v2.0.1
 
 - Fix a regression around lazily slotted elements improperly getting assigned `tabindex="0"`
 
-## 2.0.0
+## v2.0.0
 
 - Remove build step. Publish untranspiled files.
 - Move to Lit for rendering

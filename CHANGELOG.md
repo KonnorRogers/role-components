@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## Next
+
+- Fix a bug
+
+
 ## 2.0.2
 
 - Fix an errant `console.log` that was left in debugging 2.0.1

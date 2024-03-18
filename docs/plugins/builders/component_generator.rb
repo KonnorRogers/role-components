@@ -16,6 +16,11 @@ class Builders::ComponentGenerator < SiteBuilder
   end
 
   def build
+    # hook :resources, :post_init do
+    #   root = File.expand_path("../../../", __dir__)
+    #   `cd #{root} && pnpm run build`
+    # end
+
     generator do
       custom_elements_manifest_path = File.read(File.expand_path("../../../custom-elements.json", __dir__))
       manifest = JSON.parse(custom_elements_manifest_path)
@@ -41,7 +46,7 @@ class Builders::ComponentGenerator < SiteBuilder
         })
 
         path = metadata.parent_module.path
-        import_name = metadata.parent_module.exports.find { |hash| hash["name"] == "default" }["declaration"]["name"]
+        import_name = metadata.parent_module.exports.find { |hash| hash.name == "default" }.declaration.name
         tag_name = metadata.tagName
 
         slots = metadata.slots
@@ -102,7 +107,7 @@ class Builders::ComponentGenerator < SiteBuilder
         import "https://cdn.jsdelivr.net/npm/#{package_name}/#{path_without_ext}-register.js"
 
         // Manual Register
-        import #{import_name} from "https://cdn.jsdelivr.net/npm/#{package_name}/#{path}/#{path}"
+        import #{import_name} from "https://cdn.jsdelivr.net/npm/#{package_name}/#{path}"
         #{import_name}.define()
         // => Registers as <#{tag_name}>
       </script>
@@ -112,10 +117,10 @@ class Builders::ComponentGenerator < SiteBuilder
     bundler = <<~MD
       ```js
       // Auto registers as <#{tag_name}>
-      import "#{package_name}/#{path}/#{path_without_ext}-register.js"
+      import "#{package_name}/#{path_without_ext}-register.js"
 
       // Manual Register
-      import #{import_name} "#{package_name}/#{path}/#{path}"
+      import #{import_name} "#{package_name}/#{path}"
       #{import_name}.define()
       // => Registers as <#{tag_name}>
       ```

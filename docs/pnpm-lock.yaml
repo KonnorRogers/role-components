@@ -20,9 +20,12 @@ dependencies:
   '@shoelace-style/shoelace':
     specifier: ^2.7.0
     version: 2.7.0
+  bridgetown-quick-search:
+    specifier: 2.0.0
+    version: 2.0.0
   light-pen:
-    specifier: ^2.1.0
-    version: 2.1.0
+    specifier: ^3.0.2
+    version: 3.0.2
   lit:
     specifier: ^2.8.0
     version: 2.8.0
@@ -69,6 +72,13 @@ devDependencies:
     version: 1.0.0
 
 packages:
+
+  /@babel/runtime@7.24.0:
+    resolution: {integrity: sha512-Chk32uHMg6TnQdvw2e9IlqPpFX/6NLuK0Ys2PqLb7/gL5uFn9mXvK715FGLlOLQrcO4qIkNHkvPGktzzXexsFw==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      regenerator-runtime: 0.14.1
+    dev: false
 
   /@csstools/postcss-cascade-layers@1.1.1(postcss@8.4.19):
     resolution: {integrity: sha512-+KdYrpKC5TgomQr2DlZF4lDEpHcoxnj5IGddYYfBWJAKfj1JtuHUIqMa+E1pJJ+z3kvDViWMqyqPlG4Ja7amQA==}
@@ -467,10 +477,20 @@ packages:
     resolution: {integrity: sha512-kXOeFbfCm4fFf2A3WwVEeQj55tMZa8c8/f9AKHMobQMkzNUfUj+antR3fRPaZJawsa1aZiP/Da3ndpZrwEe4rQ==}
     dev: false
 
+  /@lit-labs/ssr-dom-shim@1.2.0:
+    resolution: {integrity: sha512-yWJKmpGE6lUURKAaIltoPIE/wrbY3TEkqQt+X0m+7fQNnAv0keydnYvbiJFP1PnMhizmIWRWOG5KLhYyc/xl+g==}
+    dev: false
+
   /@lit/reactive-element@1.6.2:
     resolution: {integrity: sha512-rDfl+QnCYjuIGf5xI2sVJWdYIi56CTCwWa+nidKYX6oIuBYwUbT/vX4qbUDlHiZKJ/3FRNQ/tWJui44p6/stSA==}
     dependencies:
       '@lit-labs/ssr-dom-shim': 1.1.1
+    dev: false
+
+  /@lit/reactive-element@1.6.3:
+    resolution: {integrity: sha512-QuTgnG52Poic7uM1AN5yJ09QMe0O28e10XzSvWDz02TJiiKee4stsiownEIadWm8nYzyDAyT+gKzUoZmiWQtsQ==}
+    dependencies:
+      '@lit-labs/ssr-dom-shim': 1.2.0
     dev: false
 
   /@material/mwc-icon@0.25.3:
@@ -603,6 +623,14 @@ packages:
     dependencies:
       fill-range: 7.0.1
     dev: true
+
+  /bridgetown-quick-search@2.0.0:
+    resolution: {integrity: sha512-Sr8RS0qu+a9o4dDbRyaDGEcVEWphuuhcZUnqqgL6EghDncE4QiocGB8xem6mPdT+gWAw22O5BznqH3DCb1WI+Q==}
+    dependencies:
+      '@babel/runtime': 7.24.0
+      lit: 2.8.0
+      lunr: 2.3.9
+    dev: false
 
   /browserslist@4.21.4:
     resolution: {integrity: sha512-CBHJJdDmgjl3daYjN5Cp5kbTf1mUhZoS+beLklHIvkOWscs83YAhLlF3Wsh/lciQYAcbBJgTOD44VtG31ZM4Hw==}
@@ -781,6 +809,10 @@ packages:
       to-regex-range: 5.0.1
     dev: true
 
+  /form-associated-helpers@0.0.4:
+    resolution: {integrity: sha512-Fy3dCmzxbaB08nRIr8GVBo5duQSN/NouCU4JjQ/Pd3bipsKMsV2RhPb3uGujEYYk/OIMDf9EPwRI5pQq6PsZpw==}
+    dev: false
+
   /fraction.js@4.2.0:
     resolution: {integrity: sha512-MhLuK+2gUcnZe8ZHlaaINnQLl0xRIGRfcGk2yl8xoQAfHrSsL3rYu6FCmBdkdbhc9EPlwyGHewaRsvwRMJtAlA==}
     dev: true
@@ -924,11 +956,12 @@ packages:
       web-component-define: 2.0.11
     dev: false
 
-  /light-pen@2.1.0:
-    resolution: {integrity: sha512-i7ea3HPjkE8iLTOBpvMWOrllLCUTbzfJr6m8/ffluDd6j4tqMir7p8FTE4HQSSHYgyHkAQ6m3xFgkjC1PBAGmg==}
+  /light-pen@3.0.2:
+    resolution: {integrity: sha512-XKq2owaReoBpl6HIZMPlr2L+fDABTteEp7QdAmH10t3Gh1jX670Xneicl/KkeE/vjjvm+aNuznkJvgfMNqpa8Q==}
     dependencies:
+      form-associated-helpers: 0.0.4
       lit: 2.8.0
-      prismjs: 1.29.0
+      prism-esm: 1.29.0-fix.4
       web-component-define: 2.0.11
     dev: false
 
@@ -1419,8 +1452,8 @@ packages:
       source-map-js: 1.0.2
     dev: true
 
-  /prismjs@1.29.0:
-    resolution: {integrity: sha512-Kx/1w86q/epKcmte75LNrEoT+lX8pBpavuAbvJWRXar7Hz8jrtF+e3vY751p0R8H9HdArwaCTNDDzHg/ScJK1Q==}
+  /prism-esm@1.29.0-fix.4:
+    resolution: {integrity: sha512-7/xHdroa6z9BhaGIpHA8SWIpefUz5l2eg2KT8pczFatyBiuni89q0jnKrScJbtFt1QkLwCRw36J1x8zUEGc5HA==}
     engines: {node: '>=6'}
     dev: false
 
@@ -1444,6 +1477,10 @@ packages:
     dependencies:
       picomatch: 2.3.1
     dev: true
+
+  /regenerator-runtime@0.14.1:
+    resolution: {integrity: sha512-dYnhHh0nJoMfnkZs6GmmhFknAGRrLznOu5nc9ML+EJxGvrx6H7teuevqVqCuPcPK//3eDrrjQhehXVx9cnkGdw==}
+    dev: false
 
   /resolve@1.22.1:
     resolution: {integrity: sha512-nBpuuYuY5jFsli/JIs1oldw6fOQCBioohqWZg/2hiaOybXOft4lonv85uDOKXdf8rhyK159cxU5cDcK/NKk8zw==}
@@ -1521,7 +1558,7 @@ packages:
   /web-component-define@2.0.11:
     resolution: {integrity: sha512-oMOngNGL5k55NyaQNnPz0UnV5QtPuESvSuxpBgmHHfNjb8sgVm4akAFq7HO4I5bhGHX8Of+0XnUZ3whBo0chgw==}
     dependencies:
-      '@lit/reactive-element': 1.6.2
+      '@lit/reactive-element': 1.6.3
       '@open-wc/dedupe-mixin': 1.4.0
     dev: false
 

@@ -12,6 +12,15 @@
           "name": "BaseElement",
           "members": [
             {
+              "kind": "field",
+              "name": "dependencies",
+              "static": true,
+              "type": {
+                "text": "Record<string, typeof HTMLElement>"
+              },
+              "readonly": true
+            },
+            {
               "kind": "method",
               "name": "debounce",
               "parameters": [
@@ -35,59 +44,12 @@
               }
             },
             {
-              "kind": "method",
-              "name": "addEventListener",
-              "parameters": [
-                {
-                  "name": "type",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
-                  }
-                },
-                {
-                  "name": "callback",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
-                  }
-                },
-                {
-                  "name": "options",
-                  "optional": true,
-                  "type": {
-                    "text": "boolean | AddEventListenerOptions"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              }
-            },
-            {
-              "kind": "method",
-              "name": "removeEventListener",
-              "parameters": [
-                {
-                  "name": "args",
-                  "type": {
-                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
-                }
-              }
-            },
-            {
               "kind": "field",
-              "name": "__eventMap__",
+              "name": "eventHandler",
               "type": {
-                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
+                "text": "EventHandler<this>"
               },
-              "default": "null"
+              "default": "new EventHandler(this)"
             },
             {
               "kind": "field",
@@ -117,6 +79,14 @@
           "name": "BaseElement",
           "declaration": {
             "name": "BaseElement",
+            "module": "exports/base-element.js"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "key",
+          "declaration": {
+            "name": "ctor",
             "module": "exports/base-element.js"
           }
         }
@@ -275,6 +245,10 @@
             },
             {
               "kind": "method",
+              "name": "formResetCallback"
+            },
+            {
+              "kind": "method",
               "name": "setFocus",
               "parameters": [
                 {
@@ -310,18 +284,6 @@
               "name": "click",
               "type": {
                 "text": "HTMLButtonElement[\"click\"]"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "focus",
-              "parameters": [
-                {
-                  "name": "options"
-                }
-              ],
-              "type": {
-                "text": "HTMLButtonElement[\"focus\"]"
               }
             },
             {
@@ -582,6 +544,14 @@
             },
             {
               "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "null | FormData | string"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
               "name": "selectedOptions",
               "type": {
                 "text": "HTMLElement[]"
@@ -611,12 +581,41 @@
             {
               "kind": "field",
               "name": "role",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"presentation\""
+            },
+            {
+              "kind": "field",
+              "name": "autocomplete",
               "privacy": "public",
               "type": {
                 "text": "string"
               },
-              "default": "\"listbox\"",
-              "attribute": "role",
+              "default": "\"off\"",
+              "attribute": "autocomplete"
+            },
+            {
+              "kind": "field",
+              "name": "multiple",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "multiple",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "tabIndex",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "tabindex",
               "reflects": true
             },
             {
@@ -653,18 +652,6 @@
             },
             {
               "kind": "field",
-              "name": "multiSelect",
-              "privacy": "public",
-              "type": {
-                "text": "boolean"
-              },
-              "description": "Allows multiple selections",
-              "default": "false",
-              "attribute": "multi-select",
-              "reflects": true
-            },
-            {
-              "kind": "field",
               "name": "currentActiveOption",
               "privacy": "public",
               "type": {
@@ -678,7 +665,7 @@
               "type": {
                 "text": "array"
               },
-              "default": "[\n      \"aria-current\",\n      \"selected\",\n      \"aria-selected\",\n      \"role\",\n    ]"
+              "default": "[\n      \"aria-current\",\n      \"selected\",\n      \"current\",\n      \"aria-selected\",\n      \"role\",\n    ]"
             },
             {
               "kind": "field",
@@ -688,6 +675,18 @@
                 "text": "MutationObserver"
               },
               "default": "new MutationObserver((mutations) => {\n      for (const { attributeName } of mutations) {\n        if (attributeName == null) continue;\n\n        if (this.attributeFilter.includes(attributeName)) {\n          this.debounce(() => this.updateOptions(), {\n            wait: 10,\n            key: this.updateOptions,\n          });\n        }\n\n        // We really care about the mutations, we just need to know if things are updating.\n        break;\n      }\n    })"
+            },
+            {
+              "kind": "field",
+              "name": "",
+              "privacy": "public",
+              "attribute": ""
+            },
+            {
+              "kind": "field",
+              "name": "length",
+              "privacy": "public",
+              "attribute": "length"
             },
             {
               "kind": "field",
@@ -717,6 +716,19 @@
               "default": "null"
             },
             {
+              "kind": "field",
+              "name": "dependencies",
+              "static": true,
+              "type": {
+                "text": "Record<string, typeof HTMLElement>"
+              },
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
               "kind": "method",
               "name": "debounce",
               "parameters": [
@@ -744,67 +756,12 @@
               }
             },
             {
-              "kind": "method",
-              "name": "addEventListener",
-              "parameters": [
-                {
-                  "name": "type",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
-                  }
-                },
-                {
-                  "name": "callback",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
-                  }
-                },
-                {
-                  "name": "options",
-                  "optional": true,
-                  "type": {
-                    "text": "boolean | AddEventListenerOptions"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "removeEventListener",
-              "parameters": [
-                {
-                  "name": "args",
-                  "type": {
-                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
               "kind": "field",
-              "name": "__eventMap__",
+              "name": "eventHandler",
               "type": {
-                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
+                "text": "EventHandler<this>"
               },
-              "default": "null",
+              "default": "new EventHandler(this)",
               "inheritedFrom": {
                 "name": "BaseElement",
                 "module": "exports/base-element.js"
@@ -825,20 +782,36 @@
           ],
           "attributes": [
             {
+              "name": "",
+              "fieldName": ""
+            },
+            {
+              "name": "autocomplete",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"off\"",
+              "fieldName": "autocomplete"
+            },
+            {
+              "name": "multiple",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "multiple"
+            },
+            {
+              "name": "length",
+              "fieldName": "length"
+            },
+            {
               "name": "label",
               "type": {
                 "text": "string"
               },
               "default": "\"\"",
               "fieldName": "label"
-            },
-            {
-              "name": "role",
-              "type": {
-                "text": "string"
-              },
-              "default": "\"listbox\"",
-              "fieldName": "role"
             },
             {
               "name": "wrap-selection",
@@ -849,15 +822,6 @@
               "fieldName": "wrapSelection"
             },
             {
-              "name": "multi-select",
-              "type": {
-                "text": "boolean"
-              },
-              "description": "Allows multiple selections",
-              "default": "false",
-              "fieldName": "multiSelect"
-            },
-            {
               "name": "search-buffer-delay",
               "type": {
                 "text": "number"
@@ -865,6 +829,20 @@
               "description": "Delay before the search buffer returns to an empty string",
               "default": "1000",
               "fieldName": "searchBufferDelay"
+            },
+            {
+              "name": "tabindex",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "tabIndex"
+            }
+          ],
+          "mixins": [
+            {
+              "name": "LitFormAssociatedMixin",
+              "package": "form-associated-helpers/exports/mixins/lit-form-associated-mixin.js"
             }
           ],
           "superclass": {
@@ -936,6 +914,25 @@
             },
             {
               "kind": "field",
+              "name": "internals",
+              "type": {
+                "text": "object"
+              },
+              "default": "{}"
+            },
+            {
+              "kind": "field",
+              "name": "tabIndex",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "attribute": "tabindex",
+              "reflects": true
+            },
+            {
+              "kind": "field",
               "name": "selected",
               "privacy": "public",
               "type": {
@@ -943,8 +940,18 @@
               },
               "description": "aria-selected is preferred for single-select listboxes / comboboxes",
               "default": "false",
-              "attribute": "selected",
-              "reflects": true
+              "attribute": "selected"
+            },
+            {
+              "kind": "field",
+              "name": "current",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "aria-current to show the currently focused option",
+              "default": "false",
+              "attribute": "current"
             },
             {
               "kind": "field",
@@ -961,8 +968,26 @@
               "type": {
                 "text": "null | string"
               },
-              "default": "null",
+              "default": "\"\"",
               "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "defaultSelected",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "selected"
             },
             {
               "kind": "field",
@@ -970,6 +995,26 @@
               "privacy": "public",
               "attribute": "aria-current",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "ariaSelected",
+              "privacy": "public",
+              "attribute": "aria-selected",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "static": true,
+              "type": {
+                "text": "Record<string, typeof HTMLElement>"
+              },
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
             },
             {
               "kind": "method",
@@ -999,67 +1044,12 @@
               }
             },
             {
-              "kind": "method",
-              "name": "addEventListener",
-              "parameters": [
-                {
-                  "name": "type",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
-                  }
-                },
-                {
-                  "name": "callback",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
-                  }
-                },
-                {
-                  "name": "options",
-                  "optional": true,
-                  "type": {
-                    "text": "boolean | AddEventListenerOptions"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "removeEventListener",
-              "parameters": [
-                {
-                  "name": "args",
-                  "type": {
-                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
               "kind": "field",
-              "name": "__eventMap__",
+              "name": "eventHandler",
               "type": {
-                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
+                "text": "EventHandler<this>"
               },
-              "default": "null",
+              "default": "new EventHandler(this)",
               "inheritedFrom": {
                 "name": "BaseElement",
                 "module": "exports/base-element.js"
@@ -1080,19 +1070,6 @@
           ],
           "attributes": [
             {
-              "name": "selected",
-              "type": {
-                "text": "boolean"
-              },
-              "description": "aria-selected is preferred for single-select listboxes / comboboxes",
-              "default": "false",
-              "fieldName": "selected"
-            },
-            {
-              "name": "aria-current",
-              "fieldName": "ariaCurrent"
-            },
-            {
               "name": "role",
               "type": {
                 "text": "string"
@@ -1101,11 +1078,52 @@
               "fieldName": "role"
             },
             {
+              "name": "selected",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "selected",
+              "description": "aria-selected is preferred for single-select listboxes / comboboxes",
+              "default": "false"
+            },
+            {
+              "name": "current",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "aria-current to show the currently focused option",
+              "default": "false",
+              "fieldName": "current"
+            },
+            {
+              "name": "aria-current",
+              "fieldName": "ariaCurrent"
+            },
+            {
+              "name": "aria-selected",
+              "fieldName": "ariaSelected"
+            },
+            {
+              "name": "tabindex",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "fieldName": "tabIndex"
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "label"
+            },
+            {
               "name": "value",
               "type": {
                 "text": "null | string"
               },
-              "default": "null",
+              "default": "\"\"",
               "fieldName": "value"
             }
           ],
@@ -1173,6 +1191,19 @@
               "reflects": true
             },
             {
+              "kind": "field",
+              "name": "dependencies",
+              "static": true,
+              "type": {
+                "text": "Record<string, typeof HTMLElement>"
+              },
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
               "kind": "method",
               "name": "debounce",
               "parameters": [
@@ -1200,67 +1231,12 @@
               }
             },
             {
-              "kind": "method",
-              "name": "addEventListener",
-              "parameters": [
-                {
-                  "name": "type",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
-                  }
-                },
-                {
-                  "name": "callback",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
-                  }
-                },
-                {
-                  "name": "options",
-                  "optional": true,
-                  "type": {
-                    "text": "boolean | AddEventListenerOptions"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "removeEventListener",
-              "parameters": [
-                {
-                  "name": "args",
-                  "type": {
-                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
               "kind": "field",
-              "name": "__eventMap__",
+              "name": "eventHandler",
               "type": {
-                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
+                "text": "EventHandler<this>"
               },
-              "default": "null",
+              "default": "new EventHandler(this)",
               "inheritedFrom": {
                 "name": "BaseElement",
                 "module": "exports/base-element.js"
@@ -1498,6 +1474,19 @@
               "reflects": true
             },
             {
+              "kind": "field",
+              "name": "dependencies",
+              "static": true,
+              "type": {
+                "text": "Record<string, typeof HTMLElement>"
+              },
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
               "kind": "method",
               "name": "debounce",
               "parameters": [
@@ -1525,67 +1514,12 @@
               }
             },
             {
-              "kind": "method",
-              "name": "addEventListener",
-              "parameters": [
-                {
-                  "name": "type",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
-                  }
-                },
-                {
-                  "name": "callback",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
-                  }
-                },
-                {
-                  "name": "options",
-                  "optional": true,
-                  "type": {
-                    "text": "boolean | AddEventListenerOptions"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "removeEventListener",
-              "parameters": [
-                {
-                  "name": "args",
-                  "type": {
-                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
               "kind": "field",
-              "name": "__eventMap__",
+              "name": "eventHandler",
               "type": {
-                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
+                "text": "EventHandler<this>"
               },
-              "default": "null",
+              "default": "new EventHandler(this)",
               "inheritedFrom": {
                 "name": "BaseElement",
                 "module": "exports/base-element.js"
@@ -1888,7 +1822,7 @@
               "type": {
                 "text": "Array<[keyof GlobalEventHandlersEventMap, (evt: Event | KeyboardEvent) => void]>"
               },
-              "default": "[\n      [\"pointerenter\", this.show],\n      [\"pointerleave\", this.hide],\n      [\"pointercancel\", this.hide],\n      [\"pointerup\", this.hide],\n      [\"focusin\", this.show],\n      [\"focusout\", this.hide],\n      [\"keydown\", this.keyboardHide],\n    ]"
+              "default": "[\n      [\"pointerenter\", show],\n      [\"pointerleave\", hide],\n      [\"pointercancel\", hide],\n      [\"pointerup\", hide],\n      [\"focusin\", show],\n      [\"focusout\", hide],\n      [\"keydown\", keyboardHide],\n    ]"
             },
             {
               "kind": "field",
@@ -1896,6 +1830,19 @@
               "privacy": "public",
               "attribute": "id",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "static": true,
+              "type": {
+                "text": "Record<string, typeof HTMLElement>"
+              },
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
             },
             {
               "kind": "method",
@@ -1925,67 +1872,12 @@
               }
             },
             {
-              "kind": "method",
-              "name": "addEventListener",
-              "parameters": [
-                {
-                  "name": "type",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? keyof HTMLElementEventMap : never"
-                  }
-                },
-                {
-                  "name": "callback",
-                  "type": {
-                    "text": "K extends keyof HTMLElementEventMap ? ((this: HTMLElement, evt: HTMLElementEventMap[K]) => any) : never"
-                  }
-                },
-                {
-                  "name": "options",
-                  "optional": true,
-                  "type": {
-                    "text": "boolean | AddEventListenerOptions"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "removeEventListener",
-              "parameters": [
-                {
-                  "name": "args",
-                  "type": {
-                    "text": "Parameters<HTMLElement[\"removeEventListener\"]>"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "ReturnType<HTMLElement[\"removeEventListener\"]>"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
               "kind": "field",
-              "name": "__eventMap__",
+              "name": "eventHandler",
               "type": {
-                "text": "Map<(this: HTMLElement, evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => any, {handleEvent: HTMLElementEventMap[keyof HTMLElementEventMap]}> | null"
+                "text": "EventHandler<this>"
               },
-              "default": "null",
+              "default": "new EventHandler(this)",
               "inheritedFrom": {
                 "name": "BaseElement",
                 "module": "exports/base-element.js"
@@ -2112,6 +2004,40 @@
           "declaration": {
             "name": "clamp",
             "module": "internal/clamp.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "internal/debounce.js",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "debounce",
+          "parameters": [
+            {
+              "name": "callback",
+              "type": {
+                "text": "T"
+              }
+            },
+            {
+              "name": "wait",
+              "type": {
+                "text": "number"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "debounce",
+          "declaration": {
+            "name": "debounce",
+            "module": "internal/debounce.js"
           }
         }
       ]

@@ -8,10 +8,16 @@ import { clamp } from "../../internal/clamp.js";
 import { uuidv4 } from "../../internal/uuid.js";
 import { SelectedEvent } from "../events/selected-event.js";
 import { isMacOs } from "../../internal/is-mac-os.js";
+import { LitFormAssociatedMixin } from "form-associated-helpers/exports/mixins/lit-form-associated-mixin.js";
 
 /**
  * @typedef {{ from: number, to: number }} Range
  */
+
+/**
+ * @type {import("form-associated-helpers/exports/mixins/lit-form-associated-mixin.js").LitFormAssociatedMixin["formProperties"]}
+ */
+const formProperties = LitFormAssociatedMixin.formProperties
 
 /**
  * A listbox following the W3C Listbox pattern.
@@ -37,21 +43,26 @@ import { isMacOs } from "../../internal/is-mac-os.js";
  * @customElement
  * @tagname role-listbox
  */
-export default class RoleListbox extends BaseElement {
+export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   static baseName = "role-listbox";
 
+  // static shadowRootOptions = {...LitElement.shadowRootOptions, delegatesFocus: true }
+
   static properties = {
+    ...formProperties,
     // Attributes
+    autocomplete: {},
+    // Maps to aria-multiselectable
+    multiple: { reflect: true, type: Boolean },
+    length: {},
+
     label: { reflect: true },
-    role: { reflect: true },
     wrapSelection: {
       attribute: "wrap-selection",
       reflect: true,
       type: Boolean,
     },
 
-    // Maps to aria-multiselectable
-    multiSelect: { reflect: true, type: Boolean, attribute: "multi-select" },
     searchBufferDelay: {
       attribute: "search-buffer-delay",
       type: Number,
@@ -65,6 +76,7 @@ export default class RoleListbox extends BaseElement {
     options: { attribute: false, state: true },
     currentActiveOption: { attribute: false, state: true },
     rangeStartOption: { attribute: false, state: true },
+    tabIndex: { reflect: true, attribute: "tabindex", type: Number }
   };
 
   static styles = [
@@ -93,6 +105,11 @@ export default class RoleListbox extends BaseElement {
     super();
 
     /**
+     * @type {null | FormData | string}
+     */
+    this.value = null
+
+    /**
      * @type {HTMLElement[]}
      */
     this.selectedOptions = [];
@@ -110,7 +127,19 @@ export default class RoleListbox extends BaseElement {
     /**
      * @type {string}
      */
-    this.role = "listbox";
+    this.role = "presentation";
+
+
+    // Attributes
+    this.autocomplete = "off"
+    // Maps to aria-multiselectable
+    this.multiple = false
+
+    /**
+     * @type {number}
+     */
+    this.tabIndex = 0
+
 
     /**
      * @type {string}
@@ -143,11 +172,6 @@ export default class RoleListbox extends BaseElement {
     this.options = [];
 
     /**
-     * Allows multiple selections
-     */
-    this.multiSelect = false;
-
-    /**
      * @type {null | HTMLElement}
      */
     this.currentActiveOption = null;
@@ -155,6 +179,7 @@ export default class RoleListbox extends BaseElement {
     this.attributeFilter = [
       "aria-current",
       "selected",
+      "current",
       "aria-selected",
       "role",
     ];
@@ -179,11 +204,10 @@ export default class RoleListbox extends BaseElement {
       }
     });
 
-    this.addEventListener("keydown", this.handleKeyDown);
-    this.addEventListener("click", this.handleOptionClick);
-    this.addEventListener("pointermove", this.handleOptionHover);
-
-    this.addEventListener("focusin", this.handleFocusIn);
+    this.addEventListener("keydown", this.eventHandler.get(this.handleKeyDown));
+    this.addEventListener("click", this.eventHandler.get(this.handleOptionClick));
+    this.addEventListener("pointermove", this.eventHandler.get(this.handleOptionHover))
+    this.addEventListener("focusin", this.eventHandler.get(this.handleFocusIn));
   }
 
   /**
@@ -193,10 +217,8 @@ export default class RoleListbox extends BaseElement {
   connectedCallback() {
     super.connectedCallback();
 
-    this.debounce(() => this.updateOptions(), {
-      wait: 10,
-      key: this.updateOptions,
-    });
+    this.updateOptions()
+    this.updateComplete.then(() => this.updateOptions())
 
     /**
      * We only care about "role" attribute changes
@@ -210,6 +232,21 @@ export default class RoleListbox extends BaseElement {
 
   /**
    * @override
+   */
+  formResetCallback () {
+    super.formResetCallback()
+
+    this.options.forEach((option) => {
+      const opt = /** @type {HTMLOptionElement} */ (option)
+      opt.selected = opt.defaultSelected ?? opt.hasAttribute("selected")
+    })
+
+    this.updateOptions()
+
+  }
+
+  /**
+   * @override
    * @param {import("lit").PropertyValues<this>} changedProperties
    */
   willUpdate(changedProperties) {
@@ -218,8 +255,8 @@ export default class RoleListbox extends BaseElement {
       this.role = "listbox";
     }
 
-    if (changedProperties.has("multiSelect")) {
-      if (this.multiSelect === true) {
+    if (changedProperties.has("multiple")) {
+      if (this.multiple === true) {
         this.setAttribute("aria-multiselectable", "true");
       } else {
         this.removeAttribute("aria-multiselectable");
@@ -233,7 +270,7 @@ export default class RoleListbox extends BaseElement {
         if (previousActiveOption) {
           this.removeFocus(previousActiveOption);
 
-          if (!this.multiSelect) {
+          if (!this.multiple) {
             this.deselect(previousActiveOption);
           }
         }
@@ -248,6 +285,7 @@ export default class RoleListbox extends BaseElement {
    */
   setFocus(option) {
     option.setAttribute("aria-current", "true");
+    /** @type {import("../option/option.js").default} */ (option).current = true;
   }
 
   /**
@@ -255,13 +293,15 @@ export default class RoleListbox extends BaseElement {
    */
   removeFocus(option) {
     option.setAttribute("aria-current", "false");
+    /** @type {import("../option/option.js").default} */ (option).current = false;
   }
 
   /**
    * @type {HTMLElement | null | undefined}
    */
   get baseElement() {
-    return this.shadowRoot?.querySelector("[part~='base']");
+    // return this.shadowRoot?.querySelector("[part~='base']");
+    return this
   }
 
   /**
@@ -273,18 +313,7 @@ export default class RoleListbox extends BaseElement {
 
     if (baseElement) {
       baseElement.focus();
-    }
-  }
-
-  /**
-   * @override
-   * @type HTMLButtonElement["focus"]
-   */
-  focus(options) {
-    const baseElement = this.baseElement;
-
-    if (baseElement) {
-      baseElement.focus(options);
+      // baseElement.click();
     }
   }
 
@@ -306,7 +335,7 @@ export default class RoleListbox extends BaseElement {
 
     this.currentActiveOption = option;
 
-    if (this.multiSelect) {
+    if (this.multiple) {
       if (evt.shiftKey) {
         this.selectFromRangeStartToCurrent()
       } else {
@@ -381,7 +410,7 @@ export default class RoleListbox extends BaseElement {
     ) {
       evt.preventDefault();
 
-      if (this.multiSelect && this._searchBuffer === "" && evt.key === " ") {
+      if (this.multiple && this._searchBuffer === "" && evt.key === " ") {
         // Mark selected
         if (this.currentActiveOption) {
           this.toggleSelected(this.currentActiveOption);
@@ -402,7 +431,7 @@ export default class RoleListbox extends BaseElement {
       return;
     }
 
-    if (this.multiSelect) {
+    if (this.multiple) {
       // Multi-select has slight different interactions so we need to check different key combos
 
       if (ctrlKeyPressed && shiftKeyPressed) {
@@ -499,6 +528,9 @@ export default class RoleListbox extends BaseElement {
         break;
       }
     }
+
+
+    if (this.multiple) { return }
 
     /**
      * We don't need to de-select previous items. Just from rangeStart -> currentIndex
@@ -602,12 +634,18 @@ export default class RoleListbox extends BaseElement {
    */
   select(selectedElement) {
     this.selectedOptions = this.selectedOptions.concat(selectedElement);
-    selectedElement.setAttribute("selected", "");
+    /** @type {HTMLOptionElement} */ (selectedElement).selected = true;
 
     // We don't want to override normal HTMLOptionElement semantics.
     if (!(selectedElement instanceof HTMLOptionElement)) {
-      selectedElement.setAttribute("aria-selected", "true");
+      /** @type {HTMLElement} */ (selectedElement).setAttribute("aria-selected", "true");
     }
+
+
+    this.debounce(() => this.updateOptions(), {
+      key: this.updateOptions,
+      wait: 10
+    })
 
     const event = new SelectedEvent("role-selected", { selectedElement });
     selectedElement.dispatchEvent(event);
@@ -617,8 +655,16 @@ export default class RoleListbox extends BaseElement {
    * @param {HTMLElement} selectedElement
    */
   deselect(selectedElement) {
-    selectedElement.removeAttribute("selected");
+    /** @type {HTMLOptionElement} */ (selectedElement).selected = false;
     selectedElement.setAttribute("aria-selected", "false");
+
+    const event = new SelectedEvent("role-deselected", { selectedElement });
+    selectedElement.dispatchEvent(event);
+
+    this.debounce(() => this.updateOptions(), {
+      wait: 1,
+      key: this.updateOptions,
+    });
   }
 
   /**
@@ -628,6 +674,8 @@ export default class RoleListbox extends BaseElement {
     for (const opt of this.options) {
       this.select(opt);
     }
+
+    this.updateOptions()
   }
 
   /**
@@ -637,6 +685,8 @@ export default class RoleListbox extends BaseElement {
     for (const opt of this.options) {
       this.deselect(opt);
     }
+
+    this.updateOptions()
   }
 
   /**
@@ -663,7 +713,7 @@ export default class RoleListbox extends BaseElement {
     );
     this.setFocus(selectedElement);
 
-    if (!this.multiSelect) {
+    if (!this.multiple) {
       this.select(selectedElement);
     }
 
@@ -675,7 +725,6 @@ export default class RoleListbox extends BaseElement {
    */
   focusAt(index) {
     if (this.wrapSelection) {
-      console.log("Wrap");
       index = wrap(0, index, this.options.length - 1);
     } else {
       index = clamp(0, index, this.options.length - 1);
@@ -739,10 +788,13 @@ export default class RoleListbox extends BaseElement {
    * @return {boolean}
    */
   isSelected(el) {
-    return (
-      el.getAttribute("aria-selected") === "true" ||
-      (el instanceof HTMLOptionElement && el.hasAttribute("selected"))
-    );
+    const isOption = (el instanceof HTMLOptionElement || el.getAttribute("role") === "option")
+    const isSelected =
+      (
+        /** @type {HTMLOptionElement} */ (el).selected === true
+        || el.getAttribute("aria-selected") === "true"
+      )
+    return isOption && isSelected;
   }
 
   updateOptions() {
@@ -755,6 +807,9 @@ export default class RoleListbox extends BaseElement {
 
     if (this.options.length === 0) return;
 
+    let hasSelected = false
+    const multipleFormData = new FormData()
+
     this.options.forEach((el) => {
       // Sometimes people dont provide IDs, so we can fill it for them. We need ids for aria-activedescendant.
       // Because this lives in the lightDOM, we need to make sure we don't override existing ids.
@@ -762,12 +817,22 @@ export default class RoleListbox extends BaseElement {
 
       if (this.isSelected(el)) {
         selectedOptions.push(el);
+
+        const value = /** @type {HTMLOptionElement} */ (el).value
+        if (!hasSelected) {
+          this.value = value
+          hasSelected = true
+        }
+
+        if (this.multiple && this.name) {
+          multipleFormData.append(this.name, value)
+        }
       }
     });
 
     const currentSelectedOption = selectedOptions[0];
 
-    if (!this.multiSelect) {
+    if (!this.multiple) {
       if (currentSelectedOption) {
         this.scrollOptionIntoView(currentSelectedOption)
       }
@@ -789,7 +854,10 @@ export default class RoleListbox extends BaseElement {
     let currentActiveOption = null;
 
     this.options.forEach((option) => {
-      const isActiveOption = option.getAttribute("aria-current") === "true";
+      const isActiveOption =
+        /** @type {import("../option/option.js").default} */ (option).current === true
+        || option.getAttribute("aria-current") === "true";
+
       if (!currentActiveOption && isActiveOption) {
         currentActiveOption = option;
       }
@@ -800,6 +868,7 @@ export default class RoleListbox extends BaseElement {
     });
 
     this.currentActiveOption = currentActiveOption
+    this.value = multipleFormData
   }
 
   /**
@@ -820,9 +889,8 @@ export default class RoleListbox extends BaseElement {
 
       <div
         part="base"
-        tabindex="1"
-        role="region"
-        aria-labelledby="listbox-label"
+        role="group"
+        tabindex="-1"
       >
         <slot></slot>
       </div>

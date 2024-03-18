@@ -39,11 +39,11 @@ export default class RoleToolbar extends BaseElement {
      */
     this.orientation = "horizontal";
 
-    this.addEventListener("click", this.handleClick);
-    this.addEventListener("keydown", this.handleKeyDown);
+    this.addEventListener("click", this.eventHandler.get(this.handleClick));
+    this.addEventListener("keydown", this.eventHandler.get(this.handleKeyDown));
 
     // Handles nested slot issues focusing the toolbar itself.
-    this.addEventListener("focus", this.handleClick);
+    this.addEventListener("focus", this.eventHandler.get(this.handleClick));
   }
 
   /**

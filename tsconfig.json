@@ -8,6 +8,7 @@
     "strict": true,
     "target": "ESNext",
     "allowSyntheticDefaultImports": true,
+    "useDefineForClassFields": false,
     "moduleResolution": "NodeNext",
     "module": "NodeNext",
     "lib": ["ESNext", "DOM"],

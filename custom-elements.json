@@ -12,6 +12,15 @@
           "name": "BaseElement",
           "members": [
             {
+              "kind": "field",
+              "name": "dependencies",
+              "static": true,
+              "type": {
+                "text": "Record<string, typeof HTMLElement>"
+              },
+              "readonly": true
+            },
+            {
               "kind": "method",
               "name": "debounce",
               "parameters": [
@@ -70,6 +79,14 @@
           "name": "BaseElement",
           "declaration": {
             "name": "BaseElement",
+            "module": "exports/base-element.js"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "key",
+          "declaration": {
+            "name": "ctor",
             "module": "exports/base-element.js"
           }
         }
@@ -228,6 +245,10 @@
             },
             {
               "kind": "method",
+              "name": "formResetCallback"
+            },
+            {
+              "kind": "method",
               "name": "setFocus",
               "parameters": [
                 {
@@ -383,7 +404,7 @@
                 {
                   "name": "selectedElement",
                   "type": {
-                    "text": "HTMLOptionElement"
+                    "text": "HTMLElement"
                   }
                 }
               ]
@@ -395,7 +416,7 @@
                 {
                   "name": "selectedElement",
                   "type": {
-                    "text": "HTMLOptionElement"
+                    "text": "HTMLElement"
                   }
                 }
               ]
@@ -494,7 +515,7 @@
                 {
                   "name": "el",
                   "type": {
-                    "text": "HTMLElement & { selected: boolean }"
+                    "text": "HTMLElement"
                   }
                 }
               ],
@@ -520,6 +541,14 @@
                 }
               ],
               "description": "Users dont always provide ids on elements, and we need to make sure the id isn't already taken."
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "null | FormData | string"
+              },
+              "default": "null"
             },
             {
               "kind": "field",
@@ -552,12 +581,30 @@
             {
               "kind": "field",
               "name": "role",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"presentation\""
+            },
+            {
+              "kind": "field",
+              "name": "autocomplete",
               "privacy": "public",
               "type": {
                 "text": "string"
               },
-              "default": "\"presentation\"",
-              "attribute": "role",
+              "default": "\"off\"",
+              "attribute": "autocomplete"
+            },
+            {
+              "kind": "field",
+              "name": "multiple",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "multiple",
               "reflects": true
             },
             {
@@ -605,18 +652,6 @@
             },
             {
               "kind": "field",
-              "name": "multiSelect",
-              "privacy": "public",
-              "type": {
-                "text": "boolean"
-              },
-              "description": "Allows multiple selections",
-              "default": "false",
-              "attribute": "multi-select",
-              "reflects": true
-            },
-            {
-              "kind": "field",
               "name": "currentActiveOption",
               "privacy": "public",
               "type": {
@@ -640,6 +675,18 @@
                 "text": "MutationObserver"
               },
               "default": "new MutationObserver((mutations) => {\n      for (const { attributeName } of mutations) {\n        if (attributeName == null) continue;\n\n        if (this.attributeFilter.includes(attributeName)) {\n          this.debounce(() => this.updateOptions(), {\n            wait: 10,\n            key: this.updateOptions,\n          });\n        }\n\n        // We really care about the mutations, we just need to know if things are updating.\n        break;\n      }\n    })"
+            },
+            {
+              "kind": "field",
+              "name": "",
+              "privacy": "public",
+              "attribute": ""
+            },
+            {
+              "kind": "field",
+              "name": "length",
+              "privacy": "public",
+              "attribute": "length"
             },
             {
               "kind": "field",
@@ -667,6 +714,19 @@
               },
               "description": "timeoutId to clear the search buffer",
               "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "static": true,
+              "type": {
+                "text": "Record<string, typeof HTMLElement>"
+              },
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
             },
             {
               "kind": "method",
@@ -722,6 +782,30 @@
           ],
           "attributes": [
             {
+              "name": "",
+              "fieldName": ""
+            },
+            {
+              "name": "autocomplete",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"off\"",
+              "fieldName": "autocomplete"
+            },
+            {
+              "name": "multiple",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "multiple"
+            },
+            {
+              "name": "length",
+              "fieldName": "length"
+            },
+            {
               "name": "label",
               "type": {
                 "text": "string"
@@ -730,29 +814,12 @@
               "fieldName": "label"
             },
             {
-              "name": "role",
-              "type": {
-                "text": "string"
-              },
-              "default": "\"presentation\"",
-              "fieldName": "role"
-            },
-            {
               "name": "wrap-selection",
               "type": {
                 "text": "boolean"
               },
               "default": "false",
               "fieldName": "wrapSelection"
-            },
-            {
-              "name": "multi-select",
-              "type": {
-                "text": "boolean"
-              },
-              "description": "Allows multiple selections",
-              "default": "false",
-              "fieldName": "multiSelect"
             },
             {
               "name": "search-buffer-delay",
@@ -770,6 +837,12 @@
               },
               "default": "0",
               "fieldName": "tabIndex"
+            }
+          ],
+          "mixins": [
+            {
+              "name": "LitFormAssociatedMixin",
+              "package": "form-associated-helpers/exports/mixins/lit-form-associated-mixin.js"
             }
           ],
           "superclass": {
@@ -841,6 +914,25 @@
             },
             {
               "kind": "field",
+              "name": "internals",
+              "type": {
+                "text": "object"
+              },
+              "default": "{}"
+            },
+            {
+              "kind": "field",
+              "name": "tabIndex",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "attribute": "tabindex",
+              "reflects": true
+            },
+            {
+              "kind": "field",
               "name": "selected",
               "privacy": "public",
               "type": {
@@ -848,8 +940,7 @@
               },
               "description": "aria-selected is preferred for single-select listboxes / comboboxes",
               "default": "false",
-              "attribute": "selected",
-              "reflects": true
+              "attribute": "selected"
             },
             {
               "kind": "field",
@@ -860,8 +951,7 @@
               },
               "description": "aria-current to show the currently focused option",
               "default": "false",
-              "attribute": "current",
-              "reflects": true
+              "attribute": "current"
             },
             {
               "kind": "field",
@@ -878,8 +968,26 @@
               "type": {
                 "text": "null | string"
               },
-              "default": "null",
+              "default": "\"\"",
               "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "defaultSelected",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "selected"
             },
             {
               "kind": "field",
@@ -894,6 +1002,19 @@
               "privacy": "public",
               "attribute": "aria-selected",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "static": true,
+              "type": {
+                "text": "Record<string, typeof HTMLElement>"
+              },
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
             },
             {
               "kind": "method",
@@ -949,13 +1070,21 @@
           ],
           "attributes": [
             {
+              "name": "role",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"option\"",
+              "fieldName": "role"
+            },
+            {
               "name": "selected",
               "type": {
                 "text": "boolean"
               },
+              "fieldName": "selected",
               "description": "aria-selected is preferred for single-select listboxes / comboboxes",
-              "default": "false",
-              "fieldName": "selected"
+              "default": "false"
             },
             {
               "name": "current",
@@ -975,19 +1104,26 @@
               "fieldName": "ariaSelected"
             },
             {
-              "name": "role",
+              "name": "tabindex",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "fieldName": "tabIndex"
+            },
+            {
+              "name": "label",
               "type": {
                 "text": "string"
               },
-              "default": "\"option\"",
-              "fieldName": "role"
+              "fieldName": "label"
             },
             {
               "name": "value",
               "type": {
                 "text": "null | string"
               },
-              "default": "null",
+              "default": "\"\"",
               "fieldName": "value"
             }
           ],
@@ -1053,6 +1189,19 @@
               "default": "\"group\"",
               "attribute": "role",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "static": true,
+              "type": {
+                "text": "Record<string, typeof HTMLElement>"
+              },
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
             },
             {
               "kind": "method",
@@ -1323,6 +1472,19 @@
               "privacy": "public",
               "attribute": "ariaOrientation",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "static": true,
+              "type": {
+                "text": "Record<string, typeof HTMLElement>"
+              },
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
             },
             {
               "kind": "method",
@@ -1670,6 +1832,19 @@
               "reflects": true
             },
             {
+              "kind": "field",
+              "name": "dependencies",
+              "static": true,
+              "type": {
+                "text": "Record<string, typeof HTMLElement>"
+              },
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
               "kind": "method",
               "name": "debounce",
               "parameters": [
@@ -1829,6 +2004,40 @@
           "declaration": {
             "name": "clamp",
             "module": "internal/clamp.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "internal/debounce.js",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "debounce",
+          "parameters": [
+            {
+              "name": "callback",
+              "type": {
+                "text": "T"
+              }
+            },
+            {
+              "name": "wait",
+              "type": {
+                "text": "number"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "debounce",
+          "declaration": {
+            "name": "debounce",
+            "module": "internal/debounce.js"
           }
         }
       ]

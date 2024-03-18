@@ -1,7 +1,7 @@
 // @ts-check
 
 import { BaseElement } from "../base-element.js";
-import { css, html, LitElement } from "lit";
+import { css, html } from "lit";
 import { hostStyles } from "../styles/host-styles.js";
 import { wrap } from "../../internal/wrap.js";
 import { clamp } from "../../internal/clamp.js";
@@ -13,6 +13,11 @@ import { LitFormAssociatedMixin } from "form-associated-helpers/exports/mixins/l
 /**
  * @typedef {{ from: number, to: number }} Range
  */
+
+/**
+ * @type {import("form-associated-helpers/exports/mixins/lit-form-associated-mixin.js").LitFormAssociatedMixin["formProperties"]}
+ */
+const formProperties = LitFormAssociatedMixin.formProperties
 
 /**
  * A listbox following the W3C Listbox pattern.
@@ -37,7 +42,6 @@ import { LitFormAssociatedMixin } from "form-associated-helpers/exports/mixins/l
  *   The currently selected `<role-option>` has `[aria-selected="true"]`
  * @customElement
  * @tagname role-listbox
- * // implements HTMLSelectElement
  */
 export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   static baseName = "role-listbox";
@@ -45,12 +49,11 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   // static shadowRootOptions = {...LitElement.shadowRootOptions, delegatesFocus: true }
 
   static properties = {
-    ...LitFormAssociatedMixin.formProperties,
+    ...formProperties,
     // Attributes
     autocomplete: {},
     // Maps to aria-multiselectable
     multiple: { reflect: true, type: Boolean },
-    selectedIndex: {},
     length: {},
 
     label: { reflect: true },
@@ -102,6 +105,11 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     super();
 
     /**
+     * @type {null | FormData | string}
+     */
+    this.value = null
+
+    /**
      * @type {HTMLElement[]}
      */
     this.selectedOptions = [];
@@ -126,9 +134,6 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     this.autocomplete = "off"
     // Maps to aria-multiselectable
     this.multiple = false
-    // selectedIndex: {},
-    // length: {},
-
 
     /**
      * @type {number}

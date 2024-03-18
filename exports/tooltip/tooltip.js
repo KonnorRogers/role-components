@@ -325,7 +325,7 @@ export default class RoleTooltip extends BaseElement {
     //
     const getOffsetParent =
       strategy === 'absolute'
-        ? (element) => platform.getOffsetParent(element, offsetParent)
+        ? (/** @type {Element} */ element) => platform.getOffsetParent(element, offsetParent)
         : platform.getOffsetParent;
 
 

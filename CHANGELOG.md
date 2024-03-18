@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 - `<role-tooltip>`: Upgraded the version `floating-ui` and added the `composed-offset-parent` polyfill.
 - `<role-option>`: minor internal refactoring and added a number of properties to be closer to a proper `<option>`.
+- `<role-listbox>`: Fixed a bug where if you had a selected option, it would hit a race condition.
 - `<role-listbox>`: is now form associated and has been properly tested in NVDA / VoiceOver.
 - `<role-listbox>`: Styles have been moved to the host of the element and are keyed off of `[aria-selected]` and `[aria-current]` respectively.
 

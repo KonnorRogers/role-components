@@ -1,7 +1,7 @@
 // @ts-check
 
 import { BaseElement } from "../base-element.js";
-import { css, html } from "lit";
+import { css, html, LitElement } from "lit";
 import { hostStyles } from "../styles/host-styles.js";
 import { wrap } from "../../internal/wrap.js";
 import { clamp } from "../../internal/clamp.js";
@@ -139,7 +139,6 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
      * @type {number}
      */
     this.tabIndex = 0
-
 
     /**
      * @type {string}
@@ -305,19 +304,6 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   }
 
   /**
-   * @override
-   * @type HTMLButtonElement["click"]
-   */
-  click() {
-    const baseElement = this.baseElement;
-
-    if (baseElement) {
-      baseElement.focus();
-      // baseElement.click();
-    }
-  }
-
-  /**
    * @param {PointerEvent} evt
    */
   handleOptionClick(evt) {
@@ -326,7 +312,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     const option = /** @type {HTMLElement | null} */ (
       path.find((el) => {
         return (
-          /** @type {HTMLElement} */ (el).getAttribute?.("role") === "option"
+          /** @type {HTMLElement} */ (el).getAttribute?.("role") === "option" || el instanceof HTMLOptionElement
         );
       })
     );
@@ -356,7 +342,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     const option = /** @type {HTMLElement | null} */ (
       path.find((el) => {
         return (
-          /** @type {HTMLElement} */ (el).getAttribute?.("role") === "option"
+          /** @type {HTMLElement} */ (el).getAttribute?.("role") === "option" || el instanceof HTMLOptionElement
         );
       })
     );
@@ -641,11 +627,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       /** @type {HTMLElement} */ (selectedElement).setAttribute("aria-selected", "true");
     }
 
-
-    this.debounce(() => this.updateOptions(), {
-      key: this.updateOptions,
-      wait: 10
-    })
+    // this.debounce(() => this.updateOptions(), {
+    //   key: this.updateOptions,
+    //   wait: 10
+    // })
 
     const event = new SelectedEvent("role-selected", { selectedElement });
     selectedElement.dispatchEvent(event);
@@ -661,10 +646,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     const event = new SelectedEvent("role-deselected", { selectedElement });
     selectedElement.dispatchEvent(event);
 
-    this.debounce(() => this.updateOptions(), {
-      wait: 1,
-      key: this.updateOptions,
-    });
+    // this.debounce(() => this.updateOptions(), {
+    //   wait: 1,
+    //   key: this.updateOptions,
+    // });
   }
 
   /**
@@ -714,6 +699,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     this.setFocus(selectedElement);
 
     if (!this.multiple) {
+      this.deselectAll()
       this.select(selectedElement);
     }
 

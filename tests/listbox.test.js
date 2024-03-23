@@ -44,8 +44,8 @@ test("Should properly check items in the listbox", async () => {
     const options = getOptions()
     assert.equal(options[index].selected, false)
     assert.equal(options[index].current, false)
-    assert.equal(options[index].getAttribute("aria-selected"), "false")
-    assert.equal(options[index].getAttribute("aria-current"), "false")
+    assert.equal(options[index].hasAttribute("aria-selected"), false)
+    assert.equal(options[index].hasAttribute("aria-current"), false)
   }
 
   isSelected(0)
@@ -104,7 +104,7 @@ test("Should properly set aria-selected and aria-checked for options in a multis
   const isNotSelected = (index) => {
     const options = getOptions()
     assert.equal(options[index].selected, false)
-    assert.equal(options[index].getAttribute("aria-selected"), "false")
+    assert.equal(options[index].hasAttribute("aria-selected"), false)
   }
 
   const isCurrent = (index) => {
@@ -117,7 +117,7 @@ test("Should properly set aria-selected and aria-checked for options in a multis
   const isNotCurrent = (index) => {
     const options = getOptions()
     assert.equal(options[index].current, false)
-    assert.equal(options[index].getAttribute("aria-current"), "false")
+    assert.equal(options[index].hasAttribute("aria-current"), false)
   }
 
   await aTimeout(10)
@@ -283,4 +283,60 @@ test("Should submit the text content of option 1", async () => {
   assert.lengthOf(entries.getAll("select"), 1)
   assert.lengthOf(listbox.value.getAll("select"), 1)
   assert.equal(entries.get("select"), listbox.querySelector("role-option").textContent)
+})
+
+test("Should submit the text content of option 1", async () => {
+  const form = await fixture(html`
+    <form>
+      <role-listbox name="select" style="height: 200px;">
+        <role-option selected>Option 1</role-option>
+      </role-listbox>
+    </form>
+  `)
+
+  const listbox = form.querySelector("role-listbox")
+
+  let entries = new FormData(form)
+
+  assert.lengthOf(entries.getAll("select"), 1)
+  assert.equal(listbox.value, listbox.querySelector("role-option").textContent)
+  assert.equal(entries.get("select"), listbox.querySelector("role-option").textContent)
+})
+
+test("Should start at option 4 and move up / down from there", async () => {
+  const form = await fixture(html`
+    <form>
+      <role-listbox name="select" style="height: 200px;">
+        <role-option>Option 1</role-option>
+        <role-option>Option 2</role-option>
+        <role-option>Option 3</role-option>
+        <role-option selected>Option 4</role-option>
+        <role-option>Option 5</role-option>
+      </role-listbox>
+    </form>
+  `)
+
+  const listbox = form.querySelector("role-listbox")
+
+  let entries = new FormData(form)
+
+  assert.lengthOf(entries.getAll("select"), 1)
+  assert.equal(listbox.value, listbox.querySelectorAll("role-option")[3].textContent)
+  assert.equal(entries.get("select"), listbox.querySelectorAll("role-option")[3].textContent)
+
+  assert.equal(listbox.currentOption, listbox.querySelectorAll("role-option")[3])
+
+  listbox.focus()
+  await aTimeout(10)
+  await sendKeys({ press: "ArrowDown" })
+  await aTimeout(10)
+
+  assert.equal(listbox.currentOption, listbox.querySelectorAll("role-option")[4])
+
+  await aTimeout(10)
+  await sendKeys({ press: "ArrowUp" })
+  await sendKeys({ press: "ArrowUp" })
+  await aTimeout(10)
+
+  assert.equal(listbox.currentOption, listbox.querySelectorAll("role-option")[2])
 })

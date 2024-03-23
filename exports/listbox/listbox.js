@@ -20,7 +20,7 @@ import { LitFormAssociatedMixin } from "form-associated-helpers/exports/mixins/l
 const formProperties = LitFormAssociatedMixin.formProperties
 
 /**
- * A listbox following the W3C Listbox pattern.
+ * A listbox following the APG Listbox pattern.
  *
  * <https://www.w3.org/WAI/ARIA/apg/patterns/listbox/>
  *
@@ -74,7 +74,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     _searchBuffer: { attribute: false, state: true },
     _searchBufferDebounce: { attribute: false, state: true },
     options: { attribute: false, state: true },
-    currentActiveOption: { attribute: false, state: true },
+    currentOption: { attribute: false, state: true },
     rangeStartOption: { attribute: false, state: true },
     tabIndex: { reflect: true, attribute: "tabindex", type: Number }
   };
@@ -173,7 +173,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     /**
      * @type {null | HTMLElement}
      */
-    this.currentActiveOption = null;
+    this.currentOption = null;
 
     this.attributeFilter = [
       "aria-current",
@@ -262,10 +262,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       }
     }
 
-    if (changedProperties.has("currentActiveOption")) {
-      const previousActiveOption = changedProperties.get("currentActiveOption");
+    if (changedProperties.has("currentOption")) {
+      const previousActiveOption = changedProperties.get("currentOption");
 
-      if (this.currentActiveOption !== previousActiveOption) {
+      if (this.currentOption !== previousActiveOption) {
         if (previousActiveOption) {
           this.removeFocus(previousActiveOption);
 
@@ -291,7 +291,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    * @param {HTMLElement} option
    */
   removeFocus(option) {
-    option.setAttribute("aria-current", "false");
+    option.removeAttribute("aria-current");
     /** @type {import("../option/option.js").default} */ (option).current = false;
   }
 
@@ -299,7 +299,6 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    * @type {HTMLElement | null | undefined}
    */
   get baseElement() {
-    // return this.shadowRoot?.querySelector("[part~='base']");
     return this
   }
 
@@ -319,7 +318,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
     if (!option) return;
 
-    this.currentActiveOption = option;
+    this.currentOption = option;
 
     if (this.multiple) {
       if (evt.shiftKey) {
@@ -352,8 +351,8 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     this.scrollOptionIntoView(option)
   }
 
-  get currentActiveOptionIndex() {
-    return this.options.findIndex((el) => el === this.currentActiveOption);
+  get currentOptionIndex() {
+    return this.options.findIndex((el) => el === this.currentOption);
   }
 
   /**
@@ -362,7 +361,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    */
   handleKeyUp (evt) {
     if (evt.key === "Shift") {
-      this.rangeStartOption = this.currentActiveOption
+      this.rangeStartOption = this.currentOption
     }
   }
 
@@ -382,7 +381,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     };
 
     if (evt.key === "Shift") {
-      this.rangeStartOption = this.currentActiveOption
+      this.rangeStartOption = this.currentOption
       return
     }
 
@@ -398,8 +397,8 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
       if (this.multiple && this._searchBuffer === "" && evt.key === " ") {
         // Mark selected
-        if (this.currentActiveOption) {
-          this.toggleSelected(this.currentActiveOption);
+        if (this.currentOption) {
+          this.toggleSelected(this.currentOption);
         }
         return;
       }
@@ -502,11 +501,11 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    * Finds the closest selected option prior to the current option
    */
   selectFromClosestSelectedToCurrent () {
-    let currentActiveOptionIndex = this.currentActiveOptionIndex
+    let currentOptionIndex = this.currentOptionIndex
 
     let prevSelectedIndex = 0
 
-    for (let i = currentActiveOptionIndex; i >= 0; i--) {
+    for (let i = currentOptionIndex; i >= 0; i--) {
       const curr = this.options[i]
 
       if (this.isSelected(curr)) {
@@ -522,7 +521,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
      * We don't need to de-select previous items. Just from rangeStart -> currentIndex
      * So lets slice from prev -> current
      */
-    this.options.slice(prevSelectedIndex, currentActiveOptionIndex + 1).forEach((opt) => {
+    this.options.slice(prevSelectedIndex, currentOptionIndex + 1).forEach((opt) => {
       this.select(opt)
     })
   }
@@ -532,19 +531,19 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    */
   selectFromRangeStartToCurrent () {
     const rangeStartOption = this.rangeStartOption
-    const currentActiveOption = this.currentActiveOption
+    const currentOption = this.currentOption
 
 
-    if (currentActiveOption == null) return
+    if (currentOption == null) return
 
-    const currentActiveOptionIndex = this.currentActiveOptionIndex
+    const currentOptionIndex = this.currentOptionIndex
 
     if (rangeStartOption == null) {
-      this.selectRange({ from: 0, to: currentActiveOptionIndex })
+      this.selectRange({ from: 0, to: currentOptionIndex })
     }
 
-    if (rangeStartOption === currentActiveOption) {
-      this.select(currentActiveOption)
+    if (rangeStartOption === currentOption) {
+      this.select(currentOption)
       return
     }
 
@@ -557,12 +556,12 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       return
     }
 
-    if (rangeStartIndex > currentActiveOptionIndex) {
-      this.selectRange({ from: currentActiveOptionIndex, to: rangeStartIndex })
+    if (rangeStartIndex > currentOptionIndex) {
+      this.selectRange({ from: currentOptionIndex, to: rangeStartIndex })
       return
     }
 
-    this.selectRange({ from: rangeStartIndex, to: currentActiveOptionIndex })
+    this.selectRange({ from: rangeStartIndex, to: currentOptionIndex })
   }
 
   /**
@@ -584,7 +583,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    */
   selectFromStartToCurrent (startIndex = 0) {
     this.options
-      .slice(startIndex, this.currentActiveOptionIndex + 1)
+      .slice(startIndex, this.currentOptionIndex + 1)
       .forEach((opt) => {
         this.select(opt);
       });
@@ -595,7 +594,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    */
   selectFromCurrentToEnd (endIndex = this.options.length - 1) {
     this.options
-      .slice(this.currentActiveOptionIndex, endIndex)
+      .slice(this.currentOptionIndex, endIndex)
       .forEach((opt) => {
         this.select(opt);
       });
@@ -604,13 +603,15 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   focusElementFromSearchBuffer() {
     const searchBuffer = this._searchBuffer;
 
+    const regex = new RegExp("^" + searchBuffer.replaceAll(/\\/g, "\\\\").toLowerCase())
+
     const matchedEl = this.options.find((el) => {
       // Native select only matches by case in-equal innerText.
-      return el.innerText.toLowerCase().match(new RegExp("^" + searchBuffer.replaceAll(/\\/g, "\\\\")));
+      return el.innerText.toLowerCase().match(regex);
     });
 
-    if (matchedEl && this.currentActiveOption !== matchedEl) {
-      this.currentActiveOption = matchedEl;
+    if (matchedEl && this.currentOption !== matchedEl) {
+      this.currentOption = matchedEl;
       this.focusCurrent();
     }
   }
@@ -641,7 +642,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    */
   deselect(selectedElement) {
     /** @type {HTMLOptionElement} */ (selectedElement).selected = false;
-    selectedElement.setAttribute("aria-selected", "false");
+    selectedElement.removeAttribute("aria-selected");
 
     const event = new SelectedEvent("role-deselected", { selectedElement });
     selectedElement.dispatchEvent(event);
@@ -687,7 +688,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   }
 
   focusCurrent() {
-    const selectedElement = this.currentActiveOption;
+    const selectedElement = this.currentOption;
 
     if (!selectedElement) return;
 
@@ -716,25 +717,25 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       index = clamp(0, index, this.options.length - 1);
     }
 
-    this.currentActiveOption = this.options[index];
+    this.currentOption = this.options[index];
     this.focusCurrent();
   }
 
   focusNext() {
-    this.focusAt(this.currentActiveOptionIndex + 1);
+    this.focusAt(this.currentOptionIndex + 1);
   }
 
   focusPrevious() {
-    this.focusAt(this.currentActiveOptionIndex - 1);
+    this.focusAt(this.currentOptionIndex - 1);
   }
 
   focusFirst() {
-    this.currentActiveOption = this.options[0];
+    this.currentOption = this.options[0];
     this.focusCurrent();
   }
 
   focusLast() {
-    this.currentActiveOption = this.options[this.options.length - 1];
+    this.currentOption = this.options[this.options.length - 1];
     this.focusCurrent();
   }
 
@@ -767,8 +768,6 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     }
   }
 
-  handleFocusOut() {}
-
   /**
    * @param {HTMLElement} el
    * @return {boolean}
@@ -784,8 +783,11 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   }
 
   updateOptions() {
+    const baseElement = this.baseElement
+    if (!baseElement) return
+
     this.options = /** @type {Array<HTMLElement>} */ Array.from(
-      this.querySelectorAll("option, [role='option']"),
+      baseElement.querySelectorAll("option, [role='option']"),
     );
 
     this.selectedOptions = [];
@@ -807,6 +809,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
         const value = /** @type {HTMLOptionElement} */ (el).value
         if (!hasSelected) {
           this.value = value
+          this.currentOption = el
           hasSelected = true
         }
 
@@ -837,23 +840,23 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     /**
      * @type {null | HTMLElement}
      */
-    let currentActiveOption = null;
+    let currentOption = null;
 
     this.options.forEach((option) => {
       const isActiveOption =
         /** @type {import("../option/option.js").default} */ (option).current === true
         || option.getAttribute("aria-current") === "true";
 
-      if (!currentActiveOption && isActiveOption) {
-        currentActiveOption = option;
+      if (!currentOption && isActiveOption) {
+        currentOption = option;
       }
 
-      if (option !== currentActiveOption) {
+      if (option !== currentOption) {
         this.removeFocus(option);
       }
     });
 
-    this.currentActiveOption = currentActiveOption
+    this.currentOption = currentOption
     this.value = multipleFormData
   }
 

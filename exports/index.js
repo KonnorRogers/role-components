@@ -1,4 +1,4 @@
-// export { default as RoleCombobox } from "./combobox/combobox-register.js"
+export { default as RoleCombobox } from "./combobox/combobox-register.js"
 export { default as RoleListbox } from "./listbox/listbox-register.js"
 export { default as RoleOptionGroup } from "./option-group/option-group-register.js"
 export { default as RoleOption } from "./option/option-register.js"

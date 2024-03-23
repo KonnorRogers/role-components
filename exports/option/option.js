@@ -13,7 +13,7 @@ export default class RoleOption extends BaseElement {
 
   static properties = {
     role: { reflect: true },
-    defaultSelected: { type: Boolean, attribute: "selected" },
+    defaultSelected: { type: Boolean, attribute: "selected", reflect: true },
     selected: { type: Boolean },
     current: { type: Boolean },
     ariaCurrent: { reflect: true, attribute: "aria-current" },
@@ -93,6 +93,7 @@ export default class RoleOption extends BaseElement {
      * @type {string}
      */
     this.label = this.innerText
+
   }
 
   handleSlotChange() {
@@ -119,11 +120,19 @@ export default class RoleOption extends BaseElement {
     }
 
     if (changedProperties.has("selected")) {
-      this.ariaSelected = this.selected.toString()
+      if (this.selected) {
+        this.ariaSelected = this.selected.toString()
+      } else {
+        this.removeAttribute("aria-selected")
+      }
     }
 
     if (changedProperties.has("current")) {
-      this.ariaCurrent = this.current.toString()
+      if (this.current) {
+        this.ariaCurrent = this.current.toString()
+      } else {
+        this.removeAttribute("aria-current")
+      }
     }
 
     super.willUpdate(changedProperties);
@@ -134,7 +143,7 @@ export default class RoleOption extends BaseElement {
       <div
         part="base"
       >
-        <slot name="checkmark" ?invisible=${!this.selected}> ✓ </slot>
+        <slot name="checkmark" ?invisible=${!this.selected}>✓</slot>
         <slot @slotchange=${this.handleSlotChange}></slot>
       </div>
     `;

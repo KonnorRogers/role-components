@@ -10,6 +10,7 @@ import * as Turbo from "@hotwired/turbo"
 window.Turbo = Turbo
 import "./src/layout.js"
 import "role-components"
+import "@shoelace-style/shoelace/dist/components/popup/popup.js"
 //
 LazyLoader()
 //

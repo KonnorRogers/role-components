@@ -642,7 +642,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    */
   deselect(selectedElement) {
     /** @type {HTMLOptionElement} */ (selectedElement).selected = false;
-    selectedElement.removeAttribute("aria-selected");
+    selectedElement.setAttribute("aria-selected", "false");
 
     const event = new SelectedEvent("role-deselected", { selectedElement });
     selectedElement.dispatchEvent(event);

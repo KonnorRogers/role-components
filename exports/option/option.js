@@ -120,19 +120,11 @@ export default class RoleOption extends BaseElement {
     }
 
     if (changedProperties.has("selected")) {
-      if (this.selected) {
-        this.ariaSelected = this.selected.toString()
-      } else {
-        this.removeAttribute("aria-selected")
-      }
+      this.ariaSelected = this.selected.toString()
     }
 
     if (changedProperties.has("current")) {
-      if (this.current) {
-        this.ariaCurrent = this.current.toString()
-      } else {
-        this.removeAttribute("aria-current")
-      }
+      this.ariaCurrent = this.current.toString()
     }
 
     super.willUpdate(changedProperties);

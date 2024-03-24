@@ -237,6 +237,19 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     this.addEventListener("focusin", this.eventHandler.get(this.handleFocusIn));
   }
 
+
+  /**
+   * @param {Event} e
+   */
+  handleOutsideClick (e) {
+    const path = e.composedPath()
+
+    if (!path.includes(this)) {
+      this.expanded = false
+      return
+    }
+  }
+
   /**
    * Users dont always provide ids on elements, and we need to make sure the id isn't already taken.
    * @param {HTMLElement} el
@@ -318,9 +331,13 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
             aria-autocomplete=${this.autocomplete}
             spellcheck="false"
             ?readonly=${!this.isEditable}
-            @blur=${() => this.expanded = false}
             @input=${this.focusElementFromInput}
             @focus=${() => this.expanded = true}
+            @keydown=${(/** @type {KeyboardEvent} */ e) => {
+              if (e.key === "Tab") {
+                this.expanded = false
+              }
+            }}
             style="font-size: 1.1em; padding: 0.4em 0.6em;"
           >
           <slot name="suffix" style="display: block;"></slot>
@@ -335,10 +352,9 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
             background-color: white;
           "
         >
+          <slot></slot>
         </div>
       </sl-popup>
-
-      <slot hidden></slot>
     `
 
     return finalHTML
@@ -350,6 +366,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    */
   connectedCallback() {
     super.connectedCallback();
+
+    this.setAttribute("aria-live", "assertive")
+
+    document.addEventListener("click", this.eventHandler.get(this.handleOutsideClick));
 
     // this.updateOptions()
     this.updateComplete.then(() => {
@@ -364,6 +384,12 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       childList: true,
       attributeFilter: this.attributeFilter,
     });
+  }
+
+  disconnectedCallback () {
+    super.disconnectedCallback()
+
+    document.removeEventListener("click", this.eventHandler.get(this.handleOutsideClick));
   }
 
   /**
@@ -434,7 +460,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    * @param {HTMLElement} option
    */
   removeFocus(option) {
-    option.removeAttribute("aria-current");
+    option.setAttribute("aria-current", "false");
     /** @type {import("../option/option.js").default} */ (option).current = false;
   }
 
@@ -1053,7 +1079,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
         this.deselect(optionEl);
       });
 
-      this.renderClonedOptions()
+      // this.renderClonedOptions()
       return;
     }
 
@@ -1079,6 +1105,6 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     this.currentOption = currentOption
     this.value = multipleFormData
 
-    this.renderClonedOptions()
+    // this.renderClonedOptions()
   }
 }

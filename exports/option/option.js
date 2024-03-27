@@ -48,8 +48,9 @@ export default class RoleOption extends BaseElement {
       [part~="base"] {
         display: grid;
         grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+        grid-auto-flow: column;
+        gap: 8px;
         align-items: center;
-        gap: 4px;
       }
     `,
   ];

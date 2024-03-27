@@ -371,6 +371,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   handleKeyDown(evt) {
     const ctrlKeyPressed = evt.ctrlKey || (isMacOs() && evt.metaKey);
     const shiftKeyPressed = evt.shiftKey;
+    const metaKeyPressed = evt.metaKey;
 
     const handledKeys = {
       home: "Home",
@@ -390,7 +391,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
      */
     if (
       ctrlKeyPressed === false &&
-      shiftKeyPressed === false &&
+      metaKeyPressed === false &&
       evt.key.match(/^.$/)
     ) {
       evt.preventDefault();
@@ -744,7 +745,9 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    * @return {void}
    */
   scrollOptionIntoView(selectedOption) {
-    selectedOption.scrollIntoView({ block: "nearest" });
+    if (this.matches(":focus-within")) {
+      selectedOption.scrollIntoView({ block: "nearest" });
+    }
   }
 
   /**

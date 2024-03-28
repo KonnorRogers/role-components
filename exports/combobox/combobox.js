@@ -129,7 +129,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   constructor () {
     super()
 
-    this.listboxId = uuidv4()
+    this.listboxId = "role-listbox-" + uuidv4()
 
     /**
      * @type {'' | "off" | "inline" | "list" | "both"}
@@ -482,6 +482,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   willUpdate(changedProperties) {
     const combobox = this.combobox
 
+    if (combobox && changedProperties.has("expanded")) {
+      combobox.setAttribute("aria-expanded", this.expanded.toString())
+    }
+
     if (combobox && changedProperties.has("multiple")) {
       if (this.multiple === true) {
         combobox.setAttribute("aria-multiselectable", "true");
@@ -496,10 +500,6 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       if (this.currentOption !== previousActiveOption) {
         if (previousActiveOption) {
           this.removeFocus(previousActiveOption);
-
-          if (!this.multiple) {
-            this.deselect(previousActiveOption);
-          }
         }
       }
     }
@@ -550,6 +550,11 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     }
 
     this.focusCurrent();
+
+    if (!this.multiple) {
+      this.toggleSelected(this.currentOption)
+      this.expanded = false
+    }
   }
 
 
@@ -610,7 +615,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
     if (evt.key === "Enter") {
       if (this.currentOption) {
-        this.currentOption.click()
+        this.toggleSelected(this.currentOption);
       }
 
       // Close the combobox for single select.
@@ -919,6 +924,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    * @param {HTMLElement} selectedElement
    */
   select(selectedElement) {
+    if (!this.multiple) {
+      this.deselectAll()
+    }
+
     this.selectedOptions = this.selectedOptions.concat(/** @type {RoleOption} */ (selectedElement));
     /** @type {HTMLOptionElement} */ (selectedElement).selected = true;
 
@@ -936,9 +945,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     const event = new SelectedEvent("role-selected", { selectedElement });
     selectedElement.dispatchEvent(event);
 
-    // if (this.currentOption && (this.autocomplete === "inline" || this.autocomplete === "both")) {
-    //   this.combobox.value = this.currentOption.innerText
-    // }
+    // @TODO: account for multiple.
+    if (this.currentOption) {
+      this.combobox.value = this.currentOption.innerText
+    }
   }
 
   /**
@@ -994,7 +1004,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   focusCurrent() {
     const selectedElement = this.currentOption;
 
-    if (!selectedElement) return;
+    if (!selectedElement) {
+      this.focusFirst()
+      return
+    }
 
     const combobox = this.combobox
 
@@ -1007,10 +1020,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     );
     this.setFocus(selectedElement);
 
-    if (!this.multiple) {
-      this.deselectAll()
-      this.select(selectedElement);
-    }
+    // if (!this.multiple) {
+    //   this.deselectAll()
+    //   this.select(selectedElement);
+    // }
 
     this.scrollOptionIntoView(selectedElement);
   }
@@ -1137,7 +1150,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       }
     });
 
-    const currentSelectedOption = selectedOptions[0];
+    const currentSelectedOption = this.currentOption;
 
     if (!this.multiple) {
       if (currentSelectedOption) {
@@ -1148,15 +1161,14 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       }
 
       selectedOptions.forEach((optionEl) => {
-        if (optionEl === currentSelectedOption) {
+        if (optionEl === this.currentOption) {
           return;
         }
 
         this.removeFocus(optionEl);
-        this.deselect(optionEl);
+        // this.deselect(optionEl);
       });
 
-      // this.renderClonedOptions()
       return;
     }
 

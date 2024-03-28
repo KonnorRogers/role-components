@@ -49,6 +49,7 @@ test("Should properly check items in the listbox", async () => {
   }
 
   isSelected(0)
+
   isNotSelected(1)
 
   await aTimeout(10)

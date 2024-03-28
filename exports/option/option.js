@@ -108,6 +108,7 @@ export default class RoleOption extends BaseElement {
    * @param {import("lit").PropertyValues<this>} changedProperties
    */
   willUpdate(changedProperties) {
+
     if (changedProperties.has("label")) {
       if (!this.label) {
         this.label = this.innerText
@@ -121,11 +122,19 @@ export default class RoleOption extends BaseElement {
     }
 
     if (changedProperties.has("selected")) {
-      this.ariaSelected = this.selected.toString()
+      if (this.selected) {
+        this.setAttribute("aria-selected", "true")
+      } else {
+        this.removeAttribute("aria-selected")
+      }
     }
 
     if (changedProperties.has("current")) {
-      this.ariaCurrent = this.current.toString()
+      if (this.current) {
+        this.setAttribute("aria-current", "true")
+      } else {
+        this.removeAttribute("aria-current")
+      }
     }
 
     super.willUpdate(changedProperties);

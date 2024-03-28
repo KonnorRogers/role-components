@@ -863,11 +863,12 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     if (e.inputType === "deleteContentBackward" && !this.multiple) {
       this.deselectAll()
 
-      if (this.currentOption) {
-        this.select(this.currentOption)
-      }
+      // if (this.currentOption) {
+      //   this.select(this.currentOption)
+      // }
       return
     }
+
 
     const combobox = this.combobox
 
@@ -879,6 +880,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
     // We dont focus elements if inline or off
     if (this.autocomplete !== "inline" && this.autocomplete !== "list" && this.autocomplete !== "both") return
+
+    if (!this.expanded) {
+      this.expanded = true
+    }
 
     const regex = new RegExp("^" + searchValue.replaceAll(/\\/g, "\\\\").toLowerCase())
 
@@ -902,6 +907,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     }
 
     this.focusCurrent();
+    this.select(this.currentOption)
   }
 
   focusElementFromSearchBuffer() {

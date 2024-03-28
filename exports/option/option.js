@@ -59,13 +59,6 @@ export default class RoleOption extends BaseElement {
     super();
     this.role = "option";
 
-    this.internals = {}
-
-    try {
-      this.internals = this.attachInternals()
-      this.internals.role = "option"
-    } catch (_e) {}
-
     this.tabIndex = -1
 
     /**
@@ -97,6 +90,13 @@ export default class RoleOption extends BaseElement {
 
   }
 
+  connectedCallback () {
+    super.connectedCallback()
+
+    this.setAttribute("aria-live", "assertive")
+    this.setAttribute("role", "option")
+  }
+
   handleSlotChange() {
     if (!this.hasAttribute("value") || !this.value) {
       this.value = this.innerText;
@@ -122,19 +122,21 @@ export default class RoleOption extends BaseElement {
     }
 
     if (changedProperties.has("selected")) {
-      if (this.selected) {
-        this.setAttribute("aria-selected", "true")
-      } else {
-        this.removeAttribute("aria-selected")
-      }
+      this.setAttribute("aria-selected", (this.selected || "").toString())
+      // if (this.selected) {
+      //   this.setAttribute("aria-selected", this.selected.toString())
+      // } else {
+      //   this.removeAttribute("aria-selected")
+      // }
     }
 
     if (changedProperties.has("current")) {
-      if (this.current) {
-        this.setAttribute("aria-current", "true")
-      } else {
-        this.removeAttribute("aria-current")
-      }
+      this.setAttribute("aria-current", (this.current || "").toString())
+      // if (this.current) {
+      //   this.setAttribute("aria-current", "true")
+      // } else {
+      //   this.removeAttribute("aria-current")
+      // }
     }
 
     super.willUpdate(changedProperties);
@@ -145,7 +147,7 @@ export default class RoleOption extends BaseElement {
       <div
         part="base"
       >
-        <slot name="checkmark" ?invisible=${!this.selected}>✓</slot>
+        <slot name="checkmark" ?invisible=${!this.selected} aria-hidden="true">✓</slot>
         <slot @slotchange=${this.handleSlotChange}></slot>
       </div>
     `;

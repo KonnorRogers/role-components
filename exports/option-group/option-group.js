@@ -42,9 +42,9 @@ export default class OptionGroup extends BaseElement {
 
   render() {
     return html`
-      <div part="base">
-        <div part="label">
-          <slot name="label"></slot>
+      <div part="base" role="presentation">
+        <div part="label" role="presentation">
+          <slot name="label" role="presentation"></slot>
         </div>
         <slot></slot>
       </div>

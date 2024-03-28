@@ -216,6 +216,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   connectedCallback() {
     super.connectedCallback();
 
+    this.setAttribute("aria-live", "assertive")
     this.updateOptions()
     this.updateComplete.then(() => this.updateOptions())
 
@@ -250,8 +251,14 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    */
   willUpdate(changedProperties) {
     if (changedProperties.has("role")) {
-      changedProperties.set("role", "option");
       this.role = "listbox";
+      this.setAttribute("role", "listbox")
+    }
+
+
+    if (changedProperties.has("selectedOptions")) {
+      this.setAttribute("aria-setsize", (this.selectedOptions.length).toString())
+      this.setAttribute("aria-posinset", (0).toString())
     }
 
     if (changedProperties.has("multiple")) {
@@ -643,7 +650,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    */
   deselect(selectedElement) {
     /** @type {HTMLOptionElement} */ (selectedElement).selected = false;
-    selectedElement.removeAttribute("aria-selected");
+    // selectedElement.removeAttribute("aria-selected");
 
     const event = new SelectedEvent("role-deselected", { selectedElement });
     selectedElement.dispatchEvent(event);
@@ -881,8 +888,6 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
       <div
         part="base"
-        role="group"
-        tabindex="-1"
       >
         <slot></slot>
       </div>

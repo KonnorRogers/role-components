@@ -87,8 +87,8 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       :host(:focus-within) [part~="base"],
       :host(:focus-visible) [part~="base"] {
         outline: transparent;
-        border-color: dodgerblue;
-        box-shadow: 0px 0px 2px 3px lightblue;
+        border-color: Canvas;
+        box-shadow: 0px 0px 2px 3px SelectedItem;
       }
 
       [part~="base"] {
@@ -96,7 +96,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
         max-height: 100%;
         overflow: auto;
         scroll-behavior: smooth;
-        border: 2px solid gray;
+        border: 2px solid GrayText;
       }
     `,
   ];
@@ -216,7 +216,6 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   connectedCallback() {
     super.connectedCallback();
 
-    this.setAttribute("aria-live", "assertive")
     this.updateOptions()
     this.updateComplete.then(() => this.updateOptions())
 
@@ -888,6 +887,8 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
       <div
         part="base"
+        tabindex="-1"
+        role="presentation"
       >
         <slot></slot>
       </div>

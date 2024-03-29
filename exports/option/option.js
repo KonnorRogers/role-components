@@ -18,7 +18,6 @@ export default class RoleOption extends BaseElement {
     current: { type: Boolean },
     ariaCurrent: { reflect: true, attribute: "aria-current" },
     ariaSelected: { reflect: true, attribute: "aria-selected" },
-    tabIndex: { type: Number, reflect: true, attribute: "tabindex" },
     label: {},
     value: {},
   };
@@ -31,7 +30,7 @@ export default class RoleOption extends BaseElement {
       }
       /** use :where() to lower specificity for aria-selected **/
       :host(:where(:hover)) [part~="base"] {
-        background-color: lightgray;
+        background-color: ButtonFace;
       }
 
       [part~="base"] {
@@ -42,7 +41,8 @@ export default class RoleOption extends BaseElement {
       }
 
       :host([aria-current="true"]) [part~="base"] {
-        background-color: lightblue;
+        background-color: SelectedItem;
+        color: SelectedItemText;
       }
 
       [part~="base"] {
@@ -58,8 +58,6 @@ export default class RoleOption extends BaseElement {
   constructor() {
     super();
     this.role = "option";
-
-    this.tabIndex = -1
 
     /**
      * aria-selected is preferred for single-select listboxes / comboboxes
@@ -93,7 +91,6 @@ export default class RoleOption extends BaseElement {
   connectedCallback () {
     super.connectedCallback()
 
-    this.setAttribute("aria-live", "assertive")
     this.setAttribute("role", "option")
   }
 
@@ -122,22 +119,22 @@ export default class RoleOption extends BaseElement {
     }
 
     if (changedProperties.has("selected")) {
-      this.setAttribute("aria-selected", (this.selected || "").toString())
-      // if (this.selected) {
-      //   this.setAttribute("aria-selected", this.selected.toString())
-      // } else {
-      //   this.removeAttribute("aria-selected")
-      // }
+      // this.setAttribute("aria-selected", this.selected.toString())
+      if (this.selected) {
+        this.setAttribute("aria-selected", this.selected.toString())
+      } else {
+        this.removeAttribute("aria-selected")
+      }
     }
 
-    if (changedProperties.has("current")) {
-      this.setAttribute("aria-current", (this.current || "").toString())
-      // if (this.current) {
-      //   this.setAttribute("aria-current", "true")
-      // } else {
-      //   this.removeAttribute("aria-current")
-      // }
-    }
+    // if (changedProperties.has("current")) {
+    //   // this.setAttribute("aria-current", (this.current || "").toString())
+    //   if (this.current) {
+    //     this.setAttribute("aria-current", "true")
+    //   } else {
+    //     this.removeAttribute("aria-current")
+    //   }
+    // }
 
     super.willUpdate(changedProperties);
   }

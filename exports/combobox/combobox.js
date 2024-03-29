@@ -89,6 +89,12 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   static styles = [
     hostStyles,
     css`
+      [name="input"]::slotted(input) {
+        font-size: 1.1em;
+        padding-inline-start: 0.4em;
+        padding-inline-end: 0.4em;
+        line-height: 1.8;
+      }
 
       /** because position: absolute; + isolation: isolate; don't always pierce. */
       [part~='popup']::part(popup) {
@@ -414,8 +420,8 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
         <div
           part="listbox"
           style="
-            background-color: white;
-            border: 2px dashed tomato;
+            background-color: Canvas;
+            border: 2px solid ButtonFace;
           "
         >
           <slot name="listbox" @slotchange=${this.updateListboxElement}></slot>
@@ -482,16 +488,8 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   willUpdate(changedProperties) {
     const combobox = this.combobox
 
-    if (combobox && changedProperties.has("expanded")) {
-      combobox.setAttribute("aria-expanded", this.expanded.toString())
-    }
-
-    if (combobox && changedProperties.has("multiple")) {
-      if (this.multiple === true) {
-        combobox.setAttribute("aria-multiselectable", "true");
-      } else {
-        combobox.removeAttribute("aria-multiselectable");
-      }
+    if (combobox) {
+      this.updateInputElement()
     }
 
     if (changedProperties.has("currentOption")) {
@@ -613,9 +611,23 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       space: " ",
     };
 
+    if (evt.key === "Enter" || (!this.isEditable && evt.key === " ")) {
+      if (!this.expanded) {
+        evt.preventDefault()
+        this.expanded = true
+        return
+      }
+    }
+
     if (evt.key === "Enter") {
+      evt.preventDefault()
       if (this.currentOption) {
-        this.toggleSelected(this.currentOption);
+        if (this.multiple) {
+          this.toggleSelected(this.currentOption);
+        } else {
+          this.select(this.currentOption)
+        }
+        this.combobox.setSelectionRange?.(this.combobox.value.length, this.combobox.value.length)
       }
 
       // Close the combobox for single select.
@@ -740,11 +752,18 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
         this.focusCurrent()
         return
       }
+
       this.focusNext();
       return;
     }
 
     if (evt.key === "ArrowUp") {
+      if (this.expanded === false) {
+        this.expanded = true
+        this.focusCurrent()
+        return
+      }
+
       this.focusPrevious();
       return;
     }
@@ -954,6 +973,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     // @TODO: account for multiple.
     if (this.currentOption) {
       this.combobox.value = this.currentOption.innerText
+      this.combobox.innerText = this.currentOption.innerText
     }
   }
 
@@ -1147,6 +1167,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
         if (this.value == null) {
           this.value = value
           this.combobox.value = option.innerText
+          this.combobox.innerText = option.innerText
           hasSelected = true
         }
 

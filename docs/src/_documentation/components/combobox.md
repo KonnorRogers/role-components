@@ -45,7 +45,7 @@ you can change how long it takes to "reset" searching for options.
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
     <role-combobox>
-      <input slot="input">
+      <button slot="input"></button>
 
       <div slot="listbox">
         <role-option>Honeybadger</role-option>
@@ -102,8 +102,6 @@ you can change how long it takes to "reset" searching for options.
 </light-preview>
 
 ## Inline Autocomplete Combobox
-
-
 
 <light-preview preview-mode="shadow-dom">
   <template slot="code">

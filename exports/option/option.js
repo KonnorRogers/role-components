@@ -57,7 +57,9 @@ export default class RoleOption extends BaseElement {
 
   constructor() {
     super();
-    this.role = "option";
+    // this.role = "option";
+    // this.internals = this.attachInternals()
+    // this.internals.role = "option"
 
     /**
      * aria-selected is preferred for single-select listboxes / comboboxes
@@ -127,14 +129,13 @@ export default class RoleOption extends BaseElement {
       }
     }
 
-    // if (changedProperties.has("current")) {
-    //   // this.setAttribute("aria-current", (this.current || "").toString())
-    //   if (this.current) {
-    //     this.setAttribute("aria-current", "true")
-    //   } else {
-    //     this.removeAttribute("aria-current")
-    //   }
-    // }
+    if (changedProperties.has("current")) {
+      if (this.current) {
+        this.setAttribute("aria-current", "true")
+      } else {
+        this.removeAttribute("aria-current")
+      }
+    }
 
     super.willUpdate(changedProperties);
   }
@@ -144,7 +145,7 @@ export default class RoleOption extends BaseElement {
       <div
         part="base"
       >
-        <slot name="checkmark" ?invisible=${!this.selected} aria-hidden="true">✓</slot>
+        <span aria-hidden="true"><slot name="checkmark" ?invisible=${!this.selected}>✓</slot></span>
         <slot @slotchange=${this.handleSlotChange}></slot>
       </div>
     `;

@@ -4,7 +4,7 @@
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
     <form>
-      <role-listbox style="height: 200px;">
+      <role-listbox name="listbox" style="height: 200px;">
         <role-option value="1">
           <blockquote style="display: inline-block; border-inline-start: 4px solid gray; background-color: rgba(0,0,0,0.05); padding-inline-start: 4px; margin: 0;">I'm a blockquote. Gotta love rich content.</blockquote>
           Option 1

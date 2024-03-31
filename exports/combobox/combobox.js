@@ -89,7 +89,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   static styles = [
     hostStyles,
     css`
-      [name="input"]::slotted(input) {
+      [name="trigger"]::slotted(input) {
         font-size: 1.1em;
         padding-inline-start: 0.4em;
         padding-inline-end: 0.4em;
@@ -99,6 +99,12 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       /** because position: absolute; + isolation: isolate; don't always pierce. */
       [part~='popup']::part(popup) {
         z-index: 1;
+      }
+
+      [part~="base"] {
+        display: grid;
+        grid-template-rows: minmax(0, auto) minmax(0, 1fr);
+        gap: 8px;
       }
     `
   ]
@@ -186,7 +192,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     /**
      * @type {string}
      */
-    this.role = "presentation";
+    // this.role = "presentation";
 
     /**
      * @type {string}
@@ -217,6 +223,12 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
      * @type {number}
      */
     this.searchBufferDelay = 600;
+
+
+    /**
+     * @type {HTMLButtonElement | HTMLInputElement}
+     */
+    this.triggerElement
 
     this.attributeFilter = [
       "aria-current",
@@ -265,7 +277,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    * @param {Event} e
    */
   handleInputClick (e) {
-    if (e.target.closest("[slot='input']")) {
+    if (e.target.closest("[slot='trigger']")) {
       this.expanded = !this.expanded
     }
   }
@@ -322,25 +334,45 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
     listboxElement.setAttribute("role", "listbox")
     this.listboxId = listboxElement.id || uuidv4()
+    listboxElement.setAttribute("aria-owns", this.combobox.id)
+  }
+
+  /**
+   * @param {Event} e
+   */
+  handleInputFocus (e) {
+    if (!this.isEditable) {
+      /**
+       * @type {null | HTMLInputElement}
+       */
+      // @ts-expect-error
+      const target = e.target
+
+      setTimeout(() => {
+        // Readonly inputs will select the text giving the impression its editable.
+        target?.setSelectionRange?.(null, null)
+      })
+    }
   }
 
   /**
    * Adds proper attributes to the slotted input element
    */
   updateInputElement () {
-    const inputElement = this.querySelector(":scope > [slot='input']")
-    this.inputElement = inputElement
+    const triggerElement = this.querySelector(":scope > [slot='trigger']")
+    this.triggerElement = triggerElement
 
-    if (!inputElement) return
+    if (!triggerElement) return
 
     const attributes = [
       ["role", "combobox"],
       ["aria-haspopup", "listbox"],
       ["aria-controls", this.listboxId],
-      ["aria-expanded", "false"],
       ["aria-activedescendant", this.currentOption?.id || ""],
-      ["aria-autocomplete", this.autocomplete],
-      ["spellcheck", "false"],
+      ["aria-autocomplete", this.autocomplete || ""],
+      // ["autocomplete", this.autocomplete || "list"],
+      ["spellcheck", "off"],
+      ["aria-expanded", this.expanded.toString()]
     ]
 
     /**
@@ -351,14 +383,16 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     ]
 
     for (const [attr, value] of attributes) {
-      inputElement.setAttribute(attr, value)
+      if (triggerElement.getAttribute(attr) !== value) {
+        triggerElement.setAttribute(attr, value)
+      }
     }
 
     for (const [booleanAttr, bool] of booleanAttributes) {
-      inputElement.toggleAttribute(booleanAttr, bool)
+      triggerElement.toggleAttribute(booleanAttr, bool)
     }
 
-    // inputElement.addEventListener("focus", this.eventHandler.get(this.handleInputFocus))
+    triggerElement.addEventListener("focus", this.eventHandler.get(this.handleInputFocus))
 
     // <input
     //   part="input"
@@ -381,52 +415,87 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
   }
 
-  render () {
-    const finalHTML = html`
+  renderSelectedOptions () {
+    return html`
       <span id="remove" class="visually-hidden">Remove</span>
 
-      <label part="label" for="input">
-        <slot name="label"></slot>
-      </label>
-
-      ${when(this.multiple,
-        () => html`
-          <ul part="selected-options" aria-live="assertive" aria-atomic="false" aria-relevant="additions removals">
-            ${this.selectedOptions.map((option) => {
-              return html`<li><button type="button" part="button">${option.textContent}<span aria-hidden="true" style="">&times;</span></button></li>`
-            })}
-          </ul>
-        `
-      )}
-
-      <sl-popup
-        id="popup"
-        placement="bottom"
-        sync="width"
-        ?active=${this.expanded}
-        hover-bridge
-        distance="6"
-        part="popup"
+      <ul
+        part="selected-options"
+        aria-live="assertive"
+        aria-atomic="false"
+        aria-relevant="additions removals"
+        style="
+          list-style-type: '';
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin: 0;
+          padding: 0;
+        "
       >
-        <div
-          slot="anchor"
-          style="display: grid; grid-template-columns: minmax(0, auto) minmax(0, 1fr) minmax(0, auto);"
-        >
-          <slot name="prefix"><div></div></slot>
-          <slot name="input" @slotchange=${this.updateInputElement}></slot>
-          <slot name="suffix"><div></div></slot>
-        </div>
+        ${this.selectedOptions.map((option) => {
+          return html`
+            <li>
+              <button
+                type="button"
+                part="remove-button"
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  gap: 8px;
+                "
+                @click=${() => this.deselect(option)}
+              >
+                ${option.textContent}
+                <slot name="remove-icon">
+                  <span aria-hidden="true">&times;</span>
+                </slot>
+              </button>
+            </li>
+          `
+        })}
+      </ul>
+    `
 
-        <div
-          part="listbox"
-          style="
-            background-color: Canvas;
-            border: 2px solid ButtonFace;
-          "
+  }
+
+  render () {
+    const finalHTML = html`
+      <div part="base">
+        ${when(this.multiple && this.selectedOptions.length,
+          () => this.renderSelectedOptions()
+        )}
+
+        <sl-popup
+          id="popup"
+          placement="bottom"
+          sync="width"
+          ?active=${this.expanded}
+          hover-bridge
+          distance="6"
+          part="popup"
         >
-          <slot name="listbox" @slotchange=${this.updateListboxElement}></slot>
-        </div>
-      </sl-popup>
+          <div
+            slot="anchor"
+            style="display: grid; grid-template-columns: minmax(0, auto) minmax(0, 1fr) minmax(0, auto);"
+          >
+            <slot name="prefix"><div></div></slot>
+            <slot name="trigger" @slotchange=${this.updateInputElement}></slot>
+            <slot name="suffix"><div></div></slot>
+          </div>
+
+          <div
+            part="listbox"
+            style="
+              background-color: Canvas;
+              border: 2px solid ButtonFace;
+            "
+          >
+            <slot name="listbox" @slotchange=${this.updateListboxElement}></slot>
+          </div>
+        </sl-popup>
+      </div>
     `
 
     return finalHTML
@@ -478,7 +547,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   }
 
   get combobox () {
-    return /** @type {HTMLInputElement} */ (this.inputElement)
+    return /** @type {HTMLInputElement} */ (this.triggerElement)
   }
 
   /**
@@ -553,6 +622,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       this.toggleSelected(this.currentOption)
       this.expanded = false
     }
+
+    if (this.triggerElement) {
+      this.triggerElement.focus()
+    }
   }
 
 
@@ -593,10 +666,18 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    * @param {KeyboardEvent} evt
    */
   handleKeyDown(evt) {
-    if (evt.key === "Tab" || evt.key === "Escape") {
-      if (evt.key === "Escape") { evt.preventDefault() }
+    if (evt.key === "Tab") {
       this.expanded = false
       return
+    }
+
+    if (evt.key === "Escape") {
+      evt.preventDefault()
+      if (this.expanded === false && this.triggerElement) {
+        this.triggerElement.value = null
+      }
+
+      this.expanded = false
     }
 
     const ctrlKeyPressed = evt.ctrlKey || (isMacOs() && evt.metaKey);
@@ -876,19 +957,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    * @param {Event & { inputType: string }} e
    */
   focusElementFromInput (e) {
-    if (e.target !== this.inputElement) return
-
-    // If we don't check this, we end up not being able to delete anything
-    if (e.inputType === "deleteContentBackward" && !this.multiple) {
-      this.deselectAll()
-
-      // if (this.currentOption) {
-      //   this.select(this.currentOption)
-      // }
-      return
-    }
-
-
+    if (e.target !== this.triggerElement) return
     const combobox = this.combobox
 
     if (!combobox) return
@@ -902,6 +971,12 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
     if (!this.expanded) {
       this.expanded = true
+    }
+
+    // If we don't check this, we end up not being able to delete anything
+    if (e.inputType === "deleteContentBackward" && !this.multiple) {
+      this.deselectAll()
+      return
     }
 
     const regex = new RegExp("^" + searchValue.replaceAll(/\\/g, "\\\\").toLowerCase())
@@ -921,12 +996,14 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       const currentSize = combobox.value.length
 
       setTimeout(() => {
-        combobox.setSelectionRange(currentSize, combobox.value.length)
+        if (this.currentOption) {
+          this.select(this.currentOption)
+          combobox.setSelectionRange(currentSize, combobox.value.length)
+        }
       }, 10)
     }
 
     this.focusCurrent();
-    this.select(this.currentOption)
   }
 
   focusElementFromSearchBuffer() {
@@ -1044,12 +1121,11 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       "aria-activedescendant",
       selectedElement.getAttribute("id") || "",
     );
+    // this.querySelector("[slot='listbox']")?.setAttribute(
+    //   "aria-activedescendant",
+    //   selectedElement.getAttribute("id") || "",
+    // )
     this.setFocus(selectedElement);
-
-    // if (!this.multiple) {
-    //   this.deselectAll()
-    //   this.select(selectedElement);
-    // }
 
     this.scrollOptionIntoView(selectedElement);
   }
@@ -1157,18 +1233,28 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     this.options.forEach((option, index) => {
       // Sometimes people dont provide IDs, so we can fill it for them. We need ids for aria-activedescendant.
       // Because this lives in the lightDOM, we need to make sure we don't override existing ids.
-      const id = uuidv4()
+      const id = uuidv4().slice(0, 8)
       this.assignRandomId(option, id);
 
       if (this.isSelected(option)) {
-        selectedOptions.push(option);
+        if (!this.multiple && this.currentOption == null) {
+          this.currentOption = option
+          this.select(option)
+        }
+
+        if (this.multiple) {
+          this.selectedOptions.push(option)
+        }
 
         const value = /** @type {HTMLOptionElement} */ (option).value
         if (this.value == null) {
           this.value = value
           this.combobox.value = option.innerText
           this.combobox.innerText = option.innerText
-          hasSelected = true
+        }
+
+        if (!this.currentOption) {
+          this.currentOption = option
         }
 
         if (this.multiple && this.name) {
@@ -1193,16 +1279,15 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
         }
 
         this.removeFocus(optionEl);
-        // this.deselect(optionEl);
       });
 
       return;
     }
 
     /**
-     * @type {null | HTMLElement}
+     * @type {null | HTMLOptionElement | RoleOption}
      */
-    let currentOption = null;
+    let currentOption = this.currentOption;
 
     this.options.forEach((option) => {
       const isActiveOption =
@@ -1211,6 +1296,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
       if (!currentOption && isActiveOption) {
         currentOption = option;
+        this.currentOption = option
       }
 
       if (option !== currentOption) {

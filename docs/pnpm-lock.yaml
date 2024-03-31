@@ -25,7 +25,7 @@ dependencies:
     version: 2.0.0
   light-pen:
     specifier: ^3.0.2
-    version: 3.0.2
+    version: link:../../light-pen
   lit:
     specifier: ^2.8.0
     version: 2.8.0
@@ -809,10 +809,6 @@ packages:
       to-regex-range: 5.0.1
     dev: true
 
-  /form-associated-helpers@0.0.4:
-    resolution: {integrity: sha512-Fy3dCmzxbaB08nRIr8GVBo5duQSN/NouCU4JjQ/Pd3bipsKMsV2RhPb3uGujEYYk/OIMDf9EPwRI5pQq6PsZpw==}
-    dev: false
-
   /fraction.js@4.2.0:
     resolution: {integrity: sha512-MhLuK+2gUcnZe8ZHlaaINnQLl0xRIGRfcGk2yl8xoQAfHrSsL3rYu6FCmBdkdbhc9EPlwyGHewaRsvwRMJtAlA==}
     dev: true
@@ -953,15 +949,6 @@ packages:
       '@open-wc/scoped-elements': 2.2.0
       hotkeys-js: 3.10.2
       lit: 2.8.0
-      web-component-define: 2.0.11
-    dev: false
-
-  /light-pen@3.0.2:
-    resolution: {integrity: sha512-XKq2owaReoBpl6HIZMPlr2L+fDABTteEp7QdAmH10t3Gh1jX670Xneicl/KkeE/vjjvm+aNuznkJvgfMNqpa8Q==}
-    dependencies:
-      form-associated-helpers: 0.0.4
-      lit: 2.8.0
-      prism-esm: 1.29.0-fix.4
       web-component-define: 2.0.11
     dev: false
 
@@ -1451,11 +1438,6 @@ packages:
       picocolors: 1.0.0
       source-map-js: 1.0.2
     dev: true
-
-  /prism-esm@1.29.0-fix.4:
-    resolution: {integrity: sha512-7/xHdroa6z9BhaGIpHA8SWIpefUz5l2eg2KT8pczFatyBiuni89q0jnKrScJbtFt1QkLwCRw36J1x8zUEGc5HA==}
-    engines: {node: '>=6'}
-    dev: false
 
   /qr-creator@1.0.0:
     resolution: {integrity: sha512-C0cqfbS1P5hfqN4NhsYsUXePlk9BO+a45bAQ3xLYjBL3bOIFzoVEjs79Fado9u9BPBD3buHi3+vY+C8tHh4qMQ==}

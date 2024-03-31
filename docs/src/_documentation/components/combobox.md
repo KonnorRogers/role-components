@@ -22,13 +22,10 @@ you can change how long it takes to "reset" searching for options.
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
     <role-combobox>
-      <input slot="input">
-
-      <div slot="listbox">
-        <role-option>
-          <blockquote style="display: inline-block; border-inline-start: 4px solid gray; background-color: rgba(0,0,0,0.05); padding-inline-start: 4px; margin: 0;">I'm a blockquote. Gotta love rich content.</blockquote>
-        </role-option>
-        <role-option class="text-red">Rhino</role-option>
+      <input slot="trigger">
+      <div slot="listbox" role="listbox" tabindex="-1">
+        <role-option>Capybara</role-option>
+        <role-option>Rhino</role-option>
         <role-option>Badger mole</role-option>
         <role-option>Flamingo</role-option>
         <role-option>Tortoise</role-option>
@@ -39,14 +36,13 @@ you can change how long it takes to "reset" searching for options.
   </template>
 </light-preview>
 
-## Setting a default selected value
-
+## Setting a default selected value and using a button as the trigger
 
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
-    <role-combobox>
-      <button slot="input"></button>
-
+    <label for="combobox">Animals</label>
+    <role-combobox id="combobox">
+      <button slot="trigger" style="padding: 0.4em 0.6em;"></button>
       <div slot="listbox">
         <role-option>Honeybadger</role-option>
         <role-option>Rhino</role-option>
@@ -66,8 +62,7 @@ you can change how long it takes to "reset" searching for options.
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
     <role-combobox autocomplete="off">
-      <input slot="input">
-
+      <input slot="trigger">
       <div slot="listbox">
         <role-option>Honeybadger</role-option>
         <role-option>Rhino</role-option>
@@ -86,8 +81,7 @@ you can change how long it takes to "reset" searching for options.
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
     <role-combobox autocomplete="list">
-      <input slot="input">
-
+      <input slot="trigger">
       <div slot="listbox">
         <role-option>Honeybadger</role-option>
         <role-option>Rhino</role-option>
@@ -106,8 +100,7 @@ you can change how long it takes to "reset" searching for options.
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
     <role-combobox autocomplete="inline">
-      <input slot="input">
-
+      <input slot="trigger">
       <div slot="listbox">
         <role-option>Honeybadger</role-option>
         <role-option>Rhino</role-option>
@@ -126,8 +119,7 @@ you can change how long it takes to "reset" searching for options.
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
     <role-combobox autocomplete="both">
-      <input slot="input">
-
+      <input slot="trigger">
       <div slot="listbox">
         <role-option>Honeybadger</role-option>
         <role-option>Rhino</role-option>
@@ -148,8 +140,7 @@ When using autocomplete, you may want to filter results that don't match and onl
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
     <role-combobox autocomplete="both" filter-results>
-      <input slot="input">
-
+      <input slot="trigger">
       <div slot="listbox">
         <role-option>Honeybadger</role-option>
         <role-option>Rhino</role-option>
@@ -163,6 +154,25 @@ When using autocomplete, you may want to filter results that don't match and onl
   </template>
 </light-preview>
 
+## Disabling options
+
+<light-preview preview-mode="shadow-dom">
+  <template slot="code">
+    <role-combobox>
+      <input slot="trigger">
+      <div slot="listbox">
+        <role-option disabled>Honeybadger</role-option>
+        <role-option>Rhino</role-option>
+        <role-option disabled>Badger mole</role-option>
+        <role-option>Flamingo</role-option>
+        <role-option>Tortoise</role-option>
+        <role-option>Killer Whale</role-option>
+        <role-option disabled>Opossum</role-option>
+      </div>
+    </role-combobox>
+  </template>
+</light-preview>
+
 ## Multiple select comboboxes
 
 Role Combobox supports "Multiple Select Comboboxes". Just like with the single select comboboxes above, it supports 3 different types of autocomplete.
@@ -170,8 +180,7 @@ Role Combobox supports "Multiple Select Comboboxes". Just like with the single s
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
     <role-combobox multiple>
-      <input slot="input">
-
+      <input slot="trigger">
       <div slot="listbox">
         <role-option>Honeybadger</role-option>
         <role-option>Rhino</role-option>

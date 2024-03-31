@@ -3,6 +3,7 @@ import LazyLoader from "web-component-lazy-loader";
 export default function lazyLoader() {
   return new LazyLoader({
     components: {
+
       // "light-editor": {
       //   register () {
       //     import("light-pen/exports/light-editor-register.js")
@@ -46,6 +47,7 @@ export default function lazyLoader() {
           import("@shoelace-style/shoelace/dist/components/button/button.js");
         },
       },
+
       "sl-divider": {
         register() {
           import("@shoelace-style/shoelace/dist/components/divider/divider.js");
@@ -63,6 +65,7 @@ export default function lazyLoader() {
           );
         },
       },
+
       "sl-icon": {
         register() {
           import("@shoelace-style/shoelace/dist/components/icon/icon.js");
@@ -73,6 +76,11 @@ export default function lazyLoader() {
           import(
             "@shoelace-style/shoelace/dist/components/icon-button/icon-button.js"
           );
+        },
+      },
+      "sl-input": {
+        register() {
+          import("@shoelace-style/shoelace/dist/components/input/input.js");
         },
       },
       "sl-menu": {
@@ -115,6 +123,7 @@ export default function lazyLoader() {
           );
         },
       },
+
       "sl-visually-hidden": {
         register() {
           import(

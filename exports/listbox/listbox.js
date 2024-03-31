@@ -83,7 +83,6 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     hostStyles,
     css`
       /* Split these up in case a selector isnt supported */
-      :host(:focus) [part~="base"],
       :host(:focus-within) [part~="base"],
       :host(:focus-visible) [part~="base"] {
         outline: transparent;
@@ -91,8 +90,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
         box-shadow: 0px 0px 2px 3px SelectedItem;
       }
 
-      [part~="base"] {
-        height: 100%;
+      :host {
         max-height: 100%;
         overflow: auto;
         scroll-behavior: smooth;
@@ -208,6 +206,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     this.addEventListener("pointermove", this.eventHandler.get(this.handleOptionHover))
     this.addEventListener("focusin", this.eventHandler.get(this.handleFocusIn));
   }
+
+  // click () {
+  //   this.focus()
+  // }
 
   /**
    * @override
@@ -635,10 +637,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       /** @type {HTMLElement} */ (selectedElement).setAttribute("aria-selected", "true");
     }
 
-    // this.debounce(() => this.updateOptions(), {
-    //   key: this.updateOptions,
-    //   wait: 10
-    // })
+    this.debounce(() => this.updateOptions(), {
+      key: this.updateOptions,
+      wait: 1
+    })
 
     const event = new SelectedEvent("role-selected", { selectedElement });
     selectedElement.dispatchEvent(event);
@@ -654,10 +656,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     const event = new SelectedEvent("role-deselected", { selectedElement });
     selectedElement.dispatchEvent(event);
 
-    // this.debounce(() => this.updateOptions(), {
-    //   wait: 1,
-    //   key: this.updateOptions,
-    // });
+    this.debounce(() => this.updateOptions(), {
+      wait: 1,
+      key: this.updateOptions,
+    });
   }
 
   /**
@@ -704,6 +706,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       "aria-activedescendant",
       selectedElement.getAttribute("id") || "",
     );
+
     this.setFocus(selectedElement);
 
     if (!this.multiple) {
@@ -815,9 +818,11 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       if (this.isSelected(el)) {
         selectedOptions.push(el);
 
-        const value = /** @type {HTMLOptionElement} */ (el).value
+        const value = /** @type {HTMLOptionElement} */ (el).value || el.innerText
         if (!hasSelected) {
-          this.value = value
+          if (!this.multiple) {
+            this.value = value
+          }
           this.currentOption = el
           hasSelected = true
         }
@@ -881,17 +886,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
   render() {
     return html`
-      <label class="visually-hidden" id="listbox-label">
-        <slot name="label">${this.label}</slot>
-      </label>
-
-      <div
-        part="base"
-        tabindex="-1"
-        role="presentation"
-      >
-        <slot></slot>
-      </div>
+      <slot></slot>
     `;
   }
 }

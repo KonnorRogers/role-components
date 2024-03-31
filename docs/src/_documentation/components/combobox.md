@@ -23,7 +23,7 @@ you can change how long it takes to "reset" searching for options.
   <template slot="code">
     <role-combobox>
       <input slot="trigger">
-      <div slot="listbox" role="listbox" tabindex="-1">
+      <div slot="listbox" role="listbox">
         <role-option>Capybara</role-option>
         <role-option>Rhino</role-option>
         <role-option>Badger mole</role-option>

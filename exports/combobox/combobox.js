@@ -333,8 +333,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     if (!listboxElement) return
 
     listboxElement.setAttribute("role", "listbox")
-    this.listboxId = listboxElement.id || uuidv4()
-    listboxElement.setAttribute("aria-owns", this.combobox.id)
+    if (!listboxElement.id) {
+      listboxElement.setAttribute("id", this.listboxId)
+    }
+    this.combobox.setAttribute("aria-controls", listboxElement.id)
   }
 
   /**

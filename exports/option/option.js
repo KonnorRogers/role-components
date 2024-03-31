@@ -118,9 +118,13 @@ export default class RoleOption extends BaseElement {
       if (this.value == null) {
         this.value = this.innerText
       }
+
     }
 
-    if (changedProperties.has("selected")) {
+    this.setAttribute("aria-selected", this.selected.toString())
+    this.setAttribute("aria-current", this.current.toString())
+
+    if (changedProperties.has("ariaSelected") || changedProperties.has("selected")) {
       this.setAttribute("aria-selected", this.selected.toString())
       // if (this.selected) {
       //   this.setAttribute("aria-selected", this.selected.toString())
@@ -129,8 +133,9 @@ export default class RoleOption extends BaseElement {
       // }
     }
 
-    if (changedProperties.has("current")) {
+    if (changedProperties.has("ariaCurrent") || changedProperties.has("current")) {
       this.setAttribute("aria-current", this.current.toString())
+      // this.setAttribute("aria-current", this.current.toString())
       // if (this.current) {
       //   this.setAttribute("aria-current", "true")
       // } else {

@@ -333,6 +333,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     if (!listboxElement) return
 
     listboxElement.setAttribute("role", "listbox")
+    listboxElement.setAttribute("tabindex", "-1")
     if (!listboxElement.id) {
       listboxElement.setAttribute("id", this.listboxId)
     }
@@ -433,6 +434,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
           gap: 8px;
           margin: 0;
           padding: 0;
+          position: absolute;
+          top: 0;
+          left: 0;
+          padding: 8px;
         "
       >
         ${this.selectedOptions.map((option) => {
@@ -465,10 +470,6 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   render () {
     const finalHTML = html`
       <div part="base">
-        ${when(this.multiple && this.selectedOptions.length,
-          () => this.renderSelectedOptions()
-        )}
-
         <sl-popup
           id="popup"
           placement="bottom"
@@ -480,8 +481,16 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
         >
           <div
             slot="anchor"
-            style="display: grid; grid-template-columns: minmax(0, auto) minmax(0, 1fr) minmax(0, auto);"
+            style="
+              display: grid;
+              grid-template-columns: minmax(0, auto) minmax(0, 1fr) minmax(0, auto);
+              grid-template-rows: minmax(0, auto) minmax(0, 1fr);
+              position: relative;
+            "
           >
+            ${when(this.multiple && this.selectedOptions.length,
+              () => this.renderSelectedOptions()
+            )}
             <slot name="prefix"><div></div></slot>
             <slot name="trigger" @slotchange=${this.updateInputElement}></slot>
             <slot name="suffix"><div></div></slot>
@@ -1121,7 +1130,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     // Common to both multi + single
     this.combobox.setAttribute(
       "aria-activedescendant",
-      selectedElement.getAttribute("id") || "",
+      selectedElement.id,
     );
     // this.querySelector("[slot='listbox']")?.setAttribute(
     //   "aria-activedescendant",

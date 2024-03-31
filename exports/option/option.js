@@ -57,9 +57,6 @@ export default class RoleOption extends BaseElement {
 
   constructor() {
     super();
-    // this.role = "option";
-    // this.internals = this.attachInternals()
-    // this.internals.role = "option"
 
     /**
      * aria-selected is preferred for single-select listboxes / comboboxes
@@ -121,26 +118,22 @@ export default class RoleOption extends BaseElement {
 
     }
 
-    this.setAttribute("aria-selected", this.selected.toString())
-    this.setAttribute("aria-current", this.current.toString())
-
     if (changedProperties.has("ariaSelected") || changedProperties.has("selected")) {
-      this.setAttribute("aria-selected", this.selected.toString())
-      // if (this.selected) {
-      //   this.setAttribute("aria-selected", this.selected.toString())
-      // } else {
-      //   this.removeAttribute("aria-selected")
-      // }
+      // this.setAttribute("aria-selected", this.selected.toString())
+      if (this.selected) {
+        this.setAttribute("aria-selected", this.selected.toString())
+      } else {
+        this.removeAttribute("aria-selected")
+      }
     }
 
     if (changedProperties.has("ariaCurrent") || changedProperties.has("current")) {
-      this.setAttribute("aria-current", this.current.toString())
       // this.setAttribute("aria-current", this.current.toString())
-      // if (this.current) {
-      //   this.setAttribute("aria-current", "true")
-      // } else {
-      //   this.removeAttribute("aria-current")
-      // }
+      if (this.current) {
+        this.setAttribute("aria-current", "true")
+      } else {
+        this.removeAttribute("aria-current")
+      }
     }
 
     super.willUpdate(changedProperties);

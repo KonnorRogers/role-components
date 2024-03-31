@@ -40,8 +40,7 @@ you can change how long it takes to "reset" searching for options.
 
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
-    <label for="combobox">Animals</label>
-    <role-combobox id="combobox">
+    <role-combobox>
       <button slot="trigger" style="padding: 0.4em 0.6em;"></button>
       <div slot="listbox">
         <role-option>Honeybadger</role-option>
@@ -57,7 +56,6 @@ you can change how long it takes to "reset" searching for options.
 </light-preview>
 
 ## Editable Combobox without autocomplete
-
 
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
@@ -193,3 +191,4 @@ Role Combobox supports "Multiple Select Comboboxes". Just like with the single s
     </role-combobox>
   </template>
 </light-preview>
+

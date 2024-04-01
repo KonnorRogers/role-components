@@ -28,7 +28,7 @@
     "@konnorr/bridgetown-quick-search": "^3.8.0",
     "@shoelace-style/shoelace": "^2.7.0",
     "bridgetown-quick-search": "2.0.0",
-    "light-pen": "^3.0.2",
+    "light-pen": "^3.0.4",
     "lit": "^2.8.0",
     "role-components": "link:../",
     "web-component-lazy-loader": "^1.0.1"

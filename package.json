@@ -63,7 +63,7 @@
     "prettier": "^3.0.3",
     "rimraf": "^5.0.1",
     "typedoc": "^0.25.4",
-    "typescript": "^5.2.2"
+    "typescript": "^5.4.3"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.6.3",

@@ -46,6 +46,8 @@ test("Should properly check items in the listbox", async () => {
     assert.equal(options[index].current, false)
     assert.equal(options[index].getAttribute("aria-selected"), "false")
     assert.equal(options[index].getAttribute("aria-current"), "false")
+    // assert.equal(options[index].hasAttribute("aria-selected"), false)
+    // assert.equal(options[index].hasAttribute("aria-current"), false)
   }
 
   isSelected(0)
@@ -106,6 +108,7 @@ test("Should properly set aria-selected and aria-checked for options in a multis
     const options = getOptions()
     assert.equal(options[index].selected, false)
     assert.equal(options[index].getAttribute("aria-selected"), "false")
+    // assert.equal(options[index].hasAttribute("aria-selected"), false)
   }
 
   const isCurrent = (index) => {
@@ -119,6 +122,7 @@ test("Should properly set aria-selected and aria-checked for options in a multis
     const options = getOptions()
     assert.equal(options[index].current, false)
     assert.equal(options[index].getAttribute("aria-current"), "false")
+    // assert.equal(options[index].hasAttribute("aria-current"), false)
   }
 
   await aTimeout(10)

@@ -16,7 +16,9 @@
 // autocomplete="both"
 
 // "Tag" types
-// selection-type="comma-separated | inline-buttons | outside-buttons"
+// value-type="string | formdata"
+// delimiter = ', '
+// show-buttons=""
 
 // Filtering
 // Filter results
@@ -105,6 +107,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
         display: grid;
         grid-template-rows: minmax(0, auto) minmax(0, 1fr);
         gap: 8px;
+
       }
     `
   ]
@@ -127,6 +130,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       type: Number,
       reflect: true,
     },
+    valueType: {
+      attribute: "value-type"
+    },
+    delimiter: {},
 
     // Properties
     _hasFocused: { attribute: false, state: true },
@@ -147,6 +154,12 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
      * @type {'' | "off" | "inline" | "list" | "both"}
      */
     this.autocomplete = ''
+
+    /**
+     * Used for multiple select comboboxes that use `value-type="string"`. The default is a comma with space.
+     * @type {string}
+     */
+    this.delimiter = ', '
 
     /**
      * @type {(RoleOption | HTMLOptionElement)[]}
@@ -224,6 +237,12 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
      */
     this.searchBufferDelay = 600;
 
+    /**
+     * Used for multiple selects. You can either have a string, or submit as multiple parameters in FormData
+     *   like a native `<select>`. The default is a "string"
+     * @type {"formdata" | "string"}
+     */
+    this.valueType = "string"
 
     /**
      * @type {HTMLButtonElement | HTMLInputElement}
@@ -243,16 +262,11 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
      * @type {MutationObserver}
      */
     this.optionObserver = new MutationObserver((mutations) => {
-      for (const { attributeName } of mutations) {
-        if (attributeName == null) continue;
-
-        if (this.attributeFilter.includes(attributeName)) {
-          this.debounce(() => this.updateOptions(), {
-            wait: 10,
-            key: this.updateOptions,
-          });
-          // this.updateOptions()
-        }
+      for (const mutation of mutations) {
+        this.debounce(() => this.updateOptions(), {
+          wait: 10,
+          key: this.updateOptions,
+        });
 
         // We really care about the mutations, we just need to know if things are updating.
         break;
@@ -423,6 +437,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       <span id="remove" class="visually-hidden">Remove</span>
 
       <ul
+        role="list"
         part="selected-options"
         aria-live="assertive"
         aria-atomic="false"
@@ -434,10 +449,6 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
           gap: 8px;
           margin: 0;
           padding: 0;
-          position: absolute;
-          top: 0;
-          left: 0;
-          padding: 8px;
         "
       >
         ${this.selectedOptions.map((option) => {
@@ -454,7 +465,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
                 "
                 @click=${() => this.deselect(option)}
               >
-                ${option.textContent}
+                ${option.innerText}
                 <slot name="remove-icon">
                   <span aria-hidden="true">&times;</span>
                 </slot>
@@ -470,6 +481,9 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   render () {
     const finalHTML = html`
       <div part="base">
+        ${when(this.multiple && this.selectedOptions.length,
+          () => this.renderSelectedOptions()
+        )}
         <sl-popup
           id="popup"
           placement="bottom"
@@ -478,19 +492,16 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
           hover-bridge
           distance="6"
           part="popup"
+          auto-size="both"
         >
           <div
             slot="anchor"
             style="
               display: grid;
               grid-template-columns: minmax(0, auto) minmax(0, 1fr) minmax(0, auto);
-              grid-template-rows: minmax(0, auto) minmax(0, 1fr);
-              position: relative;
+              grid-template-rows: minmax(0, 1fr);
             "
           >
-            ${when(this.multiple && this.selectedOptions.length,
-              () => this.renderSelectedOptions()
-            )}
             <slot name="prefix"><div></div></slot>
             <slot name="trigger" @slotchange=${this.updateInputElement}></slot>
             <slot name="suffix"><div></div></slot>
@@ -501,6 +512,8 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
             style="
               background-color: Canvas;
               border: 2px solid ButtonFace;
+              max-height: var(--auto-size-available-height, 100%);
+              overflow: auto;
             "
           >
             <slot name="listbox" @slotchange=${this.updateListboxElement}></slot>
@@ -521,7 +534,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
     document.addEventListener("click", this.eventHandler.get(this.handleOutsideClick));
 
-    // this.updateOptions()
+    this.updateOptions()
     this.updateComplete.then(() => {
       this.updateOptions()
     })
@@ -532,6 +545,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     this.optionObserver.observe(this, {
       subtree: true,
       childList: true,
+      attributes: true,
       attributeFilter: this.attributeFilter,
     });
 
@@ -589,7 +603,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    * @param {HTMLElement} option
    */
   setFocus(option) {
-    option.setAttribute("aria-current", "true");
+    // option.setAttribute("aria-current", "true");
     /** @type {import("../option/option.js").default} */ (option).current = true;
   }
 
@@ -597,7 +611,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    * @param {HTMLElement} option
    */
   removeFocus(option) {
-    option.setAttribute("aria-current", "false");
+    // option.setAttribute("aria-current", "false");
     /** @type {import("../option/option.js").default} */ (option).current = false;
   }
 
@@ -1049,19 +1063,21 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       /** @type {HTMLElement} */ (selectedElement).setAttribute("aria-selected", "true");
     }
 
-    // this.updateOptions()
-    this.debounce(() => this.updateOptions(), {
-      key: this.updateOptions,
-      wait: 0
-    })
+    this.updateOptions()
+    // this.debounce(() => this.updateOptions(), {
+    //   key: this.updateOptions,
+    //   wait: 10
+    // })
 
     const event = new SelectedEvent("role-selected", { selectedElement });
     selectedElement.dispatchEvent(event);
 
-    // @TODO: account for multiple.
-    if (this.currentOption) {
-      this.combobox.value = this.currentOption.innerText
-      this.combobox.innerText = this.currentOption.innerText
+    if (!this.multiple) {
+      if (this.currentOption) {
+        this.combobox.value = this.currentOption.innerText
+        this.combobox.innerText = this.currentOption.innerText
+      }
+      return
     }
   }
 
@@ -1138,7 +1154,9 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     // )
     this.setFocus(selectedElement);
 
-    this.scrollOptionIntoView(selectedElement);
+    setTimeout(() => {
+      this.scrollOptionIntoView(selectedElement);
+    })
   }
 
   /**
@@ -1179,7 +1197,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    */
   scrollOptionIntoView(selectedOption) {
     if (this.expanded && this.matches(":focus-within")) {
-      selectedOption.scrollIntoView({ block: "nearest" });
+      // this.triggerElement.scrollIntoView({ block: "center" })
+      setTimeout(() => {
+        selectedOption.scrollIntoView({ block: "nearest" });
+      })
     }
   }
 
@@ -1224,7 +1245,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     this.findFirstSelectedOption()
 
     const lightDOMOptions = /** @type {Array<HTMLOptionElement | RoleOption>} */ (Array.from(
-      this.querySelectorAll("option, [role='option']")
+      this.querySelectorAll(":is(option, [role='option']):not(:disabled, [disabled])")
     ));
 
     // const lightDOMOptions = /** @type {Array<HTMLOptionElement | RoleOption>} */ (Array.from(
@@ -1258,7 +1279,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
         }
 
         const value = /** @type {HTMLOptionElement} */ (option).value
-        if (this.value == null) {
+        if (!this.multiple && this.value == null) {
           this.value = value
           this.combobox.value = option.innerText
           this.combobox.innerText = option.innerText
@@ -1280,7 +1301,8 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       if (currentSelectedOption) {
         // Wait for cloned nodes to render.
         setTimeout(() => {
-          this.scrollOptionIntoView(currentSelectedOption)
+          // this.scrollOptionIntoView(currentSelectedOption)
+          // console.log("Scroll 1")
         })
       }
 
@@ -1303,7 +1325,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     this.options.forEach((option) => {
       const isActiveOption =
         /** @type {import("../option/option.js").default} */ (option).current === true
-        || option.getAttribute("aria-current") === "true";
+        // || option.getAttribute("aria-current") === "true";
 
       if (!currentOption && isActiveOption) {
         currentOption = option;
@@ -1316,6 +1338,23 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     });
 
     this.currentOption = currentOption
+
     this.value = multipleFormData
+
+    if (this.valueType === "formdata") {
+      this.value = multipleFormData
+    } else {
+      const stringAry = []
+
+      for (const [_key, value] of multipleFormData.entries()) {
+        stringAry.push(value)
+      }
+
+      const delimiterSeparatedValue = stringAry.join(this.delimiter)
+
+      this.value = delimiterSeparatedValue
+      this.combobox.value = this.value
+      this.combobox.innerText = this.value
+    }
   }
 }

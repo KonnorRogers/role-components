@@ -57,10 +57,10 @@ devDependencies:
     version: 5.0.1
   typedoc:
     specifier: ^0.25.4
-    version: 0.25.4(typescript@5.2.2)
+    version: 0.25.4(typescript@5.4.3)
   typescript:
-    specifier: ^5.2.2
-    version: 5.2.2
+    specifier: ^5.4.3
+    version: 5.4.3
 
 packages:
 
@@ -3130,7 +3130,7 @@ packages:
       mime-types: 2.1.35
     dev: true
 
-  /typedoc@0.25.4(typescript@5.2.2):
+  /typedoc@0.25.4(typescript@5.4.3):
     resolution: {integrity: sha512-Du9ImmpBCw54bX275yJrxPVnjdIyJO/84co0/L9mwe0R3G4FSR6rQ09AlXVRvZEGMUg09+z/usc8mgygQ1aidA==}
     engines: {node: '>= 16'}
     hasBin: true
@@ -3141,7 +3141,7 @@ packages:
       marked: 4.3.0
       minimatch: 9.0.3
       shiki: 0.14.5
-      typescript: 5.2.2
+      typescript: 5.4.3
     dev: true
 
   /typescript@4.3.5:
@@ -3150,8 +3150,8 @@ packages:
     hasBin: true
     dev: true
 
-  /typescript@5.2.2:
-    resolution: {integrity: sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==}
+  /typescript@5.4.3:
+    resolution: {integrity: sha512-KrPd3PKaCLr78MalgiwJnA25Nm8HAmdwN3mYUYZgG/wizIo9EainNVQI9/yDavtVFRN2h3k8uf3GLHuhDMgEHg==}
     engines: {node: '>=14.17'}
     hasBin: true
     dev: true

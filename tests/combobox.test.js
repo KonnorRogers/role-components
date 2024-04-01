@@ -146,3 +146,108 @@ test("Should properly selected the first selected item in the combobox", async (
   assert.equal(combobox.triggerElement.value, options()[3].innerText)
   assert.equal(combobox.value, options()[3].value)
 })
+
+// Multiple select delimiter separated
+test("Should not included disabled options", async () => {
+  const form = await fixture(html`
+    <form>
+      <role-combobox multiple name="combobox">
+        <input slot="trigger">
+        <div slot="listbox">
+          <role-option value="1" disabled>Option 1</role-option>
+          <role-option value="2">Option 2</role-option>
+        </div>
+      </role-combobox>
+    </form>
+  `)
+
+  const combobox = form.querySelector("role-combobox")
+
+  assert.lengthOf(combobox.options, 1)
+})
+
+// Multiple select formdata
+test("Should properly selected the all selected items in the combobox", async () => {
+  const form = await fixture(html`
+    <form>
+      <role-combobox multiple value-type="formdata" name="combobox">
+        <input slot="trigger">
+
+        <div slot="listbox">
+          <role-option value="1">Option 1</role-option>
+          <role-option value="2">Option 2</role-option>
+          <role-option value="3">Option 3</role-option>
+          <role-option selected value="4">Option 4</role-option>
+          <role-option selected value="5">Option 5</role-option>
+          <role-option value="6">Option 6</role-option>
+          <role-option value="7">Option 7</role-option>
+          <role-option value="8">Option 8</role-option>
+          <role-option value="9">Option 9</role-option>
+          <role-option value="10">Option 10</role-option>
+        </div>
+      </role-combobox>
+    </form>
+  `)
+
+  const combobox = form.querySelector("role-combobox")
+  const options = () => form.querySelectorAll("role-option")
+
+  const formData = () => new FormData(form)
+  assert.lengthOf(formData().getAll("combobox"), 2)
+  assert.lengthOf(combobox.value.getAll("combobox"), 2)
+})
+
+// Multiple select delimiter separated
+test("Should properly selected the all selected items in the combobox", async () => {
+  const form = await fixture(html`
+    <form>
+      <role-combobox multiple name="combobox">
+        <input slot="trigger">
+
+        <div slot="listbox">
+          <role-option value="1">Option 1</role-option>
+          <role-option value="2">Option 2</role-option>
+          <role-option value="3">Option 3</role-option>
+          <role-option selected value="4">Option 4</role-option>
+          <role-option selected value="5">Option 5</role-option>
+          <role-option value="6">Option 6</role-option>
+          <role-option value="7">Option 7</role-option>
+          <role-option value="8">Option 8</role-option>
+          <role-option value="9">Option 9</role-option>
+          <role-option value="10">Option 10</role-option>
+        </div>
+      </role-combobox>
+    </form>
+  `)
+
+  const combobox = form.querySelector("role-combobox")
+  const options = () => form.querySelectorAll("role-option")
+
+  const formData = () => new FormData(form)
+  assert.lengthOf(formData().getAll("combobox"), 1)
+  assert.equal(formData().get("combobox"), "4, 5")
+  assert.equal(combobox.value, "4, 5")
+  assert.equal(combobox.triggerElement.value, "4, 5")
+})
+
+test("Should change the delimiter when the delimiter attribute is changed", async () => {
+  const combobox = await fixture(html`
+    <role-combobox multiple delimiter="; " name="combobox">
+      <input slot="trigger">
+      <div slot="listbox">
+        <role-option>Honeybadger</role-option>
+        <role-option selected>Rhino</role-option>
+        <role-option>Badger mole</role-option>
+        <role-option>Flamingo</role-option>
+        <role-option selected>Tortoise</role-option>
+        <role-option>Killer Whale</role-option>
+        <role-option>Opossum</role-option>
+      </div>
+    </role-combobox>
+  `)
+
+  await aTimeout(15)
+
+  assert.equal(combobox.value, "Rhino; Tortoise")
+  assert.equal(combobox.triggerElement.value, "Rhino; Tortoise")
+})

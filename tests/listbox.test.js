@@ -217,7 +217,7 @@ test("Should properly reset to default selected items", async () => {
   listbox.deselectAll()
 
   // Despite deselectAll being synchronous, it seems to be subject to needing ~11ms to update.
-  await aTimeout(11)
+  await aTimeout(100)
 
   entries = new FormData(form)
   assert.lengthOf(listbox.value.getAll("select"), 0)

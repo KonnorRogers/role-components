@@ -34,7 +34,8 @@
     "deploy:major": "npm run build && npm version major && npm publish && git push --follow-tags",
     "lint": "prettier --check --ignore-path .gitignore .",
     "fix": "prettier --write --ignore-path .gitignore .",
-    "test": "web-test-runner"
+    "test": "web-test-runner",
+    "test:watch": "web-test-runner --watch"
   },
   "keywords": [
     "web-components",

@@ -34,10 +34,11 @@ test("Should properly check items in the combobox", async () => {
   assert.equal(combobox.value, null)
   assert.lengthOf(formData().getAll("combobox"), 0)
 
-  combobox.focus()
-  await aTimeout(10)
+  combobox.combobox.focus()
+
+  await aTimeout(100)
   await sendKeys({ press: "ArrowDown" })
-  await aTimeout(10)
+  await aTimeout(100)
 
   assert.equal(combobox.expanded, true)
   assert.equal(combobox.triggerElement.getAttribute("aria-expanded"), "true")
@@ -48,55 +49,58 @@ test("Should properly check items in the combobox", async () => {
   assert.equal(combobox.triggerElement.value, '')
   assert.equal(combobox.value, null)
 
+  // Select the 1st option
+  await aTimeout(10)
+  await sendKeys({ press: "Enter" })
+  await aTimeout(10)
+
+  assert.equal(combobox.expanded, false)
+  assert.equal(combobox.triggerElement.value, options()[0].value)
+  assert.equal(combobox.value, options()[0].value)
+  assert.lengthOf(formData().getAll("combobox"), 1)
+  assert.equal(formData().getAll("combobox")[0], options()[0].innerText)
+
+  assert.equal(options()[0].selected, true)
+  assert.equal(options()[0].current, true)
+
+  assert.equal(options()[1].selected, false)
+  assert.equal(options()[1].current, false)
+
+  await sendKeys({ press: "ArrowDown" }) // Expand the combobox
+  assert.equal(combobox.expanded, true)
+
+  await sendKeys({ press: "ArrowDown" }) // Focus the next option
+
+  // double check we havent lost selection
+  assert.equal(combobox.triggerElement.value, options()[0].innerText)
+  assert.equal(combobox.value, options()[0].innerText)
+  assert.lengthOf(formData().getAll("combobox"), 1)
+  assert.equal(formData().getAll("combobox")[0], options()[0].innerText)
+
+  assert.equal(options()[0].selected, true)
+  assert.equal(options()[0].current, false)
+
+  assert.equal(options()[1].selected, false)
+  assert.equal(options()[1].current, true)
 
   // Select the option
-  // await aTimeout(10)
-  // await sendKeys({ press: "Enter" })
-  // await aTimeout(10)
-  //
-  // assert.equal(combobox.triggerElement.value, options()[0].innerText)
-  // assert.equal(combobox.value, options()[0].innerText)
-  // assert.lengthOf(formData().getAll("combobox"), 1)
-  // assert.equal(formData().getAll("combobox")[0], options()[0].innerText)
-  //
-  // assert.equal(options()[0].selected, true)
-  // assert.equal(options()[0].current, true)
-  //
-  // assert.equal(options()[1].selected, false)
-  // assert.equal(options()[1].current, false)
-  //
-  // await aTimeout(10)
-  // await sendKeys({ press: "ArrowDown" })
-  // await aTimeout(10)
-  //
-  // // double check we havent lost selection
-  // assert.equal(combobox.triggerElement.value, options()[0].innerText)
-  // assert.equal(combobox.value, options()[0].innerText)
-  // assert.lengthOf(formData().getAll("combobox"), 1)
-  // assert.equal(formData().getAll("combobox")[0], options()[0].innerText)
-  //
-  // assert.equal(options()[0].selected, true)
-  // assert.equal(options()[0].current, true)
-  //
-  // assert.equal(options()[1].selected, false)
-  // assert.equal(options()[1].current, false)
-  //
-  // // Select the option
-  // await aTimeout(10)
-  // await sendKeys({ press: "Enter" })
-  // await aTimeout(10)
-  //
-  // assert.equal(options()[0].selected, false)
-  // assert.equal(options()[0].current, false)
-  //
-  // assert.equal(options()[1].selected, true)
-  // assert.equal(options()[1].current, true)
-  //
-  // // Make sure we deselect previous.
-  // assert.equal(combobox.triggerElement.value, options()[1].innerText)
-  // assert.equal(combobox.value, options()[1].innerText)
-  // assert.lengthOf(formData().getAll("combobox"), 1)
-  // assert.equal(formData().getAll("combobox")[1], options()[1].innerText)
+  await aTimeout(100)
+  await sendKeys({ press: "Enter" })
+  await aTimeout(100)
+
+  debugger
+
+  assert.equal(options()[0].selected, false)
+  assert.equal(options()[0].current, false)
+
+  assert.equal(options()[1].selected, true)
+  assert.equal(options()[1].current, true)
+
+  // Make sure we deselect previous.
+  assert.equal(combobox.triggerElement.value, options()[1].innerText)
+  assert.equal(combobox.value, options()[1].innerText)
+  assert.lengthOf(formData().getAll("combobox"), 1)
+  assert.equal(formData().getAll("combobox")[0], options()[1].innerText)
 })
 
 // Single select

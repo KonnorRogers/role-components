@@ -97,7 +97,7 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
     /**
      * @type {null | string}
      */
-    this.value = "";
+    this.value = null
 
     /**
      * @type {string}
@@ -134,7 +134,6 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
       if (this.value == null) {
         this.value = this.innerText
       }
-
     }
 
     if (changedProperties.has("ariaSelected") || changedProperties.has("selected")) {

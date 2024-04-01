@@ -1074,6 +1074,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
     if (!this.multiple) {
       if (this.currentOption) {
+        this.value = this.currentOption.value ?? this.currentOption.innerText
         this.combobox.value = this.currentOption.innerText
         this.combobox.innerText = this.currentOption.innerText
       }

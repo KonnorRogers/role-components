@@ -201,6 +201,191 @@ test("Should properly selected the all selected items in the combobox", async ()
   assert.lengthOf(combobox.value.getAll("combobox"), 2)
 })
 
+test("Should properly record a value for autocomplete='off'", async () => {
+  const form = await fixture(html`
+    <form>
+      <role-combobox name="combobox" autocomplete="off">
+        <input slot="trigger">
+        <div slot="listbox">
+          <role-option value="1">Option 1</role-option>
+          <role-option value="2">Option 2</role-option>
+          <role-option value="3">Option 3</role-option>
+          <role-option selected value="4">Option 4</role-option>
+          <role-option value="5">Option 5</role-option>
+          <role-option value="6">Option 6</role-option>
+          <role-option value="7">Option 7</role-option>
+          <role-option value="8">Option 8</role-option>
+          <role-option value="9">Option 9</role-option>
+          <role-option value="10">Option 10</role-option>
+        </div>
+      </role-combobox>
+    </form>
+  `)
+
+  const combobox = form.querySelector("role-combobox")
+
+  assert.equal(combobox.value, "4")
+  assert.equal(combobox.combobox.value, "Option 4")
+
+  combobox.combobox.value = ""
+  combobox.focus()
+
+  const str = "Option"
+
+  await sendKeys({ type: str })
+  await aTimeout(20)
+
+  // Input
+  assert.equal(combobox.combobox.value, "Option")
+  // Combobox itself
+  assert.equal(combobox.value, "Option")
+
+  await sendKeys({ press: "Backspace" })
+  await aTimeout(20)
+
+  // Input
+  assert.equal(combobox.combobox.value, "Optio")
+  // Combobox itself
+  assert.equal(combobox.value, "Optio")
+})
+
+test("Should properly record a value for autocomplete='list'", async () => {
+  const form = await fixture(html`
+    <form>
+      <role-combobox name="combobox" autocomplete="list">
+        <input slot="trigger">
+        <div slot="listbox">
+          <role-option value="1">Option 1</role-option>
+          <role-option value="2">Option 2</role-option>
+          <role-option value="3">Option 3</role-option>
+          <role-option selected value="4">Option 4</role-option>
+          <role-option value="5">Option 5</role-option>
+          <role-option value="6">Option 6</role-option>
+          <role-option value="7">Option 7</role-option>
+          <role-option value="8">Option 8</role-option>
+          <role-option value="9">Option 9</role-option>
+          <role-option value="10">Option 10</role-option>
+        </div>
+      </role-combobox>
+    </form>
+  `)
+
+  const combobox = form.querySelector("role-combobox")
+
+  assert.equal(combobox.value, "4")
+  assert.equal(combobox.combobox.value, "Option 4")
+
+  combobox.combobox.value = ""
+  combobox.focus()
+
+  const str = "Option"
+
+  await sendKeys({ type: str })
+  await aTimeout(20)
+
+  // Input
+  assert.equal(combobox.combobox.value, "Option")
+  // Combobox itself
+  assert.equal(combobox.value, "Option")
+
+  await sendKeys({ press: "Backspace" })
+  await aTimeout(20)
+
+  // Input
+  assert.equal(combobox.combobox.value, "Optio")
+  // Combobox itself
+  assert.equal(combobox.value, "Optio")
+})
+
+
+test("Should properly record a value for autocomplete='inline'", async () => {
+  const form = await fixture(html`
+    <form>
+      <role-combobox name="combobox" autocomplete="inline">
+        <input slot="trigger">
+        <div slot="listbox">
+          <role-option value="1">Option 1</role-option>
+          <role-option value="2">Option 2</role-option>
+          <role-option value="3">Option 3</role-option>
+          <role-option value="4">Option 4</role-option>
+          <role-option value="5">Option 5</role-option>
+          <role-option value="6">Option 6</role-option>
+          <role-option value="7">Option 7</role-option>
+          <role-option value="8">Option 8</role-option>
+          <role-option value="9">Option 9</role-option>
+          <role-option value="10">Option 10</role-option>
+        </div>
+      </role-combobox>
+    </form>
+  `)
+
+  const combobox = form.querySelector("role-combobox")
+
+  combobox.focus()
+
+  const str = "Option"
+
+  await sendKeys({ type: str })
+  await aTimeout(20)
+
+  // Input
+  assert.equal(combobox.combobox.value, "Option 1")
+  // Combobox itself
+  assert.equal(combobox.value, "1")
+
+  await sendKeys({ press: "Backspace" })
+  await aTimeout(20)
+
+  // Input
+  assert.equal(combobox.combobox.value, "Option")
+  // Combobox itself
+  assert.equal(combobox.value, "Option")
+})
+
+test("Should properly record a value for autocomplete='both'", async () => {
+  const form = await fixture(html`
+    <form>
+      <role-combobox name="combobox" autocomplete="both">
+        <input slot="trigger">
+        <div slot="listbox">
+          <role-option value="1">Option 1</role-option>
+          <role-option value="2">Option 2</role-option>
+          <role-option value="3">Option 3</role-option>
+          <role-option value="4">Option 4</role-option>
+          <role-option value="5">Option 5</role-option>
+          <role-option value="6">Option 6</role-option>
+          <role-option value="7">Option 7</role-option>
+          <role-option value="8">Option 8</role-option>
+          <role-option value="9">Option 9</role-option>
+          <role-option value="10">Option 10</role-option>
+        </div>
+      </role-combobox>
+    </form>
+  `)
+
+  const combobox = form.querySelector("role-combobox")
+
+  combobox.focus()
+
+  const str = "Option"
+
+  await sendKeys({ type: str })
+  await aTimeout(20)
+
+  // Input
+  assert.equal(combobox.combobox.value, "Option 1")
+  // Combobox itself
+  assert.equal(combobox.value, "1")
+
+  await sendKeys({ press: "Backspace" })
+  await aTimeout(20)
+
+  // Input
+  assert.equal(combobox.combobox.value, "Option")
+  // Combobox itself
+  assert.equal(combobox.value, "Option")
+})
+
 // Multiple select delimiter separated
 test("Should properly selected the all selected items in the combobox", async () => {
   const form = await fixture(html`

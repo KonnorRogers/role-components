@@ -25,8 +25,8 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
   };
 
   formResetCallback () {
+    // super.formResetCallback()
     this.selected = this.defaultSelected
-    super.formResetCallback()
   }
 
   static styles = [

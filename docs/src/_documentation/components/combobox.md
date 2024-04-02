@@ -119,7 +119,6 @@ you can change how long it takes to "reset" searching for options.
 
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
-    <style> button:focus { outline-color: red; }</style>
     <form>
       <role-combobox name="combobox">
         <button slot="trigger" style="padding: 0.4em 0.6em;"></button>
@@ -443,4 +442,3 @@ Make sure to add a `name` attribute to the combobox to get the FormData to work 
     <%= debug_info %>
   </template>
 </light-preview>
-

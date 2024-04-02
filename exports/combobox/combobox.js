@@ -585,15 +585,12 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
    */
   formResetCallback () {
     super.formResetCallback()
-
     this.value = null
 
-    this.options.forEach((option) => {
-      const opt = /** @type {HTMLOptionElement} */ (option)
-      opt.selected = opt.defaultSelected ?? opt.hasAttribute("selected")
+    // Need to wait for next tick to update.
+    setTimeout(() => {
+      this.updateOptions()
     })
-
-    this.updateOptions()
   }
 
   get combobox () {
@@ -612,6 +609,10 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     }
 
     if (changedProperties.has("value")) {
+      if (this.value && this.multiple && this.valueType === "string" && this.isEditable) {
+        // TODO: figure out delimited values.
+      }
+
       this.updateComplete.then(() => {
         this.dispatchEvent(new Event("change", { bubbles: true, composed: true }))
       })
@@ -1034,12 +1035,12 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
 
     const searchValue = combobox.value || "";
 
-    // if (searchValue == null) return
-
-    // this.updateOptions()
+    this.value = combobox.value
 
     // We dont focus elements if inline or off
-    if (this.autocomplete !== "inline" && this.autocomplete !== "list" && this.autocomplete !== "both") return
+    if (this.autocomplete !== "inline" && this.autocomplete !== "list" && this.autocomplete !== "both") {
+      return
+    }
 
     if (!this.expanded) {
       this.expanded = true
@@ -1048,9 +1049,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     // If we don't check this, we end up not being able to delete anything
     if (e.inputType === "deleteContentBackward" && !this.multiple) {
       this.deselectAll()
-      return
     }
-
     const regex = this.stringToRegex(searchValue)
 
     const matchedEl = this.options.find((el) => {
@@ -1058,13 +1057,18 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       return el.innerText.toLowerCase().match(regex);
     });
 
-    if (!matchedEl) return
+    if (!matchedEl) {
+      if (!this.multiple) {
+        this.deselectAll();
+      }
+      return
+    }
 
     this.currentOption = /** @type {RoleOption} */ (matchedEl);
 
     // focusCurrent is going to set the value for us, but we need to track the `currentSize` and then after the
     // value is set, create a selection range.
-    if (this.autocomplete === "inline" || this.autocomplete === "both") {
+    if ((this.autocomplete === "inline" || this.autocomplete === "both") && e.inputType !== "deleteContentBackward") {
       const currentSize = combobox.value.length
 
       setTimeout(() => {
@@ -1082,7 +1086,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
   focusElementFromSearchBuffer() {
     const searchBuffer = this._searchBuffer;
 
-    const regex = new RegExp("^" + searchBuffer.replaceAll(/\\/g, "\\\\").toLowerCase())
+    const regex = this.stringToRegex(searchBuffer.toLowerCase())
 
     const matchedEl = this.options.find((el) => {
       // Native select only matches by case in-equal innerText.
@@ -1160,12 +1164,14 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
   /**
    * Mark every element with [aria-selected="false"]
    */
-  deselectAll() {
+  deselectAll(updateOptions = true) {
     for (const opt of this.options) {
       this.deselect(opt);
     }
 
-    this.updateOptions()
+    if (updateOptions) {
+      this.updateOptions()
+    }
   }
 
   /**
@@ -1286,6 +1292,11 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     return isOption && isSelected;
   }
 
+  /** @return {NodeListOf<HTMLOptionElement | RoleOption>} */
+  get selectableOptions () {
+    return this.querySelectorAll(":is(option, [role='option']):not(:disabled, [disabled], [hidden])")
+  }
+
   updateOptions() {
     if (!this.shadowRoot) return
 
@@ -1296,8 +1307,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
 
     this.findFirstSelectedOption()
 
-    /** @type {NodeListOf<HTMLOptionElement | RoleOption>} */
-    const options = this.querySelectorAll(":is(option, [role='option']):not(:disabled, [disabled], [hidden])")
+    const options = this.selectableOptions
 
     if (options.length === 0) return;
 

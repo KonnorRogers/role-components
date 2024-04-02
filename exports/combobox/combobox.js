@@ -75,9 +75,9 @@ const formProperties = LitFormAssociatedMixin.formProperties
  *
  *   The currently selected `<role-option>` has `[aria-selected="true"]`
  * @customElement
- * @tagname role-listbox
+ * @tagname role-combobox
  */
-export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
+export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
   static baseName = "role-combobox";
   static shadowRootOptions = {...LitElement.shadowRootOptions, delegatesFocus: true }
 
@@ -114,17 +114,17 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
   static properties = {
     ...formProperties,
-    expanded: { type: Boolean, reflect: true },
+    expanded: { type: Boolean },
     autocomplete: {},
-    multiple: { type: Boolean, reflect: true },
+    multiple: { type: Boolean },
+    defaultValue: { attribute: "value", reflect: true },
     // selectedOptions: { type: Array, state: true, attribute: false },
     // currentOption: { state: true, attribute: false },
     wrapSelection: {
       attribute: "wrap-selection",
-      reflect: true,
       type: Boolean,
     },
-
+    filterResults: {type: Boolean, attribute: "filter-results"},
     searchBufferDelay: {
       attribute: "search-buffer-delay",
       type: Number,
@@ -134,6 +134,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       attribute: "value-type"
     },
     delimiter: {},
+    showEmptyResults: { type: Boolean, attribute: "show-empty-results" },
 
     // Properties
     _hasFocused: { attribute: false, state: true },
@@ -203,14 +204,27 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     this.wrapSelection = false;
 
     /**
+     * Whether or not to filter results based on what is typed into the combobox.
+     * @type {boolean}
+     */
+    this.filterResults = false
+
+    /**
      * @type {string}
      */
-    // this.role = "presentation";
+    this.role = "presentation";
+    this.internals.role = "presentation";
 
     /**
      * @type {string}
      */
     this.label = "";
+
+    /**
+     * If true, or `show-empty-results` attribute is present, it will show the "no-results-found" slot.
+     * @type {boolean}
+     */
+    this.showEmptyResults = false
 
     /**
      * Internal buffer for searching the listbox.
@@ -262,13 +276,14 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
      * @type {MutationObserver}
      */
     this.optionObserver = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        this.debounce(() => this.updateOptions(), {
+      for (const _mutation of mutations) {
+        this.debounce(() => { this.updateOptions(); }, {
           wait: 10,
           key: this.updateOptions,
         });
 
-        // We really care about the mutations, we just need to know if things are updating.
+
+        // We really don't care about the mutations, we just need to know if things are updating.
         break;
       }
     });
@@ -291,7 +306,9 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
    * @param {Event} e
    */
   handleInputClick (e) {
-    if (e.target.closest("[slot='trigger']")) {
+    const trigger = e.target.closest("[slot='trigger']")
+    if (trigger) {
+      this.combobox.focus()
       this.expanded = !this.expanded
     }
   }
@@ -384,7 +401,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     const attributes = [
       ["role", "combobox"],
       ["aria-haspopup", "listbox"],
-      ["aria-controls", this.listboxId],
+      ["aria-controls", this.listbox?.id || this.listboxId],
       ["aria-activedescendant", this.currentOption?.id || ""],
       ["aria-autocomplete", this.autocomplete || ""],
       // ["autocomplete", this.autocomplete || "list"],
@@ -478,6 +495,10 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
   }
 
+  get shouldShowEmptyResults () {
+    return this.showEmptyResults && Boolean(this.options.length)
+  }
+
   render () {
     const finalHTML = html`
       <div part="base">
@@ -509,6 +530,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
           <div
             part="listbox"
+            ?hidden=${this.showEmptyResults === false && !this.options.length}
             style="
               background-color: Canvas;
               border: 2px solid ButtonFace;
@@ -516,7 +538,8 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
               overflow: auto;
             "
           >
-            <slot name="listbox" @slotchange=${this.updateListboxElement}></slot>
+            <slot ?hidden=${!this.options.length} name="listbox" @slotchange=${this.updateListboxElement}></slot>
+            <slot ?hidden=${!this.shouldShowEmptyResults} name="no-results"><div style="padding: 1rem;">No results found</div></slot>
           </div>
         </sl-popup>
       </div>
@@ -563,6 +586,8 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   formResetCallback () {
     super.formResetCallback()
 
+    this.value = null
+
     this.options.forEach((option) => {
       const opt = /** @type {HTMLOptionElement} */ (option)
       opt.selected = opt.defaultSelected ?? opt.hasAttribute("selected")
@@ -584,6 +609,12 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
     if (combobox) {
       this.updateInputElement()
+    }
+
+    if (changedProperties.has("value")) {
+      this.updateComplete.then(() => {
+        this.dispatchEvent(new Event("change", { bubbles: true, composed: true }))
+      })
     }
 
     if (changedProperties.has("currentOption")) {
@@ -979,17 +1010,33 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   }
 
   /**
+   * @param {string} str
+   */
+  stringToRegex (str) {
+    // https://github.com/sindresorhus/escape-string-regexp/blob/main/index.js
+    return new RegExp(
+      "^" + // start of string
+      str // Escape funky characters
+        .replace(/[|\\{}()[\]^$+*?.]/g, '\\$&')
+        .replace(/-/g, '\\x2d'),
+      'gi' // Global, case insensitive
+    )
+  }
+
+
+  /**
    * @param {Event & { inputType: string }} e
    */
   focusElementFromInput (e) {
-    if (e.target !== this.triggerElement) return
     const combobox = this.combobox
-
     if (!combobox) return
+    if (e.target !== combobox) return
 
-    const searchValue = combobox.value;
+    const searchValue = combobox.value || "";
 
-    if (!searchValue) return
+    // if (searchValue == null) return
+
+    // this.updateOptions()
 
     // We dont focus elements if inline or off
     if (this.autocomplete !== "inline" && this.autocomplete !== "list" && this.autocomplete !== "both") return
@@ -1004,7 +1051,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       return
     }
 
-    const regex = new RegExp("^" + searchValue.replaceAll(/\\/g, "\\\\").toLowerCase())
+    const regex = this.stringToRegex(searchValue)
 
     const matchedEl = this.options.find((el) => {
       // Native select only matches by case in-equal innerText.
@@ -1029,6 +1076,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     }
 
     this.focusCurrent();
+    this.updateOptions()
   }
 
   focusElementFromSearchBuffer() {
@@ -1063,11 +1111,11 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       /** @type {HTMLElement} */ (selectedElement).setAttribute("aria-selected", "true");
     }
 
-    this.updateOptions()
-    // this.debounce(() => this.updateOptions(), {
-    //   key: this.updateOptions,
-    //   wait: 10
-    // })
+    // this.updateOptions()
+    this.debounce(() => this.updateOptions(), {
+      key: this.updateOptions,
+      wait: 1
+    })
 
     const event = new SelectedEvent("role-selected", { selectedElement });
     selectedElement.dispatchEvent(event);
@@ -1075,8 +1123,8 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
     if (!this.multiple) {
       if (this.currentOption) {
         this.value = this.currentOption.value ?? this.currentOption.innerText
-        this.combobox.value = this.currentOption.innerText
-        this.combobox.innerText = this.currentOption.innerText
+
+        this.updateComboboxTextContentAndValue(this.currentOption.innerText)
       }
       return
     }
@@ -1184,6 +1232,7 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
 
   focusFirst() {
     this.currentOption = this.options[0];
+    if (!this.currentOption) return
     this.focusCurrent();
   }
 
@@ -1238,63 +1287,97 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   }
 
   updateOptions() {
-    const listbox = this.listbox
-    if (!listbox) return
-
     if (!this.shadowRoot) return
+
+    const listbox = this.listbox
+    const combobox = this.combobox
+    if (!listbox) return
+    if (!combobox) return
 
     this.findFirstSelectedOption()
 
-    const lightDOMOptions = /** @type {Array<HTMLOptionElement | RoleOption>} */ (Array.from(
-      this.querySelectorAll(":is(option, [role='option']):not(:disabled, [disabled])")
-    ));
+    /** @type {NodeListOf<HTMLOptionElement | RoleOption>} */
+    const options = this.querySelectorAll(":is(option, [role='option']):not(:disabled, [disabled], [hidden])")
 
-    // const lightDOMOptions = /** @type {Array<HTMLOptionElement | RoleOption>} */ (Array.from(
-    //   this.querySelectorAll("option, [role='option']")
-    // ));
+    if (options.length === 0) return;
 
-    this.options = lightDOMOptions
+    const optionsSet = new Set([...options])
 
     this.selectedOptions = [];
     const selectedOptions = this.selectedOptions;
 
-    if (this.options.length === 0) return;
-
-    let hasSelected = false
     const multipleFormData = new FormData()
+    let hasSelected = false
 
-    this.options.forEach((option, index) => {
+    const filterResults = this.filterResults
+    let comboboxValue = (combobox.value || "")
+
+    // When we preselect values, we need to make sure we check the selection.
+    if ("selectionStart" in combobox) {
+      comboboxValue = comboboxValue.slice(0, combobox.selectionStart || undefined)
+    }
+
+    const value = comboboxValue.trim()
+    const searchRegex = this.stringToRegex(value)
+
+    // console.log("UpdateOptions")
+    for (const option of optionsSet) {
+      let hasMatch = filterResults === false || !(value)
+
+      if (!hasMatch) {
+        hasMatch = Boolean(
+          option.innerText?.match(searchRegex) ||
+          option.value?.match(searchRegex)
+        )
+        console.log({ hasMatch })
+      }
+
+      if (!hasMatch) {
+        option.style.display = "none"
+        optionsSet.delete(option)
+        continue
+      }
+
+      if (option.style.display === "none") {
+        option.style.display = "";
+      }
+
       // Sometimes people dont provide IDs, so we can fill it for them. We need ids for aria-activedescendant.
       // Because this lives in the lightDOM, we need to make sure we don't override existing ids.
       const id = uuidv4().slice(0, 8)
       this.assignRandomId(option, id);
 
       if (this.isSelected(option)) {
-        if (!this.multiple && this.currentOption == null) {
-          this.currentOption = option
-          this.select(option)
-        }
-
         if (this.multiple) {
           this.selectedOptions.push(option)
+        }
+
+        if (!this.multiple && hasSelected) {
+          this.deselect(option)
         }
 
         const value = /** @type {HTMLOptionElement} */ (option).value
         if (!this.multiple && this.value == null) {
           this.value = value
-          this.combobox.value = option.innerText
-          this.combobox.innerText = option.innerText
+          this.updateComboboxTextContentAndValue(option.innerText)
         }
 
         if (!this.currentOption) {
           this.currentOption = option
+
+          if (!this.multiple) {
+            this.select(option)
+            hasSelected = true
+          }
         }
 
         if (this.multiple && this.name) {
           multipleFormData.append(this.name, value)
         }
       }
-    });
+    };
+
+    this.options = [...optionsSet]
 
     const currentSelectedOption = this.currentOption;
 
@@ -1354,8 +1437,25 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
       const delimiterSeparatedValue = stringAry.join(this.delimiter)
 
       this.value = delimiterSeparatedValue
-      this.combobox.value = this.value
-      this.combobox.innerText = this.value
+      this.updateComboboxTextContentAndValue(delimiterSeparatedValue)
+    }
+  }
+
+  /**
+   * @param {string} str
+   */
+  updateComboboxTextContentAndValue (str) {
+    const combobox = this.combobox
+
+    if (!combobox) return
+
+    if (combobox.value !== str) {
+      combobox.value = str
+    }
+
+    // Use textContent instead of innerText to avoid infinite loops of MO on `<input>` elements.
+    if (combobox.textContent !== str) {
+      combobox.textContent = str
     }
   }
 }

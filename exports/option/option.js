@@ -33,6 +33,7 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
     hostStyles,
     css`
       :host {
+        user-select: none;
         cursor: pointer;
       }
 

@@ -91,11 +91,22 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
   static styles = [
     hostStyles,
     css`
+      :host {
+      }
       [name="trigger"]::slotted(input) {
         font-size: 1.1em;
         padding-inline-start: 0.4em;
         padding-inline-end: 0.4em;
         line-height: 1.8;
+        -webkit-appearance: none;
+        appearance: none;
+        background: Field;
+        color: FieldText;
+        border: 1px solid GrayText;
+      }
+
+      [name="trigger"]::slotted(*:focus-within) {
+        outline: 2px solid dodgerblue;
       }
 
       /** because position: absolute; + isolation: isolate; don't always pierce. */
@@ -107,7 +118,6 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
         display: grid;
         grid-template-rows: minmax(0, auto) minmax(0, 1fr);
         gap: 8px;
-
       }
     `
   ]
@@ -479,10 +489,14 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
                   align-items: center;
                   justify-content: space-between;
                   gap: 8px;
+                  appearance: none;
+                  background: ButtonFace;
+                  color: ButtonText;
+                  border: 1px solid ButtonText;
                 "
                 @click=${() => this.deselect(option)}
               >
-                ${option.innerText}
+                <span>${option.innerText}</span>
                 <slot name="remove-icon">
                   <span aria-hidden="true">&times;</span>
                 </slot>
@@ -611,6 +625,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     if (changedProperties.has("value")) {
       if (this.value && this.multiple && this.valueType === "string" && this.isEditable) {
         // TODO: figure out delimited values.
+        console.log(this.value)
       }
 
       this.updateComplete.then(() => {

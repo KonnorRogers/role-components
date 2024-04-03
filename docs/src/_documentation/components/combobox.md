@@ -87,7 +87,7 @@ you can change how long it takes to "reset" searching for options.
   <template slot="code">
     <form>
       <role-combobox name="combobox">
-        <input slot="trigger">
+        <input slot="trigger" autocomplete="off">
         <div slot="listbox">
           <role-option>Capybara</role-option>
           <role-option>Rhino</role-option>
@@ -425,6 +425,28 @@ Make sure to add a `name` attribute to the combobox to get the FormData to work 
   <template slot="code">
     <form>
       <role-combobox multiple value-type="formdata" name="combobox">
+        <input slot="trigger">
+        <div slot="listbox">
+          <role-option>Honeybadger</role-option>
+          <role-option selected>Rhino</role-option>
+          <role-option>Badger mole</role-option>
+          <role-option>Flamingo</role-option>
+          <role-option selected>Tortoise</role-option>
+          <role-option>Killer Whale</role-option>
+          <role-option>Opossum</role-option>
+        </div>
+      </role-combobox>
+      <br>
+      <button type="reset">Reset</button>
+    </form>
+    <%= debug_info %>
+  </template>
+</light-preview>
+
+<light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
+  <template slot="code">
+    <form>
+      <role-combobox multiple autocomplete="both" name="combobox">
         <input slot="trigger">
         <div slot="listbox">
           <role-option>Honeybadger</role-option>

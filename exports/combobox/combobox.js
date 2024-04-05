@@ -885,7 +885,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       }
 
       // CTRL + a || CTRL + A
-      if (ctrlKeyPressed && evt.key.match(/^[aA]$/)) {
+      if (ctrlKeyPressed && !this.isEditable && evt.key.match(/^[aA]$/)) {
         evt.preventDefault();
 
         if (this.selectedOptions.length === this.options.length) {
@@ -1085,10 +1085,9 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
 
     const searchValue = combobox.value || "";
 
-    this.value = combobox.value
-
     // We dont focus elements if inline or off
     if (this.autocomplete !== "inline" && this.autocomplete !== "list" && this.autocomplete !== "both") {
+      this.value = combobox.value
       return
     }
 
@@ -1111,6 +1110,8 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     if (this.isEditableDelimitedCombobox) {
       if (combobox.value.endsWith(this.delimiter)) { return }
       if (combobox.value.endsWith(this.delimiter + this.spacer)) { return }
+
+      // @TODO: check empty value
 
       const strs = searchValue.split(this.delimiter)
 
@@ -1137,6 +1138,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       this.selectedOptions = selectedOptions
 
       if (finalStr) {
+        this.finalString = finalStr
         regex = this.stringToRegex(finalStr)
       }
     } else {
@@ -1145,7 +1147,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
 
     let matchedEl
 
-    if (regex) {
+    if (regex && e.inputType !== "deleteContentBackward") {
       matchedEl = this.options.find((el) => {
         // Native select only matches by case in-equal innerText.
         return el.innerText.toLowerCase().match(regex);
@@ -1164,19 +1166,21 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
 
     // focusCurrent is going to set the value for us, but we need to track the `currentSize` and then after the
     // value is set, create a selection range.
-    if ((this.autocomplete === "inline" || this.autocomplete === "both") && e.inputType !== "deleteContentBackward") {
+    if (this.autocomplete === "inline" || this.autocomplete === "both") {
+      this.finalString = undefined
       const currentSize = combobox.value.length
 
+      this.select(matchedEl)
       setTimeout(() => {
-        this.select(matchedEl)
-        setTimeout(() => {
-          combobox.setSelectionRange(currentSize, combobox.value.length)
-        })
+        combobox.setSelectionRange(currentSize, combobox.value.length)
       }, 10)
     }
 
     this.focusCurrent();
     this.updateOptions()
+    setTimeout(() => {
+      this.finalString = undefined
+    }, 20)
   }
 
   focusElementFromSearchBuffer() {
@@ -1530,7 +1534,6 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
 
     this.currentOption = currentOption
 
-    console.log(this.finalString)
     this.updateMultipleValue(this.finalString)
   }
 
@@ -1557,7 +1560,6 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       }
 
       const delimiterSeparatedValue = stringAry.join(this.delimiter + this.spacer)
-      console.log({ delimiterSeparatedValue })
 
       this.value = delimiterSeparatedValue
       this.updateComboboxTextContentAndValue(delimiterSeparatedValue)

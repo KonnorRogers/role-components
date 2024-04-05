@@ -154,6 +154,9 @@ you can change how long it takes to "reset" searching for options.
 
 ## Editable Combobox without autocomplete
 
+A combobox with `autocomplete="off"` is editable, but will not guide the user along the popup list
+of options and will not prefill the input.
+
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
     <form>
@@ -187,6 +190,9 @@ you can change how long it takes to "reset" searching for options.
 </light-preview>
 
 ## List Autocomplete Combobox
+
+"list" autocomplete will show the list and guide the user to the item in the list based
+on the string provided in the input.
 
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
@@ -222,6 +228,8 @@ you can change how long it takes to "reset" searching for options.
 
 ## Inline Autocomplete Combobox
 
+Inline autocomplete will prefill the closest match for the user.
+
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
     <form>
@@ -255,6 +263,8 @@ you can change how long it takes to "reset" searching for options.
 </light-preview>
 
 ## Autocomplete List & Inline Combobox
+
+A list + inline ("both") combobox will both highlight the value in the input and select the item in the combobox list.
 
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
@@ -325,6 +335,8 @@ When using autocomplete, you may want to filter results that don't match and onl
 </light-preview>
 
 ## Disabling options
+
+Options can be disabled by passing the `disabled` attribute to the `<role-option>` element.
 
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">

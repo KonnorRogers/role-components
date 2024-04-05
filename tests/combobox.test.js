@@ -232,8 +232,12 @@ test("Should properly record a value for autocomplete='off'", async () => {
 
   const str = "Option"
 
-  await sendKeys({ type: str })
-  await aTimeout(20)
+  for (const char of str) {
+    combobox.focus()
+    await aTimeout(10)
+    await sendKeys({ press: char })
+    await aTimeout(10)
+  }
 
   // Input
   assert.equal(combobox.combobox.value, "Option")
@@ -325,8 +329,10 @@ test("Should properly record a value for autocomplete='inline'", async () => {
 
   const str = "Option"
 
-  await sendKeys({ type: str })
-  await aTimeout(20)
+  for (const char of str) {
+    await sendKeys({ type: char })
+    await aTimeout(10)
+  }
 
   // Input
   assert.equal(combobox.combobox.value, "Option 1")
@@ -421,7 +427,7 @@ test("Should properly selected the all selected items in the combobox", async ()
 
 test("Should change the delimiter when the delimiter attribute is changed", async () => {
   const combobox = await fixture(html`
-    <role-combobox multiple delimiter="; " name="combobox">
+    <role-combobox multiple delimiter=";" name="combobox">
       <input slot="trigger">
       <div slot="listbox">
         <role-option>Honeybadger</role-option>
@@ -439,4 +445,54 @@ test("Should change the delimiter when the delimiter attribute is changed", asyn
 
   assert.equal(combobox.value, "Rhino; Tortoise")
   assert.equal(combobox.triggerElement.value, "Rhino; Tortoise")
+})
+
+test("Should properly manipulate and add / remove buttons and strings for an editable delimited combobox", async () => {
+  const combobox = await fixture(html`
+    <role-combobox multiple editable name="combobox">
+      <input slot="trigger">
+      <div slot="listbox">
+        <role-option>Honeybadger</role-option>
+        <role-option selected>Rhino</role-option>
+        <role-option>Badger mole</role-option>
+        <role-option>Flamingo</role-option>
+        <role-option selected>Tortoise</role-option>
+        <role-option>Killer Whale</role-option>
+        <role-option>Opossum</role-option>
+      </div>
+    </role-combobox>
+  `)
+
+  await aTimeout(15)
+
+  const selectedOptionsButtons = () => combobox.shadowRoot.querySelectorAll("[part~='selected-options'] button")
+  assert.lengthOf(selectedOptionsButtons(), 2)
+  assert.equal(combobox.value, "Rhino, Tortoise")
+  assert.equal(combobox.triggerElement.value, "Rhino, Tortoise")
+
+  combobox.triggerElement.focus()
+
+  // await aTimeout(20)
+  // await sendKeys({ press: "Backspace" })
+  // await aTimeout(20)
+  //
+  // assert.equal(selectedOptionsButtons().length, 1)
+  // assert.equal(combobox.value, "Rhino, Tortois")
+  // assert.equal(combobox.triggerElement.value, "Rhino, Tortois")
+  //
+  // await aTimeout(20)
+  // await sendKeys({ press: "e" })
+  // await aTimeout(20)
+  //
+  // assert.equal(selectedOptionsButtons().length, 2)
+  // assert.equal(combobox.value, "Rhino, Tortoise")
+  // assert.equal(combobox.triggerElement.value, "Rhino, Tortoise")
+  //
+  // const firstOption = combobox.querySelector("role-option")
+  // firstOption.click()
+  //
+  // // Should not re-order value or buttons
+  // assert.equal(selectedOptionsButtons().length, 3)
+  // assert.equal(combobox.value, "Rhino, Tortoise, Honeybadger")
+  // assert.equal(combobox.triggerElement.value, "Rhino, Tortoise, Honeybadger")
 })

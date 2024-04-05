@@ -21,7 +21,7 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
     ariaSelected: { reflect: true, attribute: "aria-selected" },
     disabled: {type: Boolean},
     label: {},
-    tabIndex: {},
+    tabIndex: {attribute: "tabindex", reflect: true},
   };
 
   formResetCallback () {
@@ -68,9 +68,11 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
   constructor() {
     super();
 
-    this.role = "option"
+    this.setAttribute("role", "presentation")
+    this.addEventListener("focus", this.eventHandler.get(this.handleFocus))
+
+    https://twitter.com/diegohaz/status/1775695123948437646
     this.internals.role = "presentation"
-    // this.internals = this.attachInternals()
 
     /**
      * aria-selected is preferred for single-select listboxes / comboboxes
@@ -118,6 +120,13 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
     if (!this.hasAttribute("value") || !this.value) {
       this.value = this.innerText;
     }
+  }
+
+  /**
+   * Sends a bubbling focus event to be usable by the combobox.
+   */
+  handleFocus () {
+    this.dispatchEvent(new Event("role-focus", { composed: true, bubbles: true }))
   }
 
   /**

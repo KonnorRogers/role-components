@@ -21,6 +21,9 @@ you can change how long it takes to "reset" searching for options.
 
 <% debug_info = capture do %>
     <style>
+      light-code {
+        isolation: isolate;
+      }
       pre {
         background-color: rgb(250, 250, 250);
         padding: 1rem;

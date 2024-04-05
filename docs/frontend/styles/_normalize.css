@@ -5,6 +5,10 @@ html {
   -webkit-box-decoration-break: clone;
 }
 
+light-code {
+  isolation: isolate;
+}
+
 *, *:before, *:after {
   box-sizing: border-box;
 }

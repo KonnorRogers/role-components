@@ -134,6 +134,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       attribute: "wrap-selection",
       type: Boolean,
     },
+    editable: {type: Boolean},
     filterResults: {type: Boolean, attribute: "filter-results"},
     searchBufferDelay: {
       attribute: "search-buffer-delay",
@@ -144,6 +145,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       attribute: "value-type"
     },
     delimiter: {},
+    spacer: {},
     showEmptyResults: { type: Boolean, attribute: "show-empty-results" },
 
     // Properties
@@ -162,15 +164,31 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     this.listboxId = "role-listbox-" + uuidv4()
 
     /**
+     * Any autocompletes of type `"off"`, `"inline"`, `"list"`, or `"both"` will automatically make the triggerElement editable.
      * @type {'' | "off" | "inline" | "list" | "both"}
      */
     this.autocomplete = ''
 
     /**
-     * Used for multiple select comboboxes that use `value-type="string"`. The default is a comma with space.
+     * If true, the `<input>` element provided is not treated as readonly, and rather as an editable input. This can be omitted
+     *  if you use any of the possible `autocomplete` attributes. Do not use this to check if the combobox is editable.
+     *  instead, use `this.isEditable` to check if the triggerElement is editable.
+     * @type {boolean}
+     */
+    this.editable = false
+
+
+    /**
+     * Used for multiple select comboboxes that use `value-type="string"`. The default is a comma.
      * @type {string}
      */
-    this.delimiter = ', '
+    this.delimiter = ','
+
+    /**
+     * Used for multiple select comboboxes that use `value-type="string"`. The default is a space.
+     * @type {string}
+     */
+    this.spacer = " "
 
     /**
      * @type {(RoleOption | HTMLOptionElement)[]}
@@ -302,14 +320,28 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     this.addEventListener("click", this.eventHandler.get(this.handleInputClick));
     this.addEventListener("click", this.eventHandler.get(this.handleOptionClick));
     this.addEventListener("pointermove", this.eventHandler.get(this.handleOptionHover))
-    // this.addEventListener("focusin", this.eventHandler.get(this.handleFocusIn));
+    this.addEventListener("role-focus", this.eventHandler.get(this.handleOptionFocus))
 
-    this.addEventListener("input", this.eventHandler.get(this.focusElementFromInput))
+    this.addEventListener("input", this.eventHandler.get(this.handleInput))
     this.addEventListener("keydown", this.eventHandler.get((/** @type {KeyboardEvent} */ e) => {
       if (e.key === "Tab") {
         this.expanded = false
       }
     }))
+  }
+
+  /**
+   * @param {{target: null | RoleOption}} event
+   */
+  handleOptionFocus (event) {
+    if (!this.expanded) return
+
+    const { target } = event
+
+    if (!target) return
+
+    this.currentOption = target
+    this.focusCurrent()
   }
 
   /**
@@ -346,23 +378,12 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     }
   }
 
-  get clonedOptions () {
-    /**
-     * @type {HTMLSlotElement | null | undefined}
-     */
-    const defaultSlot = this.shadowRoot?.querySelector("slot:not([name])")
-
-    if (!defaultSlot) return []
-
-    return defaultSlot.assignedElements({ flatten: true }).map((option) => option.cloneNode(true))
-  }
-
   get listbox () {
     return this.querySelector(":scope > [slot='listbox']")
   }
 
   get isEditable () {
-    return this._editableAutocompletes.includes(this.autocomplete)
+    return this.editable || this._editableAutocompletes.includes(this.autocomplete)
   }
 
   /**
@@ -378,7 +399,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     if (!listboxElement.id) {
       listboxElement.setAttribute("id", this.listboxId)
     }
-    this.combobox.setAttribute("aria-controls", listboxElement.id)
+    this.combobox?.setAttribute("aria-controls", listboxElement.id)
   }
 
   /**
@@ -461,14 +482,14 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
 
   renderSelectedOptions () {
     return html`
-      <span id="remove" class="visually-hidden">Remove</span>
+      ${this.selectedOptions.map((option) => {
+        return html`<span class="visually-hidden" id=${`remove-option-${option.id}`}>Remove "${option.innerText}" option from combobox</span>`
+      })}
 
       <ul
         role="list"
         part="selected-options"
-        aria-live="assertive"
-        aria-atomic="false"
-        aria-relevant="additions removals"
+        tabindex="-1"
         style="
           list-style-type: '';
           display: flex;
@@ -484,6 +505,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
               <button
                 type="button"
                 part="remove-button"
+                aria-labelledby=${`remove-option-${option.id}`}
                 style="
                   display: flex;
                   align-items: center;
@@ -612,6 +634,13 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
   }
 
   /**
+   * @returns {boolean} - Returns true if its a multi-select string delimited combobox.
+   */
+  get isEditableDelimitedCombobox () {
+    return this.multiple && this.valueType === "string" && this.isEditable
+  }
+
+  /**
    * @override
    * @param {import("lit").PropertyValues<this>} changedProperties
    */
@@ -623,9 +652,8 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     }
 
     if (changedProperties.has("value")) {
-      if (this.value && this.multiple && this.valueType === "string" && this.isEditable) {
+      if (this.value && this.isEditableDelimitedCombobox) {
         // TODO: figure out delimited values.
-        console.log(this.value)
       }
 
       this.updateComplete.then(() => {
@@ -743,13 +771,19 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       return
     }
 
+    const triggerElementFocused = evt.composedPath().includes(this.triggerElement)
+
     if (evt.key === "Escape") {
       evt.preventDefault()
-      if (this.expanded === false && this.triggerElement) {
+      if (this.expanded === false && this.triggerElement && triggerElementFocused) {
         this.triggerElement.value = null
       }
 
       this.expanded = false
+    }
+
+    if (!triggerElementFocused) {
+      return
     }
 
     const ctrlKeyPressed = evt.ctrlKey || (isMacOs() && evt.metaKey);
@@ -1023,6 +1057,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       .forEach((opt) => {
         this.select(opt);
       });
+
   }
 
   /**
@@ -1043,7 +1078,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
   /**
    * @param {Event & { inputType: string }} e
    */
-  focusElementFromInput (e) {
+  handleInput (e) {
     const combobox = this.combobox
     if (!combobox) return
     if (e.target !== combobox) return
@@ -1065,17 +1100,63 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     if (e.inputType === "deleteContentBackward" && !this.multiple) {
       this.deselectAll()
     }
-    const regex = this.stringToRegex(searchValue)
 
-    const matchedEl = this.options.find((el) => {
-      // Native select only matches by case in-equal innerText.
-      return el.innerText.toLowerCase().match(regex);
-    });
+    /**
+     * @type {undefined | RegExp}
+     */
+    let regex
+
+    /** @type {undefined | string} */
+    let finalStr
+    if (this.isEditableDelimitedCombobox) {
+      if (combobox.value.endsWith(this.delimiter)) { return }
+      if (combobox.value.endsWith(this.delimiter + this.spacer)) { return }
+
+      const strs = searchValue.split(this.delimiter)
+
+      /**
+       * @type {typeof this.selectedOptions}
+       */
+      const selectedOptions = []
+
+      strs.forEach((str) => {
+        const opt = this.options.find((opt) => opt.innerText === str.trim())
+        if (opt) {
+          selectedOptions.push(opt)
+        }
+      })
+
+      finalStr = strs.pop()?.trim()
+
+      this.selectedOptions.forEach((selectedOption) => {
+        if (!selectedOptions.includes(selectedOption)) {
+          this.deselect(selectedOption)
+        }
+      })
+
+      this.selectedOptions = selectedOptions
+
+      if (finalStr) {
+        regex = this.stringToRegex(finalStr)
+      }
+    } else {
+      regex = this.stringToRegex(searchValue)
+    }
+
+    let matchedEl
+
+    if (regex) {
+      matchedEl = this.options.find((el) => {
+        // Native select only matches by case in-equal innerText.
+        return el.innerText.toLowerCase().match(regex);
+      });
+    }
 
     if (!matchedEl) {
       if (!this.multiple) {
         this.deselectAll();
       }
+
       return
     }
 
@@ -1087,10 +1168,10 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       const currentSize = combobox.value.length
 
       setTimeout(() => {
-        if (this.currentOption) {
-          this.select(this.currentOption)
+        this.select(matchedEl)
+        setTimeout(() => {
           combobox.setSelectionRange(currentSize, combobox.value.length)
-        }
+        })
       }, 10)
     }
 
@@ -1118,16 +1199,20 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
    * @param {HTMLElement} selectedElement
    */
   select(selectedElement) {
+    const selectedOption = /** @type {RoleOption} */ (selectedElement)
     if (!this.multiple) {
       this.deselectAll()
     }
 
-    this.selectedOptions = this.selectedOptions.concat(/** @type {RoleOption} */ (selectedElement));
-    /** @type {HTMLOptionElement} */ (selectedElement).selected = true;
+    if (!this.selectedOptions.includes(selectedOption)) {
+      this.selectedOptions = this.selectedOptions.concat(selectedOption);
+    }
+
+    selectedOption.selected = true;
 
     // We don't want to override normal HTMLOptionElement semantics.
-    if (!(selectedElement instanceof HTMLOptionElement)) {
-      /** @type {HTMLElement} */ (selectedElement).setAttribute("aria-selected", "true");
+    if (!(selectedOption instanceof HTMLOptionElement)) {
+      /** @type {HTMLElement} */ (selectedOption).setAttribute("aria-selected", "true");
     }
 
     // this.updateOptions()
@@ -1136,8 +1221,17 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       wait: 1
     })
 
-    const event = new SelectedEvent("role-selected", { selectedElement });
-    selectedElement.dispatchEvent(event);
+    const event = new SelectedEvent("role-selected", { selectedElement: selectedOption });
+    selectedOption.dispatchEvent(event);
+
+
+    setTimeout(() => {
+      if (this.expanded) {
+        // Focus for a second for screen readers.
+        // this.shadowRoot?.querySelector("[role~='list']")?.focus()
+        // this.combobox.focus()
+      }
+    }, 10)
 
     if (!this.multiple) {
       if (this.currentOption) {
@@ -1145,6 +1239,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
 
         this.updateComboboxTextContentAndValue(this.currentOption.innerText)
       }
+
       return
     }
   }
@@ -1159,6 +1254,9 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     const event = new SelectedEvent("role-deselected", { selectedElement });
     selectedElement.dispatchEvent(event);
 
+    const selectedIndex = this.selectedOptions.indexOf(selectedElement);
+    this.selectedOptions.splice(selectedIndex, 1)
+    this.requestUpdate("selectedOptions")
     // this.debounce(() => this.updateOptions(), {
     //   wait: 0,
     //   key: this.updateOptions,
@@ -1202,6 +1300,8 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
   }
 
   focusCurrent() {
+    if (!this.expanded) return
+
     const selectedElement = this.currentOption;
 
     if (!selectedElement) {
@@ -1218,12 +1318,8 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       "aria-activedescendant",
       selectedElement.id,
     );
-    // this.querySelector("[slot='listbox']")?.setAttribute(
-    //   "aria-activedescendant",
-    //   selectedElement.getAttribute("id") || "",
-    // )
-    this.setFocus(selectedElement);
 
+    this.setFocus(selectedElement);
     setTimeout(() => {
       this.scrollOptionIntoView(selectedElement);
     })
@@ -1269,6 +1365,8 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
   scrollOptionIntoView(selectedOption) {
     if (this.expanded && this.matches(":focus-within")) {
       // this.triggerElement.scrollIntoView({ block: "center" })
+      // selectedOption.focus()
+      this.combobox.focus()
       setTimeout(() => {
         selectedOption.scrollIntoView({ block: "nearest" });
       })
@@ -1328,10 +1426,8 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
 
     const optionsSet = new Set([...options])
 
-    this.selectedOptions = [];
-    const selectedOptions = this.selectedOptions;
+    this.selectedOptions = this.selectedOptions || [];
 
-    const multipleFormData = new FormData()
     let hasSelected = false
 
     const filterResults = this.filterResults
@@ -1345,7 +1441,6 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     const value = comboboxValue.trim()
     const searchRegex = this.stringToRegex(value)
 
-    // console.log("UpdateOptions")
     for (const option of optionsSet) {
       let hasMatch = filterResults === false || !(value)
 
@@ -1354,7 +1449,6 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
           option.innerText?.match(searchRegex) ||
           option.value?.match(searchRegex)
         )
-        console.log({ hasMatch })
       }
 
       if (!hasMatch) {
@@ -1374,7 +1468,9 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
 
       if (this.isSelected(option)) {
         if (this.multiple) {
-          this.selectedOptions.push(option)
+          if (!this.selectedOptions.includes(option)) {
+            this.selectedOptions.push(option)
+          }
         }
 
         if (!this.multiple && hasSelected) {
@@ -1395,27 +1491,13 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
             hasSelected = true
           }
         }
-
-        if (this.multiple && this.name) {
-          multipleFormData.append(this.name, value)
-        }
       }
     };
 
     this.options = [...optionsSet]
 
-    const currentSelectedOption = this.currentOption;
-
     if (!this.multiple) {
-      if (currentSelectedOption) {
-        // Wait for cloned nodes to render.
-        setTimeout(() => {
-          // this.scrollOptionIntoView(currentSelectedOption)
-          // console.log("Scroll 1")
-        })
-      }
-
-      selectedOptions.forEach((optionEl) => {
+      this.selectedOptions.forEach((optionEl) => {
         if (optionEl === this.currentOption) {
           return;
         }
@@ -1448,7 +1530,22 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
 
     this.currentOption = currentOption
 
-    this.value = multipleFormData
+    console.log(this.finalString)
+    this.updateMultipleValue(this.finalString)
+  }
+
+  /**
+   * @param {null | undefined | string} [additionalString] - An additional forced string for use with delimiter separated values.
+   */
+  updateMultipleValue (additionalString) {
+    const multipleFormData = new FormData()
+    this.selectedOptions.forEach((optionEl) => {
+      multipleFormData.append(this.name, optionEl.value ?? optionEl.innerText)
+    })
+
+    if (additionalString) {
+      multipleFormData.append(this.name, additionalString)
+    }
 
     if (this.valueType === "formdata") {
       this.value = multipleFormData
@@ -1459,7 +1556,8 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
         stringAry.push(value)
       }
 
-      const delimiterSeparatedValue = stringAry.join(this.delimiter)
+      const delimiterSeparatedValue = stringAry.join(this.delimiter + this.spacer)
+      console.log({ delimiterSeparatedValue })
 
       this.value = delimiterSeparatedValue
       this.updateComboboxTextContentAndValue(delimiterSeparatedValue)

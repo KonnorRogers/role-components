@@ -24,8 +24,8 @@ dependencies:
     specifier: 2.0.0
     version: 2.0.0
   light-pen:
-    specifier: ^3.0.4
-    version: 3.0.4
+    specifier: ^3.0.6
+    version: 3.0.6
   lit:
     specifier: ^2.8.0
     version: 2.8.0
@@ -956,8 +956,8 @@ packages:
       web-component-define: 2.0.11
     dev: false
 
-  /light-pen@3.0.4:
-    resolution: {integrity: sha512-aThSizy+FFYOf3pJvACzUC+svRy0LMa3jASw46rUD6ykkgGF7T6jIwSFlMDxfcnw8pkH+GZ10Jvauwzfp/uF3A==}
+  /light-pen@3.0.6:
+    resolution: {integrity: sha512-wHmfEOM67qtyMJ4alH8UxxW15s7nbfZuN/E9QnQQj6T8TnJlf4Dcuj4WZ8sr9zH5GLx5rE/UGgxc1XkfLqFbrQ==}
     dependencies:
       form-associated-helpers: 0.0.4
       lit: 2.8.0

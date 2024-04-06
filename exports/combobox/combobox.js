@@ -778,6 +778,8 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       evt.preventDefault()
       if (this.expanded === false && this.triggerElement && triggerElementFocused) {
         this.triggerElement.value = null
+        this.value = null
+        this.deselectAll()
       }
 
       this.expanded = false
@@ -1085,16 +1087,84 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     if (!combobox) return
     if (e.target !== combobox) return
 
+    if (!this.isEditableDelimitedCombobox) {
+      this.value = combobox.value
+    }
+
     this.finalString = undefined
 
-    // If this moves, we break everything :)
-    this.value = combobox.value
+    /** @type {undefined | RegExp} */
+    let regex
+
+    /** @type {undefined | string} */
+    let finalStr
+    let finalStrSelected = false
+
+    /**
+      * @type {typeof this.selectedOptions}
+      */
+    const selectedOptions = []
+
     const searchValue = combobox.value || "";
 
+    const updateOptions = () => {
+      if (combobox.value.trim() === "") {
+        this.deselectAll()
+        return
+      }
+
+      if (combobox.value.endsWith(this.delimiter)) {
+        return
+      }
+
+      if (combobox.value.endsWith(this.delimiter + this.spacer)) {
+        return
+      }
+
+      const strs = searchValue.split(this.delimiter)
+
+      strs.forEach((str, index) => {
+        const opt = this.options.find((opt) => opt.innerText === str.trim())
+        const isLastOption = index === strs.length -1
+
+        if (isLastOption) {
+          finalStr = str?.replace(this.spacer, "")
+        }
+
+        if (!opt) {
+          if (isLastOption) {
+            this.finalString = finalStr
+          }
+          return
+        }
+
+        if (isLastOption) { finalStrSelected = true }
+        selectedOptions.push(opt)
+      })
+
+      // Order matters here. We have to remove previousOptions first, and then set it to a new array.
+      const previousOptions = this.selectedOptions
+
+      previousOptions.forEach((opt) => {
+        if (!selectedOptions.includes(opt)) {
+          this.deselect(opt)
+        }
+      })
+
+      this.selectedOptions = selectedOptions
+
+      this.selectedOptions.forEach((opt) => {
+        this.select(opt)
+      })
+    }
+
     // We dont focus elements if inline or off
-    // if (this.autocomplete !== "inline" && this.autocomplete !== "list" && this.autocomplete !== "both") {
-    //   return
-    // }
+    if (this.autocomplete !== "inline" && this.autocomplete !== "list" && this.autocomplete !== "both") {
+      if (this.isEditableDelimitedCombobox) {
+        updateOptions()
+      }
+      return
+    }
 
     if (!this.expanded) {
       this.expanded = true
@@ -1104,69 +1174,12 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     if (e.inputType === "deleteContentBackward" && !this.multiple) {
       this.deselectAll()
     }
-
-    /**
-     * @type {undefined | RegExp}
-     */
-    let regex
-
-    /** @type {undefined | string} */
-    let finalStr
     if (this.isEditableDelimitedCombobox) {
-      if (combobox.value.endsWith(this.delimiter)) { return }
-      if (combobox.value.endsWith(this.delimiter + this.spacer)) { return }
-      if (combobox.value.trim() === "") {
-        this.deselectAll()
-        return
-      }
+      updateOptions()
 
-      const strs = searchValue.split(this.delimiter)
-
-      /**
-       * @type {typeof this.selectedOptions}
-       */
-      const selectedOptions = []
-
-      let finalStrSelected = false
-
-      /**
-       * @type {undefined | string}
-       */
-      let finalStr
-      strs.forEach((str, index) => {
-        const opt = this.options.find((opt) => opt.innerText === str.trim())
-        const isLastOption = index === strs.length -1
-
-        if (isLastOption) {
-          finalStr = str.trim()
-        }
-
-        if (!opt) {
-          return
-        }
-
-        selectedOptions.push(opt)
-
-        if (isLastOption) {
-          finalStrSelected = true
-        }
-      })
-
-      this.selectedOptions.forEach((selectedOption) => {
-        if (!selectedOptions.includes(selectedOption)) {
-          this.deselect(selectedOption)
-        }
-      })
-
-      this.selectedOptions = selectedOptions
-      this.selectedOptions.forEach((opt) => this.select(opt))
-
-      if (finalStr) {
-        /** Prevent infinite loop of trying to delete final option. */
-        if (!finalStrSelected) {
-          this.finalString = finalStr
-        }
-        regex = this.stringToRegex(finalStr)
+      /** Prevent infinite loop of trying to delete final option. */
+      if (!finalStrSelected && this.finalString) {
+        regex = this.stringToRegex(this.finalString)
       }
     } else {
       regex = this.stringToRegex(searchValue)
@@ -1181,17 +1194,16 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       });
     }
 
+
     if (!matchedEl) {
       if (!this.multiple) {
         this.deselectAll();
       }
 
-      this.updateOptions()
       return
     }
 
     this.currentOption = /** @type {RoleOption} */ (matchedEl);
-
 
     // focusCurrent is going to set the value for us, but we need to track the `currentSize` and then after the
     // value is set, create a selection range.
@@ -1286,11 +1298,10 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     const event = new SelectedEvent("role-deselected", { selectedElement });
     selectedElement.dispatchEvent(event);
 
-    const selectedIndex = this.selectedOptions.indexOf(selectedElement);
+    const selectedIndex = this.selectedOptions.indexOf(/** @type {RoleOption | HTMLOptionElement} */ (selectedElement));
     this.selectedOptions.splice(selectedIndex, 1)
-    this.requestUpdate("selectedOptions")
     // this.debounce(() => this.updateOptions(), {
-    //   wait: 0,
+    //   wait: 1,
     //   key: this.updateOptions,
     // });
   }
@@ -1588,7 +1599,6 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     }
 
     const delimiterSeparatedValue = stringAry.join(this.delimiter + this.spacer)
-
 
     if (this.valueType === "formdata") {
       this.value = multipleFormData

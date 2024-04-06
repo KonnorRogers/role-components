@@ -193,6 +193,7 @@ test("Should properly selected the all selected items in the combobox", async ()
     </form>
   `)
 
+  await aTimeout(10)
   const combobox = form.querySelector("role-combobox")
   const options = () => form.querySelectorAll("role-option")
 
@@ -330,8 +331,10 @@ test("Should properly record a value for autocomplete='inline'", async () => {
   const str = "Option"
 
   for (const char of str) {
+    combobox.focus()
+    await aTimeout(20)
     await sendKeys({ type: char })
-    await aTimeout(10)
+    await aTimeout(20)
   }
 
   // Input
@@ -339,8 +342,13 @@ test("Should properly record a value for autocomplete='inline'", async () => {
   // Combobox itself
   assert.equal(combobox.value, "1")
 
+  debugger
+
   await sendKeys({ press: "Backspace" })
+  // await sendKeys({ press: "Backspace" })
   await aTimeout(20)
+
+  debugger
 
   // Input
   assert.equal(combobox.combobox.value, "Option")
@@ -375,8 +383,12 @@ test("Should properly record a value for autocomplete='both'", async () => {
 
   const str = "Option"
 
-  await sendKeys({ type: str })
-  await aTimeout(20)
+  for (const char of str) {
+    combobox.focus()
+    await aTimeout(20)
+    await sendKeys({ type: char })
+    await aTimeout(20)
+  }
 
   // Input
   assert.equal(combobox.combobox.value, "Option 1")
@@ -472,27 +484,29 @@ test("Should properly manipulate and add / remove buttons and strings for an edi
 
   combobox.triggerElement.focus()
 
-  // await aTimeout(20)
-  // await sendKeys({ press: "Backspace" })
-  // await aTimeout(20)
-  //
-  // assert.equal(selectedOptionsButtons().length, 1)
-  // assert.equal(combobox.value, "Rhino, Tortois")
-  // assert.equal(combobox.triggerElement.value, "Rhino, Tortois")
-  //
-  // await aTimeout(20)
-  // await sendKeys({ press: "e" })
-  // await aTimeout(20)
-  //
-  // assert.equal(selectedOptionsButtons().length, 2)
-  // assert.equal(combobox.value, "Rhino, Tortoise")
-  // assert.equal(combobox.triggerElement.value, "Rhino, Tortoise")
-  //
-  // const firstOption = combobox.querySelector("role-option")
-  // firstOption.click()
-  //
-  // // Should not re-order value or buttons
-  // assert.equal(selectedOptionsButtons().length, 3)
-  // assert.equal(combobox.value, "Rhino, Tortoise, Honeybadger")
-  // assert.equal(combobox.triggerElement.value, "Rhino, Tortoise, Honeybadger")
+  await aTimeout(100)
+  await sendKeys({ press: "Backspace" })
+  await aTimeout(100)
+  await combobox.updateComplete
+
+  assert.equal(selectedOptionsButtons().length, 1)
+  assert.equal(combobox.value, "Rhino, Tortois")
+  assert.equal(combobox.triggerElement.value, "Rhino, Tortois")
+
+  await aTimeout(20)
+  await sendKeys({ press: "e" })
+  await aTimeout(20)
+
+  assert.equal(selectedOptionsButtons().length, 2)
+  assert.equal(combobox.value, "Rhino, Tortoise")
+  assert.equal(combobox.triggerElement.value, "Rhino, Tortoise")
+
+  const firstOption = combobox.querySelector("role-option")
+  firstOption.click()
+
+  await aTimeout(20)
+  // Should not re-order value or buttons
+  assert.equal(selectedOptionsButtons().length, 3)
+  assert.equal(combobox.value, "Rhino, Tortoise, Honeybadger")
+  assert.equal(combobox.triggerElement.value, "Rhino, Tortoise, Honeybadger")
 })

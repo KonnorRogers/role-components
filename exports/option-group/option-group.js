@@ -27,6 +27,8 @@ export default class OptionGroup extends BaseElement {
   constructor() {
     super();
     this.role = "group";
+    this.setAttribute("role", "group")
+    this.setAttribute("tabindex", "-1")
   }
 
   /**
@@ -42,9 +44,9 @@ export default class OptionGroup extends BaseElement {
 
   render() {
     return html`
-      <div part="base" role="presentation">
-        <div part="label" role="presentation">
-          <slot name="label" role="presentation"></slot>
+      <div part="base">
+        <div part="label">
+          <slot name="label"></slot>
         </div>
         <slot></slot>
       </div>

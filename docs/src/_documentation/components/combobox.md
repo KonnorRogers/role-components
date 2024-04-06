@@ -439,6 +439,7 @@ Make sure to add a `name` attribute to the combobox to get the FormData to work 
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
     <form>
+      <span>Multiple select-only combobox with no autocomplete and an value type of "formdata"</span>
       <role-combobox multiple value-type="formdata" name="combobox">
         <input slot="trigger">
         <div slot="listbox">
@@ -461,18 +462,48 @@ Make sure to add a `name` attribute to the combobox to get the FormData to work 
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
     <form>
-      <role-combobox multiple autocomplete="both" name="combobox">
-        <input slot="trigger">
-        <div slot="listbox">
-          <role-option>Honeybadger</role-option>
-          <role-option selected>Rhino</role-option>
-          <role-option>Badger mole</role-option>
-          <role-option>Flamingo</role-option>
-          <role-option selected>Tortoise</role-option>
-          <role-option>Killer Whale</role-option>
-          <role-option>Opossum</role-option>
-        </div>
-      </role-combobox>
+      <label>
+        <span>Editable multiple combobox with autocomplete of "both" with an value type of "formdata"</span>
+        <br>
+        <role-combobox multiple editable value-type="formdata" name="combobox">
+          <input slot="trigger">
+          <div slot="listbox">
+            <role-option>Honeybadger</role-option>
+            <role-option selected>Rhino</role-option>
+            <role-option>Badger mole</role-option>
+            <role-option>Flamingo</role-option>
+            <role-option selected>Tortoise</role-option>
+            <role-option>Killer Whale</role-option>
+            <role-option>Opossum</role-option>
+          </div>
+        </role-combobox>
+      </label>
+      <br>
+      <button type="reset">Reset</button>
+    </form>
+    <%= debug_info %>
+  </template>
+</light-preview>
+
+<light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
+  <template slot="code">
+    <form>
+      <label>
+        <span>Editable multiple combobox with autocomplete of "both"</span>
+        <br>
+        <role-combobox multiple autocomplete="both" name="combobox">
+          <input slot="trigger">
+          <div slot="listbox">
+            <role-option>Honeybadger</role-option>
+            <role-option selected>Rhino</role-option>
+            <role-option>Badger mole</role-option>
+            <role-option>Flamingo</role-option>
+            <role-option selected>Tortoise</role-option>
+            <role-option>Killer Whale</role-option>
+            <role-option>Opossum</role-option>
+          </div>
+        </role-combobox>
+      </label>
       <br>
       <button type="reset">Reset</button>
     </form>

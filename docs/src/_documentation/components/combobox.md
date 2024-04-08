@@ -86,6 +86,32 @@ you can change how long it takes to "reset" searching for options.
     </script>
 <% end.chomp.html_safe %>
 
+
+<light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
+  <template slot="code">
+    <form>
+      <role-combobox multiple name="combobox" autocomplete="off">
+        <input slot="trigger">
+        <div slot="listbox">
+          <role-option value="1">Option 1</role-option>
+          <role-option value="2">Option 2</role-option>
+          <role-option value="3">Option 3</role-option>
+          <role-option selected value="4">Option 4</role-option>
+          <role-option value="5">Option 5</role-option>
+          <role-option value="6">Option 6</role-option>
+          <role-option value="7">Option 7</role-option>
+          <role-option value="8">Option 8</role-option>
+          <role-option value="9">Option 9</role-option>
+          <role-option value="10">Option 10</role-option>
+        </div>
+      </role-combobox>
+      <br>
+      <button type="reset">Reset</button>
+    </form>
+    <%= debug_info %>
+  </template>
+</light-preview>
+
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
     <form>

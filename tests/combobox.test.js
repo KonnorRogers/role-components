@@ -34,7 +34,7 @@ test("Should properly check items in the combobox", async () => {
   assert.equal(combobox.value, null)
   assert.lengthOf(formData().getAll("combobox"), 0)
 
-  combobox.combobox.focus()
+  combobox.triggerElement.focus()
 
   await aTimeout(100)
   await sendKeys({ press: "ArrowDown" })
@@ -226,9 +226,9 @@ test("Should properly record a value for autocomplete='off'", async () => {
   const combobox = form.querySelector("role-combobox")
 
   assert.equal(combobox.value, "4")
-  assert.equal(combobox.combobox.value, "Option 4")
+  assert.equal(combobox.triggerElement.value, "Option 4")
 
-  combobox.combobox.value = ""
+  combobox.triggerElement.value = ""
   combobox.focus()
 
   const str = "Option"
@@ -241,7 +241,7 @@ test("Should properly record a value for autocomplete='off'", async () => {
   }
 
   // Input
-  assert.equal(combobox.combobox.value, "Option")
+  assert.equal(combobox.triggerElement.value, "Option")
   // Combobox itself
   assert.equal(combobox.value, "Option")
 
@@ -249,7 +249,7 @@ test("Should properly record a value for autocomplete='off'", async () => {
   await aTimeout(20)
 
   // Input
-  assert.equal(combobox.combobox.value, "Optio")
+  assert.equal(combobox.triggerElement.value, "Optio")
   // Combobox itself
   assert.equal(combobox.value, "Optio")
 })
@@ -278,9 +278,9 @@ test("Should properly record a value for autocomplete='list'", async () => {
   const combobox = form.querySelector("role-combobox")
 
   assert.equal(combobox.value, "4")
-  assert.equal(combobox.combobox.value, "Option 4")
+  assert.equal(combobox.triggerElement.value, "Option 4")
 
-  combobox.combobox.value = ""
+  combobox.triggerElement.value = ""
   combobox.focus()
 
   const str = "Option"
@@ -289,7 +289,7 @@ test("Should properly record a value for autocomplete='list'", async () => {
   await aTimeout(20)
 
   // Input
-  assert.equal(combobox.combobox.value, "Option")
+  assert.equal(combobox.triggerElement.value, "Option")
   // Combobox itself
   assert.equal(combobox.value, "Option")
 
@@ -297,7 +297,7 @@ test("Should properly record a value for autocomplete='list'", async () => {
   await aTimeout(20)
 
   // Input
-  assert.equal(combobox.combobox.value, "Optio")
+  assert.equal(combobox.triggerElement.value, "Optio")
   // Combobox itself
   assert.equal(combobox.value, "Optio")
 })
@@ -338,7 +338,7 @@ test("Should properly record a value for autocomplete='inline'", async () => {
   }
 
   // Input
-  assert.equal(combobox.combobox.value, "Option 1")
+  assert.equal(combobox.triggerElement.value, "Option 1")
   // Combobox itself
   assert.equal(combobox.value, "1")
 
@@ -351,7 +351,7 @@ test("Should properly record a value for autocomplete='inline'", async () => {
   debugger
 
   // Input
-  assert.equal(combobox.combobox.value, "Option")
+  assert.equal(combobox.triggerElement.value, "Option")
   // Combobox itself
   assert.equal(combobox.value, "Option")
 })
@@ -391,7 +391,7 @@ test("Should properly record a value for autocomplete='both'", async () => {
   }
 
   // Input
-  assert.equal(combobox.combobox.value, "Option 1")
+  assert.equal(combobox.triggerElement.value, "Option 1")
   // Combobox itself
   assert.equal(combobox.value, "1")
 
@@ -399,7 +399,7 @@ test("Should properly record a value for autocomplete='both'", async () => {
   await aTimeout(20)
 
   // Input
-  assert.equal(combobox.combobox.value, "Option")
+  assert.equal(combobox.triggerElement.value, "Option")
   // Combobox itself
   assert.equal(combobox.value, "Option")
 })

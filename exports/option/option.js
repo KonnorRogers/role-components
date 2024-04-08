@@ -147,6 +147,11 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
     }
 
     if (changedProperties.has("ariaSelected") || changedProperties.has("selected")) {
+      let bool = false
+      if (this.selected || this.ariaSelected === "true") {
+        bool = true
+      }
+
       this.setAttribute("aria-selected", this.selected.toString())
       // if (this.selected) {
       //   this.setAttribute("aria-selected", this.selected.toString())
@@ -156,6 +161,11 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
     }
 
     if (changedProperties.has("ariaCurrent") || changedProperties.has("current")) {
+      // let bool = false
+      // if (this.current || this.ariaCurrent === "true") {
+      //   bool = true
+      // }
+
       this.setAttribute("aria-current", this.current.toString())
       // if (this.current) {
       //   this.setAttribute("aria-current", "true")

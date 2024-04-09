@@ -42,7 +42,7 @@ import { when } from "lit/directives/when.js";
 
 /**
  * @typedef {Object} OptionObject
- * @property {string} id - Id of the option object
+ * @property {string | null} id - Id of the option object
  * @property {string} content - Id of the option object
  * @property {string} value - Id of the option object
  * @property {boolean} current - Id of the option object
@@ -359,6 +359,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       return
     }
 
+    console.log("YO")
     this.handleSingleEditableInput(event, triggerElement)
   }
 
@@ -376,35 +377,46 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
      */
     let currentOption
 
-    if (event.inputType !== "deleteContentBackward" && (this.autocomplete === "both" || this.autocomplete === "inline")) {
-      currentOption = this.options.find((option) => option.content.match(this.stringToRegex(val)))
-      const valueSize = val.length
-
-      if ("setSelectionRange" in triggerElement) {
-        setTimeout(() => {
-          if (currentOption) {
-            triggerElement.setSelectionRange(valueSize, currentOption.content.length)
-          }
-        })
+    this.selectedOptions = val.split(this.delimiter + this.spacer).join(this.delimiter).split(this.delimiter).map((str) => {
+      /** @type {OptionObject} */
+      return {
+        id: str,
+        content: str,
+        value: str,
+        current: false,
+        selected: true,
       }
-    } else {
-      currentOption = this.options.find((option) => option.content === val)
-    }
+    })
 
-    if (val !== this.value) {
-      if (this.currentOption) {
-        this.deselect(this.currentOption)
-      }
-
-      if (currentOption) {
-        if (this.autocomplete === "list" || this.autocomplete === "both" || this.autocomplete === "inline") {
-          this.setCurrent(currentOption)
-        }
-        this.select(currentOption)
-      } else {
-        this.value = val
-      }
-    }
+    // if (event.inputType !== "deleteContentBackward" && (this.autocomplete === "both" || this.autocomplete === "inline")) {
+    //   currentOption = this.options.find((option) => option.content.match(this.stringToRegex(val)))
+    //   const valueSize = val.length
+    //
+    //   if ("setSelectionRange" in triggerElement) {
+    //     setTimeout(() => {
+    //       if (currentOption) {
+    //         triggerElement.setSelectionRange(valueSize, currentOption.content.length)
+    //       }
+    //     })
+    //   }
+    // } else {
+    //   currentOption = this.options.find((option) => option.content === val)
+    // }
+    //
+    // if (val !== this.value) {
+    //   if (this.currentOption) {
+    //     this.deselect(this.currentOption)
+    //   }
+    //
+    //   if (currentOption) {
+    //     if (this.autocomplete === "list" || this.autocomplete === "both" || this.autocomplete === "inline") {
+    //       this.setCurrent(currentOption)
+    //     }
+    //     this.select(currentOption)
+    //   } else {
+    //     this.value = val
+    //   }
+    // }
   }
 
   /**
@@ -848,6 +860,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
    * @returns {RoleOption | null}
    */
   findOptionElement (option) {
+    if (!option.id) { return null }
     return this.querySelector(`#${option.id}`)
   }
 
@@ -1265,20 +1278,20 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
 
     if (!this.multiple) {
       this.deselectAll()
+      this.selectedOptions = []
     }
 
     if (!this.selectedOptions.includes(option)) {
       this.selectedOptions = this.selectedOptions.concat(option);
     }
 
-
-    if (optionElement) return
-
     option.selected = true
+
+    if (!optionElement) return
 
     // We don't want to override normal HTMLOptionElement semantics.
     if (!(optionElement instanceof HTMLOptionElement)) {
-      // optionElement.setAttribute("aria-selected", "true");
+      optionElement.setAttribute("aria-selected", "true");
     }
 
     // this.updateOptions()

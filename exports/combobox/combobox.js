@@ -348,6 +348,12 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     if (event.target !== triggerElement) { return }
     if (!this.isEditable) { return }
 
+    if (this.autocomplete === "list" || this.autocomplete === "both") {
+      if (!this.expanded) {
+        this.expanded = true
+      }
+    }
+
     if (this.multiple) {
       this.handleMultipleEditableInput(event, triggerElement)
       return
@@ -364,21 +370,6 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     if (!triggerElement) return
 
     const val = triggerElement.value
-    this.value = val
-    return
-
-    if (val.endsWith(this.delimiter)) {
-      // this.finalString = this.delimiter
-      this.value = val
-      return
-    }
-
-    if (val.endsWith(this.delimiter + this.spacer)) {
-      // this.finalString = this.delimiter + this.spacer
-      this.value = val
-      console.log
-      return
-    }
 
     /**
      * @type {null | undefined | OptionObject}
@@ -413,8 +404,6 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       } else {
         this.value = val
       }
-
-      setTimeout(() => this.finalString = undefined)
     }
   }
 
@@ -985,11 +974,12 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       evt.preventDefault()
 
       if (this.currentOption) {
-        if (this.multiple) {
-          this.toggleSelected(this.currentOption);
-        } else {
-          this.select(this.currentOption)
-        }
+        // if (this.multiple) {
+        //   this.toggleSelected(this.currentOption);
+        // } else {
+        //   this.select(this.currentOption)
+        // }
+        this.toggleSelected(this.currentOption)
 
         if (this.triggerElement && "setSelectionRange" in this.triggerElement) {
           this.triggerElement.setSelectionRange?.(this.triggerElement.value.length, this.triggerElement.value.length)
@@ -1272,7 +1262,6 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
    */
   select(option) {
     const optionElement = this.findOptionElement(option)
-    if (!optionElement) return
 
     if (!this.multiple) {
       this.deselectAll()
@@ -1282,8 +1271,10 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       this.selectedOptions = this.selectedOptions.concat(option);
     }
 
+
+    if (optionElement) return
+
     option.selected = true
-    optionElement.selected = true;
 
     // We don't want to override normal HTMLOptionElement semantics.
     if (!(optionElement instanceof HTMLOptionElement)) {
@@ -1316,17 +1307,18 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
   deselect(option) {
     const selectedElement = this.findOptionElement(option)
 
-    if (!selectedElement) return
-
     option.selected = false
-    selectedElement.selected = false;
-    selectedElement.removeAttribute("aria-selected");
 
-    const event = new SelectedEvent("role-deselected", { selectedElement });
-    selectedElement.dispatchEvent(event);
+    const event = new SelectedEvent("role-deselected", { selectedOption: option, selectedElement });
+    ;(selectedElement || this).dispatchEvent(event);
 
     const selectedIndex = this.selectedOptions.indexOf(option);
     this.selectedOptions.splice(selectedIndex, 1)
+
+    if (selectedElement) {
+      selectedElement.selected = false;
+      selectedElement.removeAttribute("aria-selected");
+    }
   }
 
   /**
@@ -1473,6 +1465,8 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
    * @return {boolean}
    */
   isSelected(option) {
+    if (option.selected === true) return true
+
     const el = this.findOptionElement(option)
 
     if (!el) return false

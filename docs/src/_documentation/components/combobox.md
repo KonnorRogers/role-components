@@ -90,7 +90,7 @@ you can change how long it takes to "reset" searching for options.
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
     <form>
-      <role-combobox multiple name="combobox" autocomplete="off">
+      <role-combobox name="combobox" autocomplete="both">
         <input slot="trigger">
         <div slot="listbox">
           <role-option value="1">Option 1</role-option>

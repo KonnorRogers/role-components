@@ -359,64 +359,108 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       return
     }
 
-    console.log("YO")
     this.handleSingleEditableInput(event, triggerElement)
   }
 
   /**
+   * @param {string} value
+   */
+  splitValue (value) {
+    return value.split(this.delimiter + this.spacer).join(this.delimiter).split(this.delimiter)
+  }
+
+  /**
    * @param {InputEvent} event
-   * @param {typeof this.triggerElement} triggerElement
+   * @param {HTMLButtonElement | HTMLInputElement} triggerElement
    */
   handleMultipleEditableInput (event, triggerElement) {
     if (!triggerElement) return
 
     const val = triggerElement.value
 
-    /**
-     * @type {null | undefined | OptionObject}
-     */
-    let currentOption
+    const prevSelectedOptions = this.selectedOptions
+    const splitValue = this.splitValue(val)
 
-    this.selectedOptions = val.split(this.delimiter + this.spacer).join(this.delimiter).split(this.delimiter).map((str) => {
+    const newSelectedOptions = splitValue.filter(Boolean).map((str) => {
+      const option = this.options.find((option) => option.content === str)
+
+      const optionId = option?.id || null
+
       /** @type {OptionObject} */
       return {
-        id: str,
-        content: str,
-        value: str,
+        id: optionId,
+        content: option?.content || str,
+        value: option?.value || str,
         current: false,
         selected: true,
       }
     })
 
-    // if (event.inputType !== "deleteContentBackward" && (this.autocomplete === "both" || this.autocomplete === "inline")) {
-    //   currentOption = this.options.find((option) => option.content.match(this.stringToRegex(val)))
-    //   const valueSize = val.length
-    //
-    //   if ("setSelectionRange" in triggerElement) {
-    //     setTimeout(() => {
-    //       if (currentOption) {
-    //         triggerElement.setSelectionRange(valueSize, currentOption.content.length)
-    //       }
-    //     })
-    //   }
-    // } else {
-    //   currentOption = this.options.find((option) => option.content === val)
-    // }
-    //
-    // if (val !== this.value) {
-    //   if (this.currentOption) {
-    //     this.deselect(this.currentOption)
-    //   }
-    //
-    //   if (currentOption) {
-    //     if (this.autocomplete === "list" || this.autocomplete === "both" || this.autocomplete === "inline") {
-    //       this.setCurrent(currentOption)
-    //     }
-    //     this.select(currentOption)
-    //   } else {
-    //     this.value = val
-    //   }
-    // }
+    prevSelectedOptions.forEach((prevOption) => {
+      if (newSelectedOptions.find((newOption) => newOption.id && prevOption.id && newOption.id === prevOption.id)) {
+        return
+      }
+
+      this.deselect(prevOption)
+    })
+
+    let finalSelectedOptionInList = null
+    let anyOptionExistsInList = false
+    newSelectedOptions.forEach((opt, index) => {
+      const isLastOption = newSelectedOptions.length - 1 === index
+
+      if (opt.id) {
+        anyOptionExistsInList = true
+        if (isLastOption) {
+          finalSelectedOptionInList = opt
+        }
+      }
+
+      this.select(opt)
+    })
+
+
+    if (event.inputType === "deleteContentBackward" || !["list", "both", "inline"].includes(this.autocomplete)) {
+      if (!anyOptionExistsInList) {
+        this.deselectAll()
+      }
+
+      if (finalSelectedOptionInList) {
+        this.setCurrent(finalSelectedOptionInList)
+      }
+
+      newSelectedOptions.forEach((opt) => this.select(opt))
+      this.selectedOptions = newSelectedOptions
+      this.requestUpdate("selectedOptions")
+      return
+    }
+
+    /**
+     * @type {null | OptionObject}
+     */
+    let suggestedOption = null
+
+    const finalString = splitValue[splitValue.length - 1]
+
+    if (!finalString) { return }
+
+    suggestedOption = this.options.find((option) => option.selected !== true && option.content.match(this.stringToRegex(finalString))) || null
+
+    if ((this.autocomplete === "both" || this.autocomplete === "inline")) {
+      if ("setSelectionRange" in triggerElement) {
+        if (suggestedOption) {
+          const remainingString = suggestedOption.content.slice(finalString.length, suggestedOption.content.length)
+          const previousCharacters = splitValue.join(this.delimiter + this.spacer)
+          const combinedString = previousCharacters + remainingString
+          this.updateTriggerElementTextContentAndValue(combinedString)
+          triggerElement.setSelectionRange(previousCharacters.length, combinedString.length)
+        }
+      }
+    }
+
+    if (suggestedOption) {
+      this.setCurrent(suggestedOption)
+    }
   }
 
   /**
@@ -635,7 +679,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
 
   renderSelectedOptions () {
     return html`
-      ${this.selectedOptions.map((option) => {
+      ${this.selectedOptions.filter((option) => (option.content || "").trim() !== "").map((option) => {
         return html`<span class="visually-hidden" id=${`remove-option-${option.id}`}>Remove "${option.content}" option from combobox</span>`
       })}
 
@@ -652,7 +696,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
           padding: 0;
         "
       >
-        ${this.selectedOptions.map((option) => {
+        ${this.selectedOptions.filter((option) => (option.content || "").trim() !== "").map((option, index) => {
           return html`
             <li>
               <button
@@ -669,7 +713,12 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
                   color: ButtonText;
                   border: 1px solid ButtonText;
                 "
-                @click=${() => this.deselect(option)}
+                @click=${() => {
+                  this.deselect(option)
+                  if (this.isEditableMultipleCombobox) {
+                    this.updateMultipleValue(true)
+                  }
+                }}
               >
                 <span>${option.content}</span>
                 <slot name="remove-icon">
@@ -880,20 +929,25 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
 
     if (!option) return;
 
-    this.currentOption = this.optionElementToOptionObject(/** @type {RoleOption} */ (option));
+    const currentOption = this.optionElementToOptionObject(/** @type {RoleOption} */ (option));
 
     if (this.multiple) {
       if (evt.shiftKey) {
         this.selectFromRangeStartToCurrent()
       } else {
-        this.toggleSelected(this.currentOption);
+        this.toggleSelected(currentOption);
+        // Updates triggerElement.
+        if (this.isEditableMultipleCombobox) {
+          this.updateMultipleValue(true)
+        }
       }
     }
 
+    this.setCurrent(currentOption)
     this.focusCurrent();
 
     if (!this.multiple) {
-      this.toggleSelected(this.currentOption)
+      this.toggleSelected(currentOption)
       this.expanded = false
     }
 
@@ -987,12 +1041,11 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       evt.preventDefault()
 
       if (this.currentOption) {
-        // if (this.multiple) {
-        //   this.toggleSelected(this.currentOption);
-        // } else {
-        //   this.select(this.currentOption)
-        // }
         this.toggleSelected(this.currentOption)
+
+        if (this.isEditableMultipleCombobox) {
+          this.updateMultipleValue(true)
+        }
 
         if (this.triggerElement && "setSelectionRange" in this.triggerElement) {
           this.triggerElement.setSelectionRange?.(this.triggerElement.value.length, this.triggerElement.value.length)
@@ -1241,15 +1294,23 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
   }
 
   /**
+   * Escape characters for regex matching.
+   * @param {string} str
+   */
+  escapeRegexChars (str) {
+    return str
+      .replace(/[|\\{}()[\]^$+*?.]/g, '\\$&')
+      .replace(/-/g, '\\x2d')
+  }
+
+  /**
    * @param {string} str
    */
   stringToRegex (str) {
     // https://github.com/sindresorhus/escape-string-regexp/blob/main/index.js
     return new RegExp(
       "^" + // start of string
-      str // Escape funky characters
-        .replace(/[|\\{}()[\]^$+*?.]/g, '\\$&')
-        .replace(/-/g, '\\x2d'),
+      this.escapeRegexChars(str), // Escape funky characters
       'gi' // Global, case insensitive
     )
   }
@@ -1281,17 +1342,20 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       this.selectedOptions = []
     }
 
-    if (!this.selectedOptions.includes(option)) {
+    if (!(this.selectedOptions.find((opt) => opt.id === option.id))) {
       this.selectedOptions = this.selectedOptions.concat(option);
+      this.requestUpdate("selectedOptions")
     }
 
     option.selected = true
 
-    if (!optionElement) return
+    if (optionElement) {
+      optionElement.selected = true
 
-    // We don't want to override normal HTMLOptionElement semantics.
-    if (!(optionElement instanceof HTMLOptionElement)) {
-      optionElement.setAttribute("aria-selected", "true");
+      // We don't want to override normal HTMLOptionElement semantics.
+      if (!(optionElement instanceof HTMLOptionElement)) {
+        optionElement.setAttribute("aria-selected", "true");
+      }
     }
 
     // this.updateOptions()
@@ -1301,13 +1365,13 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     })
 
     const event = new SelectedEvent("role-selected", { selectedOption: option, selectedElement: optionElement });
-    optionElement.dispatchEvent(event);
+    ;(optionElement || this).dispatchEvent(event);
 
     if (!this.multiple) {
       if (this.currentOption) {
         this.value = option.value ?? option.content
 
-        this.updateComboboxTextContentAndValue(option.content)
+        this.updateTriggerElementTextContentAndValue(option.content)
       }
 
       return
@@ -1325,8 +1389,12 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     const event = new SelectedEvent("role-deselected", { selectedOption: option, selectedElement });
     ;(selectedElement || this).dispatchEvent(event);
 
-    const selectedIndex = this.selectedOptions.indexOf(option);
-    this.selectedOptions.splice(selectedIndex, 1)
+    const selectedIndex = this.selectedOptions.findIndex((opt) => opt === option || opt.id === option.id);
+    if (selectedIndex >= 0) {
+      this.selectedOptions.splice(selectedIndex, 1)
+      this.selectedOptions = this.selectedOptions
+      this.requestUpdate("selectedOptions")
+    }
 
     if (selectedElement) {
       selectedElement.selected = false;
@@ -1495,7 +1563,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
 
   /** @return {NodeListOf<HTMLOptionElement | RoleOption>} */
   get selectableOptions () {
-    return this.querySelectorAll(":is(option, [role='option']):not(:disabled, [disabled], [hidden])")
+    return this.querySelectorAll(":is(option, [role='option']):not(:disabled, [disabled])")
   }
 
   updateOptions() {
@@ -1532,7 +1600,13 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     }
 
     const value = comboboxValue.trim()
-    const searchRegex = this.stringToRegex(value)
+    let searchRegex = this.stringToRegex(value)
+
+    if (this.isEditableMultipleCombobox) {
+      const splitValue = this.splitValue(value)
+      const finalString = splitValue[splitValue.length - 1]
+      searchRegex = this.stringToRegex(finalString)
+    }
 
     for (const option of optionsSet) {
       let hasMatch = filterResults === false || !(value)
@@ -1572,7 +1646,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
         const value = option.value
         if (!this.multiple && this.value == null) {
           this.value = value
-          this.updateComboboxTextContentAndValue(option.content)
+          this.updateTriggerElementTextContentAndValue(option.content)
         }
 
         if (!this.currentOption) {
@@ -1623,36 +1697,63 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     // if (currentOption) {
     //   this.setCurrent(currentOption)
     // }
-    this.updateMultipleValue()
+
+    // Don't force updates if the trigger element is being used.
+    if (this.triggerElement && this.triggerElement.matches(":focus-within")) {
+      this.updateMultipleValue()
+    } else {
+      this.updateMultipleValue(true)
+    }
+  }
+
+  get multipleFormDataAndStringValue () {
+    const formData = new FormData()
+
+    /** @type {string[]} */
+    const contentAry = []
+
+    /** @type {string[]} */
+    const valueAry = []
+
+    this.selectedOptions.forEach((option) => {
+      formData.append(this.name, option.value ?? option.content)
+      valueAry.push(option.value ?? option.content)
+      contentAry.push(option.content)
+    })
+
+    const delimiterSeparatedValue = valueAry.join(this.delimiter + this.spacer)
+    const delimiterSeparatedContent = contentAry.join(this.delimiter + this.spacer)
+
+    return { formData, delimiterSeparatedValue, delimiterSeparatedContent }
   }
 
   /**
    * Updates formData / combobox.value
+   * @param {boolean} [force=false]  - whether or not to force update a new value
    */
-  updateMultipleValue () {
-    const multipleFormData = new FormData()
-
-    /** @type {string[]} */
-    const stringAry = []
-    this.selectedOptions.forEach((option) => {
-      multipleFormData.append(this.name, option.value ?? option.content)
-      stringAry.push(option.content)
-    })
-
-    const delimiterSeparatedValue = stringAry.join(this.delimiter + this.spacer) + (this.finalString || "")
+  updateMultipleValue (force = false) {
+    const { formData, delimiterSeparatedValue, delimiterSeparatedContent } = this.multipleFormDataAndStringValue
 
     if (this.valueType === "formdata") {
-      this.value = multipleFormData
+      this.value = formData
     } else {
       this.value = delimiterSeparatedValue
     }
-    this.updateComboboxTextContentAndValue(delimiterSeparatedValue)
+
+    if (force) {
+      this.updateTriggerElementTextContentAndValue(delimiterSeparatedContent)
+      return
+    }
+
+    if (this.triggerElement) {
+      this.updateTriggerElementTextContentAndValue(this.triggerElement.value)
+    }
   }
 
   /**
    * @param {string} str
    */
-  updateComboboxTextContentAndValue (str) {
+  updateTriggerElementTextContentAndValue (str) {
     const triggerElement = this.triggerElement
 
     if (!triggerElement) return

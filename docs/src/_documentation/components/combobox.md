@@ -86,44 +86,18 @@ you can change how long it takes to "reset" searching for options.
     </script>
 <% end.chomp.html_safe %>
 
-
-<light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
-  <template slot="code">
-    <form>
-      <role-combobox multiple name="combobox" autocomplete="both">
-        <input slot="trigger">
-        <div slot="listbox">
-          <role-option value="1">Option 1</role-option>
-          <role-option value="2">Option 2</role-option>
-          <role-option value="3">Option 3</role-option>
-          <role-option selected value="4">Option 4</role-option>
-          <role-option value="5">Option 5</role-option>
-          <role-option value="6">Option 6</role-option>
-          <role-option value="7">Option 7</role-option>
-          <role-option value="8">Option 8</role-option>
-          <role-option value="9">Option 9</role-option>
-          <role-option value="10">Option 10</role-option>
-        </div>
-      </role-combobox>
-      <br>
-      <button type="reset">Reset</button>
-    </form>
-    <%= debug_info %>
-  </template>
-</light-preview>
-
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
     <form>
       <role-combobox name="combobox">
-        <input slot="trigger" autocomplete="off">
+        <button slot="trigger" style="padding: 0.4em 0.6em;"></button>
         <div slot="listbox">
           <role-option>Capybara</role-option>
           <role-option>Rhino</role-option>
           <role-option>Badger mole</role-option>
           <role-option>Flamingo</role-option>
           <role-option>Tortoise</role-option>
-          <role-option>Killer Whale</role-option>
+          <role-option selected>Killer Whale</role-option>
           <role-option>Opossum</role-option>
           <role-option>Turtle</role-option>
           <role-option>Elephant</role-option>
@@ -530,6 +504,143 @@ Make sure to add a `name` attribute to the combobox to get the FormData to work 
           </div>
         </role-combobox>
       </label>
+      <br>
+      <button type="reset">Reset</button>
+    </form>
+    <%= debug_info %>
+  </template>
+</light-preview>
+
+### Editable Multi select combobox with autocomplete "both"
+
+<light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
+  <template slot="code">
+    <form>
+      <role-combobox name="combobox">
+        <input slot="trigger" autocomplete="both">
+        <div slot="listbox">
+          <role-option>Capybara</role-option>
+          <role-option>Rhino</role-option>
+          <role-option>Badger mole</role-option>
+          <role-option>Flamingo</role-option>
+          <role-option>Tortoise</role-option>
+          <role-option selected>Killer Whale</role-option>
+          <role-option>Opossum</role-option>
+          <role-option>Turtle</role-option>
+          <role-option>Elephant</role-option>
+          <role-option>Dove</role-option>
+          <role-option>Sparrow</role-option>
+          <role-option>Platypus</role-option>
+          <role-option>Zebra</role-option>
+          <role-option>Dog</role-option>
+          <role-option>Cat</role-option>
+          <role-option>Swan</role-option>
+          <role-option>Goose</role-option>
+        </div>
+      </role-combobox>
+      <br>
+      <button type="reset">Reset</button>
+    </form>
+    <%= debug_info %>
+  </template>
+</light-preview>
+
+### Editable Multi select combobox with filtered results
+
+<light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
+  <template slot="code">
+    <form>
+      <role-combobox multiple name="combobox" autocomplete="both">
+        <input slot="trigger">
+        <div slot="listbox">
+          <role-option>Capybara</role-option>
+          <role-option>Rhino</role-option>
+          <role-option>Badger mole</role-option>
+          <role-option>Flamingo</role-option>
+          <role-option>Tortoise</role-option>
+          <role-option selected>Killer Whale</role-option>
+          <role-option>Opossum</role-option>
+          <role-option>Turtle</role-option>
+          <role-option>Elephant</role-option>
+          <role-option>Dove</role-option>
+          <role-option>Sparrow</role-option>
+          <role-option>Platypus</role-option>
+          <role-option>Zebra</role-option>
+          <role-option>Dog</role-option>
+          <role-option>Cat</role-option>
+          <role-option>Swan</role-option>
+          <role-option>Goose</role-option>
+        </div>
+      </role-combobox>
+      <br>
+      <button type="reset">Reset</button>
+    </form>
+    <%= debug_info %>
+  </template>
+</light-preview>
+
+
+### Editable Multi select combobox with autocomplete "off"
+
+<light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
+  <template slot="code">
+    <form>
+      <role-combobox multiple name="combobox" autocomplete="off">
+        <input slot="trigger">
+        <div slot="listbox">
+          <role-option>Capybara</role-option>
+          <role-option>Rhino</role-option>
+          <role-option selected>Badger mole</role-option>
+          <role-option selected>Flamingo</role-option>
+          <role-option selected>Tortoise</role-option>
+          <role-option>Killer Whale</role-option>
+          <role-option>Opossum</role-option>
+          <role-option>Turtle</role-option>
+          <role-option>Elephant</role-option>
+          <role-option>Dove</role-option>
+          <role-option>Sparrow</role-option>
+          <role-option>Platypus</role-option>
+          <role-option>Zebra</role-option>
+          <role-option>Dog</role-option>
+          <role-option>Cat</role-option>
+          <role-option>Swan</role-option>
+          <role-option>Goose</role-option>
+        </div>
+      </role-combobox>
+      <br>
+      <button type="reset">Reset</button>
+    </form>
+    <%= debug_info %>
+  </template>
+</light-preview>
+
+### Editable Multi select combobox with filtering
+
+<light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
+  <template slot="code">
+    <form>
+      <role-combobox multiple name="combobox" autocomplete="off">
+        <input slot="trigger">
+        <div slot="listbox">
+          <role-option>Capybara</role-option>
+          <role-option>Rhino</role-option>
+          <role-option selected>Badger mole</role-option>
+          <role-option selected>Flamingo</role-option>
+          <role-option selected>Tortoise</role-option>
+          <role-option>Killer Whale</role-option>
+          <role-option>Opossum</role-option>
+          <role-option>Turtle</role-option>
+          <role-option>Elephant</role-option>
+          <role-option>Dove</role-option>
+          <role-option>Sparrow</role-option>
+          <role-option>Platypus</role-option>
+          <role-option>Zebra</role-option>
+          <role-option>Dog</role-option>
+          <role-option>Cat</role-option>
+          <role-option>Swan</role-option>
+          <role-option>Goose</role-option>
+        </div>
+      </role-combobox>
       <br>
       <button type="reset">Reset</button>
     </form>

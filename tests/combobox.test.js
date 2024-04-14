@@ -1,6 +1,10 @@
 import { html, fixture, assert, aTimeout } from '@open-wc/testing';
 import { sendKeys } from "@web/test-runner-commands"
 
+const isiOS = /Mac|iOS|iPhone|iPad|iPod/i.test(
+  window.navigator.platform,
+);
+
 import "../exports/combobox/combobox-register.js"
 import "../exports/option/option-register.js"
 
@@ -434,7 +438,7 @@ test("Should properly selected the all selected items in the combobox", async ()
   assert.lengthOf(formData().getAll("combobox"), 1)
   assert.equal(formData().get("combobox"), "4, 5")
   assert.equal(combobox.value, "4, 5")
-  assert.equal(combobox.triggerElement.value, "4, 5")
+  assert.equal(combobox.triggerElement.value, "Option 4, Option 5")
 })
 
 test("Should change the delimiter when the delimiter attribute is changed", async () => {
@@ -489,7 +493,7 @@ test("Should properly manipulate and add / remove buttons and strings for an edi
   await aTimeout(100)
   await combobox.updateComplete
 
-  assert.equal(selectedOptionsButtons().length, 1)
+  assert.equal(selectedOptionsButtons().length, 2)
   assert.equal(combobox.value, "Rhino, Tortois")
   assert.equal(combobox.triggerElement.value, "Rhino, Tortois")
 
@@ -509,4 +513,84 @@ test("Should properly manipulate and add / remove buttons and strings for an edi
   assert.equal(selectedOptionsButtons().length, 3)
   assert.equal(combobox.value, "Rhino, Tortoise, Honeybadger")
   assert.equal(combobox.triggerElement.value, "Rhino, Tortoise, Honeybadger")
+})
+
+test("Should properly manipulate and add / remove buttons and strings for an editable delimited combobox", async () => {
+  const combobox = await fixture(html`
+    <role-combobox multiple editable name="combobox">
+      <input slot="trigger">
+      <div slot="listbox">
+        <role-option>Honeybadger</role-option>
+        <role-option selected>Rhino</role-option>
+        <role-option selected>Badger mole</role-option>
+        <role-option selected>Flamingo</role-option>
+        <role-option>Tortoise</role-option>
+        <role-option>Killer Whale</role-option>
+        <role-option>Opossum</role-option>
+      </div>
+    </role-combobox>
+  `)
+
+  await aTimeout(15)
+
+  const selectedOptionsButtons = () => combobox.shadowRoot.querySelectorAll("[part~='selected-options'] button")
+  assert.lengthOf(selectedOptionsButtons(), 3)
+  assert.equal(combobox.value, "Rhino, Badger mole, Flamingo")
+  assert.equal(combobox.triggerElement.value, "Rhino, Badger mole, Flamingo")
+
+  selectedOptionsButtons()[1].click()
+
+  await combobox.updateComplete
+
+  assert.lengthOf(selectedOptionsButtons(), 2)
+  assert.equal(combobox.value, "Rhino, Flamingo")
+  assert.equal(combobox.triggerElement.value, "Rhino, Flamingo")
+
+})
+
+suite("Should properly remove all values when the triggerElement has everything deleted", async () => {
+  const autocompleteTypes = ["off", "both", "inline", ""]
+
+  for (const autocomplete of autocompleteTypes) {
+    test(autocomplete, async () => {
+      const combobox = await fixture(html`
+        <role-combobox multiple editable name="combobox" autocomplete=${autocomplete}>
+          <input slot="trigger">
+          <div slot="listbox">
+            <role-option>Honeybadger</role-option>
+            <role-option selected>Rhino</role-option>
+            <role-option selected>Badger mole</role-option>
+            <role-option selected>Flamingo</role-option>
+            <role-option>Tortoise</role-option>
+            <role-option>Killer Whale</role-option>
+            <role-option>Opossum</role-option>
+          </div>
+        </role-combobox>
+      `)
+
+      await aTimeout(15)
+
+      assert.lengthOf(combobox.selectedOptions, 3)
+      assert.equal(combobox.value, "Rhino, Badger mole, Flamingo")
+      assert.equal(combobox.triggerElement.value, "Rhino, Badger mole, Flamingo")
+
+      combobox.triggerElement.focus()
+
+      if (isiOS) {
+        // select all on macOS
+        await sendKeys({ press: 'Meta+A' })
+      } else {
+        // select all on non-macOS
+        await sendKeys({ press: 'Control+A' })
+      }
+
+      await sendKeys({ press: "Backspace" })
+
+      await combobox.updateComplete
+
+      assert.lengthOf(combobox.selectedOptions, 0)
+      assert.equal(combobox.value, "")
+      assert.equal(combobox.triggerElement.value, "")
+    })
+  }
 })

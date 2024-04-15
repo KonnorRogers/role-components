@@ -626,15 +626,16 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   }
 
   /**
-   * @param {HTMLElement} selectedElement
+   * @param {HTMLElement} element
    */
-  select(selectedElement) {
+  select(element) {
+    const selectedElement = /** @type {import("../option/option.js").default} */ (element)
     this.selectedOptions = this.selectedOptions.concat(selectedElement);
-    /** @type {HTMLOptionElement} */ (selectedElement).selected = true;
+    selectedElement.selected = true;
 
     // We don't want to override normal HTMLOptionElement semantics.
     if (!(selectedElement instanceof HTMLOptionElement)) {
-      /** @type {HTMLElement} */ (selectedElement).setAttribute("aria-selected", "true");
+      selectedElement.setAttribute("aria-selected", "true");
     }
 
     this.debounce(() => this.updateOptions(), {
@@ -647,10 +648,11 @@ export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {
   }
 
   /**
-   * @param {HTMLElement} selectedElement
+   * @param {HTMLElement} element
    */
-  deselect(selectedElement) {
-    /** @type {HTMLOptionElement} */ (selectedElement).selected = false;
+  deselect(element) {
+    const selectedElement = /** @type {import("../option/option.js").default} */ (element)
+    selectedElement.selected = false;
     // selectedElement.removeAttribute("aria-selected");
 
     const event = new SelectedEvent("role-deselected", { selectedElement });

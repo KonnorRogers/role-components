@@ -619,7 +619,7 @@ Make sure to add a `name` attribute to the combobox to get the FormData to work 
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
     <form>
-      <role-combobox multiple name="combobox" autocomplete="off">
+      <role-combobox multiple name="combobox" autocomplete="both" filter-results>
         <input slot="trigger">
         <div slot="listbox">
           <role-option>Capybara</role-option>

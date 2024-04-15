@@ -99,6 +99,14 @@
       "exports": [
         {
           "kind": "js",
+          "name": "RoleCombobox",
+          "declaration": {
+            "name": "default",
+            "module": "\"./combobox/combobox-register.js\""
+          }
+        },
+        {
+          "kind": "js",
           "name": "RoleListbox",
           "declaration": {
             "name": "default",
@@ -143,13 +151,1075 @@
       "kind": "javascript-module",
       "path": "exports/combobox/combobox-register.js",
       "declarations": [],
-      "exports": []
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "RoleCombobox",
+            "module": "exports/combobox/combobox-register.js"
+          }
+        }
+      ]
     },
     {
       "kind": "javascript-module",
       "path": "exports/combobox/combobox.js",
-      "declarations": [],
-      "exports": []
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "A listbox following the W3C Listbox pattern.\n\n<https://www.w3.org/WAI/ARIA/apg/patterns/listbox/>\n\n\n`Single-select` listbox uses the \"select follows focus\" model.\n\n\n`Multi-select` listbox implements the keyboard recommendations here: <https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboard_interaction>\n\n  - <kbd>Shift + Down Arrow</kbd>: Moves focus to and toggles the selected state of the next option.\n  - <kbd>Shift + Up Arrow</kbd>: Moves focus to and toggles the selected state of the previous option.\n  - <kbd>Shift + Space</kbd>: Selects contiguous items from the most recently selected item to the focused item.\n  - <kbd>Control + Shift + Home</kbd>: Selects the focused option and all options up to the first option. Optionally, moves focus to the first option.\n  - <kbd>Control + Shift + End</kbd>: Selects the focused option and all options down to the last option.\n  - <kbd>Control + a</kbd>: Selects all\n\n  The currently hovered / focus `<role-option>` has `[aria-current=\"true\"]`\n\n  The currently selected `<role-option>` has `[aria-selected=\"true\"]`",
+          "name": "RoleCombobox",
+          "members": [
+            {
+              "kind": "field",
+              "name": "baseName",
+              "type": {
+                "text": "string"
+              },
+              "static": true,
+              "default": "\"role-combobox\""
+            },
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{...LitElement.shadowRootOptions, delegatesFocus: true }"
+            },
+            {
+              "kind": "method",
+              "name": "focus",
+              "parameters": [
+                {
+                  "name": "args"
+                }
+              ],
+              "type": {
+                "text": "HTMLElement[\"focus\"]"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleInput",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "InputEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "splitValue",
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleMultipleEditableInput",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "InputEvent"
+                  }
+                },
+                {
+                  "name": "triggerElement",
+                  "type": {
+                    "text": "HTMLButtonElement | HTMLInputElement"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleSingleEditableInput",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "InputEvent"
+                  }
+                },
+                {
+                  "name": "triggerElement",
+                  "type": {
+                    "text": "typeof this.triggerElement"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "optionElementToOptionObject",
+              "parameters": [
+                {
+                  "name": "el",
+                  "type": {
+                    "text": "RoleOption"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "OptionObject"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleOptionFocus",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "{target: null | RoleOption}"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleInputClick",
+              "parameters": [
+                {
+                  "name": "e",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleOutsideClick",
+              "parameters": [
+                {
+                  "name": "e",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "assignRandomId",
+              "parameters": [
+                {
+                  "name": "el",
+                  "type": {
+                    "text": "HTMLElement"
+                  }
+                },
+                {
+                  "name": "id",
+                  "default": "uuidv4()"
+                }
+              ],
+              "description": "Users dont always provide ids on elements, and we need to make sure the id isn't already taken."
+            },
+            {
+              "kind": "field",
+              "name": "listbox",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "isEditable",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "updateListboxElement",
+              "description": "Adds proper attributes to the slotted listbox element"
+            },
+            {
+              "kind": "method",
+              "name": "handleInputFocus",
+              "parameters": [
+                {
+                  "name": "e",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "updateTriggerElement",
+              "description": "Adds proper attributes to the slotted input element"
+            },
+            {
+              "kind": "method",
+              "name": "renderSelectedOptions"
+            },
+            {
+              "kind": "field",
+              "name": "shouldShowEmptyResults",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "formResetCallback"
+            },
+            {
+              "kind": "field",
+              "name": "isEditableMultipleCombobox",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "setCurrent",
+              "parameters": [
+                {
+                  "name": "option",
+                  "type": {
+                    "text": "OptionObject"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "removeCurrent",
+              "parameters": [
+                {
+                  "name": "option",
+                  "type": {
+                    "text": "OptionObject"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "findOptionElement",
+              "parameters": [
+                {
+                  "name": "option",
+                  "type": {
+                    "text": "OptionObject"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "RoleOption | null"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleOptionClick",
+              "parameters": [
+                {
+                  "name": "evt",
+                  "type": {
+                    "text": "PointerEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleOptionHover",
+              "parameters": [
+                {
+                  "name": "evt",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "currentOptionIndex",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "currentFocusableOptionIndex",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "handleKeyUp",
+              "parameters": [
+                {
+                  "name": "evt",
+                  "type": {
+                    "text": "KeyboardEvent"
+                  }
+                }
+              ],
+              "description": "Reset range when shiftKey goes up"
+            },
+            {
+              "kind": "method",
+              "name": "handleKeyDown",
+              "parameters": [
+                {
+                  "name": "evt",
+                  "type": {
+                    "text": "KeyboardEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "selectFromClosestSelectedToCurrent",
+              "description": "Finds the closest selected option prior to the current option"
+            },
+            {
+              "kind": "method",
+              "name": "selectFromRangeStartToCurrent"
+            },
+            {
+              "kind": "method",
+              "name": "selectRange",
+              "parameters": [
+                {
+                  "name": "{ from, to }"
+                },
+                {
+                  "name": "options",
+                  "type": {
+                    "text": "Range"
+                  }
+                }
+              ],
+              "description": "Selects all options in a range and deselects all options not in the range"
+            },
+            {
+              "kind": "method",
+              "name": "selectFromStartToCurrent",
+              "parameters": [
+                {
+                  "name": "startIndex",
+                  "default": "0",
+                  "optional": true,
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "selectFromCurrentToEnd",
+              "parameters": [
+                {
+                  "name": "endIndex",
+                  "default": "this.options.length - 1",
+                  "optional": true,
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "escapeRegexChars",
+              "parameters": [
+                {
+                  "name": "str",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "description": "Escape characters for regex matching."
+            },
+            {
+              "kind": "method",
+              "name": "stringToRegex",
+              "parameters": [
+                {
+                  "name": "str",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "focusElementFromSearchBuffer"
+            },
+            {
+              "kind": "method",
+              "name": "select",
+              "parameters": [
+                {
+                  "name": "option",
+                  "type": {
+                    "text": "OptionObject"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "deselect",
+              "parameters": [
+                {
+                  "name": "option",
+                  "type": {
+                    "text": "OptionObject"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "selectAll",
+              "description": "Mark every element with [aria-selected=\"true\"]"
+            },
+            {
+              "kind": "method",
+              "name": "deselectAll",
+              "parameters": [
+                {
+                  "name": "updateOptions",
+                  "default": "true"
+                }
+              ],
+              "description": "Mark every element with [aria-selected=\"false\"]"
+            },
+            {
+              "kind": "method",
+              "name": "toggleSelected",
+              "parameters": [
+                {
+                  "name": "option",
+                  "type": {
+                    "text": "OptionObject"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "focusCurrent"
+            },
+            {
+              "kind": "field",
+              "name": "focusableOptions",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "focusAt",
+              "parameters": [
+                {
+                  "name": "index",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "focusNext"
+            },
+            {
+              "kind": "method",
+              "name": "focusPrevious"
+            },
+            {
+              "kind": "method",
+              "name": "focusFirst"
+            },
+            {
+              "kind": "method",
+              "name": "focusLast"
+            },
+            {
+              "kind": "method",
+              "name": "scrollOptionIntoView",
+              "parameters": [
+                {
+                  "name": "selectedOption",
+                  "type": {
+                    "text": "OptionObject"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "scrollOptionElementIntoView",
+              "parameters": [
+                {
+                  "name": "optionElement",
+                  "type": {
+                    "text": "HTMLElement"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "isSelected",
+              "parameters": [
+                {
+                  "name": "option",
+                  "type": {
+                    "text": "OptionObject"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "selectableOptions",
+              "return": {
+                "type": {
+                  "text": "NodeListOf<HTMLOptionElement | RoleOption>"
+                }
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "completionSelected",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "updateOptions"
+            },
+            {
+              "kind": "field",
+              "name": "multipleFormDataAndStringValue",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "updateMultipleValue",
+              "parameters": [
+                {
+                  "name": "force",
+                  "default": "false",
+                  "description": "whether or not to force update a new value",
+                  "optional": true,
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "description": "Updates formData / combobox.value"
+            },
+            {
+              "kind": "method",
+              "name": "updateTriggerElementTextContentAndValue",
+              "parameters": [
+                {
+                  "name": "str",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "triggerElement",
+              "type": {
+                "text": "HTMLButtonElement | HTMLInputElement | null"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "listboxId"
+            },
+            {
+              "kind": "field",
+              "name": "autocomplete",
+              "privacy": "public",
+              "type": {
+                "text": "'' | \"off\" | \"inline\" | \"list\" | \"both\""
+              },
+              "description": "Any autocompletes of type `\"off\"`, `\"inline\"`, `\"list\"`, or `\"both\"` will automatically make the triggerElement editable.",
+              "default": "''",
+              "attribute": "autocomplete"
+            },
+            {
+              "kind": "field",
+              "name": "editable",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "If true, the `<input>` element provided is not treated as readonly, and rather as an editable input. This can be omitted\n if you use any of the possible `autocomplete` attributes. Do not use this to check if the combobox is editable.\n instead, use `this.isEditable` to check if the triggerElement is editable.",
+              "default": "false",
+              "attribute": "editable"
+            },
+            {
+              "kind": "field",
+              "name": "delimiter",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "description": "Used for multiple select comboboxes that use `value-type=\"string\"`. The default is a comma.",
+              "default": "','",
+              "attribute": "delimiter"
+            },
+            {
+              "kind": "field",
+              "name": "spacer",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "description": "Used for multiple select comboboxes that use `value-type=\"string\"`. The default is a space.",
+              "default": "\" \"",
+              "attribute": "spacer"
+            },
+            {
+              "kind": "field",
+              "name": "selectedOptions",
+              "privacy": "public",
+              "type": {
+                "text": "OptionObject[]"
+              },
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "options",
+              "privacy": "public",
+              "type": {
+                "text": "OptionObject[]"
+              },
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "currentOption",
+              "privacy": "public",
+              "type": {
+                "text": "null | OptionObject"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "expanded",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "expanded"
+            },
+            {
+              "kind": "field",
+              "name": "multiple",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Whether to allow multiple selections.",
+              "default": "false",
+              "attribute": "multiple"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "null | FormData | string"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "__rangeStartOption",
+              "privacy": "public",
+              "type": {
+                "text": "null | OptionObject"
+              },
+              "description": "Used internally for range selections",
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "wrapSelection",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "wrap-selection"
+            },
+            {
+              "kind": "field",
+              "name": "filterResults",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Whether or not to filter results based on what is typed into the combobox.",
+              "default": "false",
+              "attribute": "filter-results"
+            },
+            {
+              "kind": "field",
+              "name": "role",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"presentation\""
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "showEmptyResults",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "If true, or `show-empty-results` attribute is present, it will show the \"no-results-found\" slot.",
+              "default": "false",
+              "attribute": "show-empty-results"
+            },
+            {
+              "kind": "field",
+              "name": "searchBufferDelay",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "description": "Delay before the search buffer returns to an empty string",
+              "default": "600",
+              "attribute": "search-buffer-delay",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "valueType",
+              "privacy": "public",
+              "type": {
+                "text": "\"formdata\" | \"string\""
+              },
+              "description": "Used for multiple selects. You can either have a string, or submit as multiple parameters in FormData\n  like a native `<select>`. The default is a \"string\"",
+              "default": "\"string\"",
+              "attribute": "value-type"
+            },
+            {
+              "kind": "field",
+              "name": "attributeFilter",
+              "type": {
+                "text": "array"
+              },
+              "default": "[\n      \"aria-current\",\n      \"selected\",\n      \"current\",\n      \"aria-selected\",\n      \"role\",\n    ]"
+            },
+            {
+              "kind": "field",
+              "name": "optionObserver",
+              "description": "Monitors its DOM for new nodes and assigns them to `this.options`",
+              "type": {
+                "text": "MutationObserver"
+              },
+              "default": "new MutationObserver((mutations) => {\n      for (const _mutation of mutations) {\n        this.debounce(() => { this.updateOptions(); }, {\n          wait: 10,\n          key: this.updateOptions,\n        });\n\n\n        // We really don't care about the mutations, we just need to know if things are updating.\n        break;\n      }\n    })"
+            },
+            {
+              "kind": "field",
+              "name": "",
+              "privacy": "public",
+              "attribute": ""
+            },
+            {
+              "kind": "field",
+              "name": "defaultValue",
+              "privacy": "public",
+              "attribute": "value",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "_hasFocused",
+              "privacy": "public"
+            },
+            {
+              "kind": "field",
+              "name": "_searchBuffer",
+              "privacy": "public",
+              "ignore": true,
+              "type": {
+                "text": "string"
+              },
+              "description": "Internal buffer for searching the listbox.",
+              "default": "\"\""
+            },
+            {
+              "kind": "field",
+              "name": "_searchBufferDebounce",
+              "privacy": "public",
+              "ignore": true,
+              "type": {
+                "text": "null | ReturnType<typeof setTimeout>"
+              },
+              "description": "timeoutId to clear the search buffer",
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "static": true,
+              "type": {
+                "text": "Record<string, typeof HTMLElement>"
+              },
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "debounce",
+              "parameters": [
+                {
+                  "name": "callback",
+                  "type": {
+                    "text": "(...args: any[]) => any"
+                  }
+                },
+                {
+                  "name": "options",
+                  "type": {
+                    "text": "{ key: any, wait: number }"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "ReturnType<typeof setTimeout>"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "eventHandler",
+              "type": {
+                "text": "EventHandler<this>"
+              },
+              "default": "new EventHandler(this)",
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "__debounceMap__",
+              "type": {
+                "text": "null | Map<any, ReturnType<typeof setTimeout>>"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            }
+          ],
+          "events": [
+            {
+              "name": "change",
+              "type": {
+                "text": "Event"
+              }
+            },
+            {
+              "name": "input",
+              "type": {
+                "text": "Event"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "",
+              "fieldName": ""
+            },
+            {
+              "name": "expanded",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "expanded"
+            },
+            {
+              "name": "autocomplete",
+              "type": {
+                "text": "'' | \"off\" | \"inline\" | \"list\" | \"both\""
+              },
+              "description": "Any autocompletes of type `\"off\"`, `\"inline\"`, `\"list\"`, or `\"both\"` will automatically make the triggerElement editable.",
+              "default": "''",
+              "fieldName": "autocomplete"
+            },
+            {
+              "name": "multiple",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Whether to allow multiple selections.",
+              "default": "false",
+              "fieldName": "multiple"
+            },
+            {
+              "name": "value",
+              "fieldName": "defaultValue"
+            },
+            {
+              "name": "wrap-selection",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "wrapSelection"
+            },
+            {
+              "name": "editable",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "If true, the `<input>` element provided is not treated as readonly, and rather as an editable input. This can be omitted\n if you use any of the possible `autocomplete` attributes. Do not use this to check if the combobox is editable.\n instead, use `this.isEditable` to check if the triggerElement is editable.",
+              "default": "false",
+              "fieldName": "editable"
+            },
+            {
+              "name": "filter-results",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Whether or not to filter results based on what is typed into the combobox.",
+              "default": "false",
+              "fieldName": "filterResults"
+            },
+            {
+              "name": "search-buffer-delay",
+              "type": {
+                "text": "number"
+              },
+              "description": "Delay before the search buffer returns to an empty string",
+              "default": "600",
+              "fieldName": "searchBufferDelay"
+            },
+            {
+              "name": "value-type",
+              "type": {
+                "text": "\"formdata\" | \"string\""
+              },
+              "description": "Used for multiple selects. You can either have a string, or submit as multiple parameters in FormData\n  like a native `<select>`. The default is a \"string\"",
+              "default": "\"string\"",
+              "fieldName": "valueType"
+            },
+            {
+              "name": "delimiter",
+              "type": {
+                "text": "string"
+              },
+              "description": "Used for multiple select comboboxes that use `value-type=\"string\"`. The default is a comma.",
+              "default": "','",
+              "fieldName": "delimiter"
+            },
+            {
+              "name": "spacer",
+              "type": {
+                "text": "string"
+              },
+              "description": "Used for multiple select comboboxes that use `value-type=\"string\"`. The default is a space.",
+              "default": "\" \"",
+              "fieldName": "spacer"
+            },
+            {
+              "name": "show-empty-results",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "If true, or `show-empty-results` attribute is present, it will show the \"no-results-found\" slot.",
+              "default": "false",
+              "fieldName": "showEmptyResults"
+            }
+          ],
+          "mixins": [
+            {
+              "name": "LitFormAssociatedMixin",
+              "package": "form-associated-helpers/exports/mixins/lit-form-associated-mixin.js"
+            }
+          ],
+          "superclass": {
+            "name": "BaseElement",
+            "module": "/exports/base-element.js"
+          },
+          "tagName": "role-combobox",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "RoleCombobox",
+            "module": "exports/combobox/combobox.js"
+          }
+        }
+      ]
     },
     {
       "kind": "javascript-module",
@@ -189,7 +1259,14 @@
               "kind": "field",
               "name": "selectedElement",
               "type": {
-                "text": "HTMLElement"
+                "text": "null | RoleOption"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "selectedOption",
+              "type": {
+                "text": "null | OptionObject"
               }
             }
           ],
@@ -231,7 +1308,7 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "A listbox following the W3C Listbox pattern.\n\n<https://www.w3.org/WAI/ARIA/apg/patterns/listbox/>\n\n\n`Single-select` listbox uses the \"select follows focus\" model.\n\n\n`Multi-select` listbox implements the keyboard recommendations here: <https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboard_interaction>\n\n  - <kbd>Shift + Down Arrow</kbd>: Moves focus to and toggles the selected state of the next option.\n  - <kbd>Shift + Up Arrow</kbd>: Moves focus to and toggles the selected state of the previous option.\n  - <kbd>Shift + Space</kbd>: Selects contiguous items from the most recently selected item to the focused item.\n  - <kbd>Control + Shift + Home</kbd>: Selects the focused option and all options up to the first option. Optionally, moves focus to the first option.\n  - <kbd>Control + Shift + End</kbd>: Selects the focused option and all options down to the last option.\n  - <kbd>Control + a</kbd>: Selects all\n\n  The currently hovered / focus `<role-option>` has `[aria-current=\"true\"]`\n\n  The currently selected `<role-option>` has `[aria-selected=\"true\"]`",
+          "description": "A listbox following the APG Listbox pattern.\n\n<https://www.w3.org/WAI/ARIA/apg/patterns/listbox/>\n\n\n`Single-select` listbox uses the \"select follows focus\" model.\n\n\n`Multi-select` listbox implements the keyboard recommendations here: <https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboard_interaction>\n\n  - <kbd>Shift + Down Arrow</kbd>: Moves focus to and toggles the selected state of the next option.\n  - <kbd>Shift + Up Arrow</kbd>: Moves focus to and toggles the selected state of the previous option.\n  - <kbd>Shift + Space</kbd>: Selects contiguous items from the most recently selected item to the focused item.\n  - <kbd>Control + Shift + Home</kbd>: Selects the focused option and all options up to the first option. Optionally, moves focus to the first option.\n  - <kbd>Control + Shift + End</kbd>: Selects the focused option and all options down to the last option.\n  - <kbd>Control + a</kbd>: Selects all\n\n  The currently hovered / focus `<role-option>` has `[aria-current=\"true\"]`\n\n  The currently selected `<role-option>` has `[aria-selected=\"true\"]`",
           "name": "RoleListbox",
           "members": [
             {
@@ -281,13 +1358,6 @@
             },
             {
               "kind": "method",
-              "name": "click",
-              "type": {
-                "text": "HTMLButtonElement[\"click\"]"
-              }
-            },
-            {
-              "kind": "method",
               "name": "handleOptionClick",
               "parameters": [
                 {
@@ -312,7 +1382,7 @@
             },
             {
               "kind": "field",
-              "name": "currentActiveOptionIndex",
+              "name": "currentOptionIndex",
               "readonly": true
             },
             {
@@ -402,7 +1472,7 @@
               "name": "select",
               "parameters": [
                 {
-                  "name": "selectedElement",
+                  "name": "element",
                   "type": {
                     "text": "HTMLElement"
                   }
@@ -414,7 +1484,7 @@
               "name": "deselect",
               "parameters": [
                 {
-                  "name": "selectedElement",
+                  "name": "element",
                   "type": {
                     "text": "HTMLElement"
                   }
@@ -503,10 +1573,6 @@
                   }
                 }
               ]
-            },
-            {
-              "kind": "method",
-              "name": "handleFocusOut"
             },
             {
               "kind": "method",
@@ -652,7 +1718,7 @@
             },
             {
               "kind": "field",
-              "name": "currentActiveOption",
+              "name": "currentOption",
               "privacy": "public",
               "type": {
                 "text": "null | HTMLElement"
@@ -898,38 +1964,23 @@
               "default": "\"role-option\""
             },
             {
+              "kind": "field",
+              "name": "validators",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "formResetCallback"
+            },
+            {
               "kind": "method",
               "name": "handleSlotChange"
             },
             {
-              "kind": "field",
-              "name": "role",
-              "privacy": "public",
-              "type": {
-                "text": "string"
-              },
-              "default": "\"option\"",
-              "attribute": "role",
-              "reflects": true
-            },
-            {
-              "kind": "field",
-              "name": "internals",
-              "type": {
-                "text": "object"
-              },
-              "default": "{}"
-            },
-            {
-              "kind": "field",
-              "name": "tabIndex",
-              "privacy": "public",
-              "type": {
-                "text": "number"
-              },
-              "default": "-1",
-              "attribute": "tabindex",
-              "reflects": true
+              "kind": "method",
+              "name": "handleFocus",
+              "description": "Sends a bubbling focus event to be usable by the combobox."
             },
             {
               "kind": "field",
@@ -941,6 +1992,17 @@
               "description": "aria-selected is preferred for single-select listboxes / comboboxes",
               "default": "false",
               "attribute": "selected"
+            },
+            {
+              "kind": "field",
+              "name": "defaultSelected",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "The selection state when the form is reset",
+              "attribute": "selected",
+              "reflects": true
             },
             {
               "kind": "field",
@@ -964,12 +2026,10 @@
             {
               "kind": "field",
               "name": "value",
-              "privacy": "public",
               "type": {
                 "text": "null | string"
               },
-              "default": "\"\"",
-              "attribute": "value"
+              "default": "null"
             },
             {
               "kind": "field",
@@ -982,12 +2042,20 @@
             },
             {
               "kind": "field",
-              "name": "defaultSelected",
+              "name": "tabIndex",
               "privacy": "public",
               "type": {
-                "text": "boolean"
+                "text": "number"
               },
-              "attribute": "selected"
+              "default": "-1",
+              "attribute": "tabindex",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "",
+              "privacy": "public",
+              "attribute": ""
             },
             {
               "kind": "field",
@@ -1002,6 +2070,15 @@
               "privacy": "public",
               "attribute": "aria-selected",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "disabled"
             },
             {
               "kind": "field",
@@ -1068,22 +2145,26 @@
               }
             }
           ],
+          "events": [
+            {
+              "name": "role-focus",
+              "type": {
+                "text": "Event"
+              }
+            }
+          ],
           "attributes": [
             {
-              "name": "role",
-              "type": {
-                "text": "string"
-              },
-              "default": "\"option\"",
-              "fieldName": "role"
+              "name": "",
+              "fieldName": ""
             },
             {
               "name": "selected",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "selected",
               "description": "aria-selected is preferred for single-select listboxes / comboboxes",
+              "fieldName": "selected",
               "default": "false"
             },
             {
@@ -1104,12 +2185,11 @@
               "fieldName": "ariaSelected"
             },
             {
-              "name": "tabindex",
+              "name": "disabled",
               "type": {
-                "text": "number"
+                "text": "boolean"
               },
-              "default": "-1",
-              "fieldName": "tabIndex"
+              "fieldName": "disabled"
             },
             {
               "name": "label",
@@ -1119,12 +2199,18 @@
               "fieldName": "label"
             },
             {
-              "name": "value",
+              "name": "tabindex",
               "type": {
-                "text": "null | string"
+                "text": "number"
               },
-              "default": "\"\"",
-              "fieldName": "value"
+              "default": "-1",
+              "fieldName": "tabIndex"
+            }
+          ],
+          "mixins": [
+            {
+              "name": "LitFormAssociatedMixin",
+              "package": "form-associated-helpers/exports/mixins/lit-form-associated-mixin.js"
             }
           ],
           "superclass": {

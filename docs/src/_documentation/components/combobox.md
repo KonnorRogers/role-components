@@ -152,6 +152,42 @@ you can change how long it takes to "reset" searching for options.
   </template>
 </light-preview>
 
+## Rendering Links in your combobox
+
+<light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
+  <template slot="code">
+    <form>
+      <role-combobox multiple name="combobox" autocomplete="both">
+        <input slot="trigger">
+        <div slot="listbox">
+          <role-option href="#">Capybara</role-option>
+          <role-option href="#">Rhino</role-option>
+          <role-option href="#">Badger mole</role-option>
+          <role-option href="#">Flamingo</role-option>
+          <role-option selected href="#">Tortoise</role-option>
+          <role-option href="#">Killer Whale</role-option>
+          <role-option href="#">Opossum</role-option>
+          <role-option href="#">Turtle</role-option>
+          <role-option href="#">Elephant</role-option>
+          <role-option href="#">Dove</role-option>
+          <role-option href="#">Sparrow</role-option>
+          <role-option href="#">Platypus</role-option>
+          <role-option href="#">Zebra</role-option>
+          <role-option href="#">Dog</role-option>
+          <role-option href="#">Cat</role-option>
+          <role-option href="#">Swan</role-option>
+          <role-option href="#">Goose</role-option>
+        </div>
+      </role-combobox>
+      <br>
+      <button type="reset">Reset</button>
+    </form>
+    <%= debug_info %>
+  </template>
+</light-preview>
+
+
+
 ## Editable Combobox without autocomplete
 
 A combobox with `autocomplete="off"` is editable, but will not guide the user along the popup list
@@ -647,3 +683,5 @@ Make sure to add a `name` attribute to the combobox to get the FormData to work 
     <%= debug_info %>
   </template>
 </light-preview>
+
+

@@ -22,6 +22,7 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
     disabled: {type: Boolean},
     label: {},
     tabIndex: {attribute: "tabindex", reflect: true},
+    href: {reflect: true},
   };
 
   formResetCallback () {
@@ -61,6 +62,8 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
         gap: 8px;
         padding: 0.4em 0.6em;
         align-items: center;
+        text-decoration: inherit;
+        color: inherit;
       }
     `,
   ];
@@ -68,10 +71,27 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
   constructor() {
     super();
 
-    this.setAttribute("role", "presentation")
-    this.addEventListener("focus", this.eventHandler.get(this.handleFocus))
+    /**
+     * @type {null | string}
+     */
+    this.href = null
 
-    https://twitter.com/diegohaz/status/1775695123948437646
+    // Using for passing along all relevant anchor attributes when faking a link click.
+    this.linkAttributes = [
+      "download",
+      "href",
+      "hreflang",
+      "ping",
+      "referrerpolicy",
+      "rel",
+      "target",
+      "type",
+    ]
+
+    this.addEventListener("focus", this.eventHandler.get(this.handleFocus))
+    this.addEventListener("blur", this.eventHandler.get(this.handleBlur))
+
+    // https://twitter.com/diegohaz/status/1775695123948437646
     this.internals.role = "presentation"
 
     /**
@@ -130,6 +150,13 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
   }
 
   /**
+   * Sends a bubbling focus event to be usable by the combobox.
+   */
+  handleBlur () {
+    this.dispatchEvent(new Event("role-blur", { composed: true, bubbles: true }))
+  }
+
+  /**
    * @override
    * @param {import("lit").PropertyValues<this>} changedProperties
    */
@@ -147,44 +174,64 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
     }
 
     if (changedProperties.has("ariaSelected") || changedProperties.has("selected")) {
-      let bool = false
-      if (this.selected || this.ariaSelected === "true") {
-        bool = true
-      }
-
       this.setAttribute("aria-selected", this.selected.toString())
-      // if (this.selected) {
-      //   this.setAttribute("aria-selected", this.selected.toString())
-      // } else {
-      //   this.removeAttribute("aria-selected")
-      // }
     }
 
     if (changedProperties.has("ariaCurrent") || changedProperties.has("current")) {
-      // let bool = false
-      // if (this.current || this.ariaCurrent === "true") {
-      //   bool = true
-      // }
-
       this.setAttribute("aria-current", this.current.toString())
-      // if (this.current) {
-      //   this.setAttribute("aria-current", "true")
-      // } else {
-      //   this.removeAttribute("aria-current")
-      // }
     }
 
     super.willUpdate(changedProperties);
   }
 
+  simulateLinkClick () {
+    if (!this.href) { return }
+
+    const linkEl = document.createElement("a")
+
+    this.linkAttributes.forEach((attr) => {
+      const val = this.getAttribute(attr)
+
+      if (val) {
+        linkEl.setAttribute(attr, val)
+      }
+    })
+
+    const parentElement = this.parentElement
+
+    if (!parentElement) { return false }
+
+    parentElement.append(linkEl)
+    linkEl.click()
+    linkEl.remove()
+    return true
+  }
+
+  /**
+   * @param {ReturnType<import("lit").html>} content
+   */
+  renderBase (content) {
+    if (this.href) {
+      // @TODO: Provide a translation mechanism. This is a hacky way to add "link," before announcing the option in screenreaders.
+      const roleDescription = html`<span class="visually-hidden">link,</span>`
+      return html`${roleDescription}<a
+        part="base"
+        href=${this.href}
+        @click=${(e) => {
+          e.preventDefault()
+        }}
+      >${content}</a>`
+    }
+
+    return html`<div part="base">${content}</div>`
+  }
+
   render() {
     return html`
-      <div
-        part="base"
-      >
+      ${this.renderBase(html`
         <span aria-hidden="true"><slot name="checkmark" ?invisible=${!this.selected}>✓</slot></span>
         <slot @slotchange=${this.handleSlotChange}></slot>
-      </div>
+      `)}
     `;
   }
 }

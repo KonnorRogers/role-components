@@ -414,8 +414,9 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       // @TODO: Should we show current string, or the autocompleted string?
       suggestedOption = (this.options.find((option) => {
         return (
-          // option.selected !== true
-          /* && */ option.content.match(this.stringToRegex(finalString))
+          // Check to make sure we're not trying to find an option we've already selected.
+          newSelectedOptions.findIndex((opt) => opt.id === option.id) === -1
+          && option.content.match(this.stringToRegex(finalString))
         )
       })) || null
     }
@@ -876,10 +877,6 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     }
 
     if (changedProperties.has("value")) {
-      if (this.value && this.isEditableMultipleCombobox) {
-        // TODO: figure out delimited values.
-      }
-
       this.updateComplete.then(() => {
         this.dispatchEvent(new Event("change", { bubbles: true, composed: true }))
         this.dispatchEvent(new Event("input", { bubbles: true, composed: true }))
@@ -903,13 +900,15 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
    * @param {OptionObject} option
    */
   setCurrent(option) {
+    if (!option) return
+
     const optionEl = this.findOptionElement(option)
 
     option.current = true
 
     if (optionEl) {
       optionEl.current = true
-      // optionEl.setAttribute("aria-current", "true")
+      optionEl.setAttribute("aria-current", "true")
     }
 
     if (option.id !== this.currentOption?.id) {
@@ -934,7 +933,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
    * @returns {RoleOption | null}
    */
   findOptionElement (option) {
-    if (!option.id) { return null }
+    if (!option?.id) { return null }
     return this.querySelector(`#${option.id}`)
   }
 
@@ -961,12 +960,10 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
         this.selectFromRangeStartToCurrent()
       } else {
         this.toggleSelected(currentOption);
-
-        // Updates triggerElement.
-        if (this.isEditableMultipleCombobox) {
-          this.updateMultipleValue(true)
-        }
       }
+
+      // Updates triggerElement.
+      this.updateMultipleValue(true)
     }
 
     this.setCurrent(currentOption)
@@ -1071,7 +1068,10 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       evt.preventDefault()
 
       if (this.currentOption) {
-        this.toggleSelected(this.currentOption)
+        // If a completion is selected, we just let it fall through.
+        if (!this.completionSelected) {
+          this.toggleSelected(this.currentOption)
+        }
 
         if (this.isEditableMultipleCombobox) {
           this.updateMultipleValue(true)
@@ -1367,6 +1367,11 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
   select(option) {
     const optionElement = this.findOptionElement(option)
 
+    // We dont want to simulate if its not open.
+    if (this.expanded && optionElement?.hasAttribute("href")) {
+      optionElement.simulateLinkClick()
+    }
+
     if (!this.multiple) {
       this.deselectAll()
       this.selectedOptions = []
@@ -1494,8 +1499,10 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       selectedOption.id || "",
     );
 
-    // this.setCurrent(selectedOption);
-    setTimeout(() => {
+    // For some reason something is setting "current" after this only when using VoiceOver, so re-set it in a setTimeout.
+    this.setCurrent(selectedOption);
+    requestAnimationFrame(() => {
+      this.setCurrent(selectedOption);
       this.scrollOptionIntoView(selectedOption);
     })
   }
@@ -1607,7 +1614,11 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
   }
 
   get completionSelected () {
-    return this.triggerElement && "selectionEnd" in this.triggerElement && this.triggerElement.selectionStart !== this.triggerElement.selectionEnd
+    return (
+      this.triggerElement
+      && "selectionEnd" in this.triggerElement
+      && this.triggerElement.selectionStart !== this.triggerElement.selectionEnd
+    )
   }
 
   updateOptions() {
@@ -1617,7 +1628,6 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     const combobox = this.triggerElement
     if (!listbox) return
     if (!combobox) return
-
 
     const options = [...this.selectableOptions].map((optionElement) => {
       // Sometimes people dont provide IDs, so we can fill it for them. We need ids for aria-activedescendant.

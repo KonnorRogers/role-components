@@ -589,6 +589,35 @@ suite("Should properly remove all values when the triggerElement has everything 
   }
 })
 
+suite("Multiple select combobox", () => {
+  test("Should select options properly", async () => {
+    const combobox = await fixture(html`
+      <role-combobox multiple name="combobox">
+        <input slot="trigger">
+        <div slot="listbox">
+          <role-option>Honeybadger</role-option>
+          <role-option>Rhino</role-option>
+          <role-option>Badger mole</role-option>
+          <role-option>Flamingo</role-option>
+          <role-option>Tortoise</role-option>
+          <role-option>Killer Whale</role-option>
+          <role-option>Opossum</role-option>
+        </div>
+      </role-combobox>
+    `)
+
+    combobox.focus()
+
+    await sendKeys({ press: "ArrowDown" })
+    await sendKeys({ press: "Enter" })
+
+    const options = () => combobox.querySelectorAll("role-option")
+    assert.equal(combobox.triggerElement.value, options()[0].textContent)
+    assert.lengthOf(combobox.selectedOptions, 1)
+    assert.equal(options()[0].selected, true)
+  })
+})
+
 suite("Multiple editable combobox", async () => {
 
   test("autocomplete='' > Should maintain order of selected options", async () => {
@@ -773,3 +802,5 @@ suite("Multiple editable combobox", async () => {
     assert.equal(combobox.selectedOptions[0].content, "Honeybadg")
   })
 })
+
+

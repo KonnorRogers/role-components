@@ -1983,6 +1983,54 @@
               "description": "Sends a bubbling focus event to be usable by the combobox."
             },
             {
+              "kind": "method",
+              "name": "handleBlur",
+              "description": "Sends a bubbling focus event to be usable by the combobox."
+            },
+            {
+              "kind": "method",
+              "name": "simulateLinkClick"
+            },
+            {
+              "kind": "method",
+              "name": "renderBase",
+              "parameters": [
+                {
+                  "name": "content",
+                  "type": {
+                    "text": "ReturnType<html>"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "href",
+              "privacy": "public",
+              "type": {
+                "text": "null | string"
+              },
+              "default": "null",
+              "attribute": "href",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "linkAttributes",
+              "type": {
+                "text": "array"
+              },
+              "default": "[\n      \"download\",\n      \"href\",\n      \"hreflang\",\n      \"ping\",\n      \"referrerpolicy\",\n      \"rel\",\n      \"target\",\n      \"type\",\n    ]"
+            },
+            {
+              "kind": "field",
+              "name": "role",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"presentation\""
+            },
+            {
               "kind": "field",
               "name": "selected",
               "privacy": "public",
@@ -2151,6 +2199,12 @@
               "type": {
                 "text": "Event"
               }
+            },
+            {
+              "name": "role-blur",
+              "type": {
+                "text": "Event"
+              }
             }
           ],
           "attributes": [
@@ -2205,6 +2259,14 @@
               },
               "default": "-1",
               "fieldName": "tabIndex"
+            },
+            {
+              "name": "href",
+              "type": {
+                "text": "null | string"
+              },
+              "default": "null",
+              "fieldName": "href"
             }
           ],
           "mixins": [

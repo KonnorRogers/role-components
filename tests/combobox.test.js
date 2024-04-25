@@ -92,8 +92,6 @@ test("Should properly check items in the combobox", async () => {
   await sendKeys({ press: "Enter" })
   await aTimeout(100)
 
-  debugger
-
   assert.equal(options()[0].selected, false)
   assert.equal(options()[0].current, false)
 
@@ -346,13 +344,9 @@ test("Should properly record a value for autocomplete='inline'", async () => {
   // Combobox itself
   assert.equal(combobox.value, "1")
 
-  debugger
-
   await sendKeys({ press: "Backspace" })
   // await sendKeys({ press: "Backspace" })
   await aTimeout(20)
-
-  debugger
 
   // Input
   assert.equal(combobox.triggerElement.value, "Option")
@@ -593,4 +587,189 @@ suite("Should properly remove all values when the triggerElement has everything 
       assert.equal(combobox.triggerElement.value, "")
     })
   }
+})
+
+suite("Multiple editable combobox", async () => {
+
+  test("autocomplete='' > Should maintain order of selected options", async () => {
+    const combobox = await fixture(html`
+      <role-combobox multiple editable name="combobox">
+        <input slot="trigger">
+        <div slot="listbox">
+          <role-option>Honeybadger</role-option>
+          <role-option>Rhino</role-option>
+          <role-option>Badger mole</role-option>
+          <role-option>Flamingo</role-option>
+          <role-option>Tortoise</role-option>
+          <role-option>Killer Whale</role-option>
+          <role-option>Opossum</role-option>
+        </div>
+      </role-combobox>
+    `)
+
+    combobox.triggerElement.focus()
+
+    const str = "Blah, Honeybadge"
+    await sendKeys({ type: str })
+
+    assert.lengthOf(combobox.selectedOptions, 2)
+    assert.equal(combobox.selectedOptions[0].content, "Blah")
+    assert.equal(combobox.selectedOptions[1].content, "Honeybadge")
+  })
+
+  test("autocomplete='off' > Should maintain order of selected options", async () => {
+    const combobox = await fixture(html`
+      <role-combobox multiple editable name="combobox">
+        <input slot="trigger">
+        <div slot="listbox">
+          <role-option>Honeybadger</role-option>
+          <role-option>Rhino</role-option>
+          <role-option>Badger mole</role-option>
+          <role-option>Flamingo</role-option>
+          <role-option>Tortoise</role-option>
+          <role-option>Killer Whale</role-option>
+          <role-option>Opossum</role-option>
+        </div>
+      </role-combobox>
+    `)
+
+    combobox.triggerElement.focus()
+
+    const str = "Blah, Honeybadge"
+    await sendKeys({ type: str })
+
+    assert.lengthOf(combobox.selectedOptions, 2)
+    assert.equal(combobox.selectedOptions[0].content, "Blah")
+    assert.equal(combobox.selectedOptions[1].content, "Honeybadge")
+  })
+
+  test("autocomplete='inline' > Should maintain order of selected options", async () => {
+    const combobox = await fixture(html`
+      <role-combobox multiple name="combobox" autocomplete="inline">
+        <input slot="trigger">
+        <div slot="listbox">
+          <role-option>Honeybadger</role-option>
+          <role-option>Rhino</role-option>
+          <role-option>Badger mole</role-option>
+          <role-option>Flamingo</role-option>
+          <role-option>Tortoise</role-option>
+          <role-option>Killer Whale</role-option>
+          <role-option>Opossum</role-option>
+        </div>
+      </role-combobox>
+    `)
+
+    combobox.triggerElement.focus()
+
+    const str = "Blah, Honeybadge"
+    await sendKeys({ type: str })
+
+    assert.lengthOf(combobox.selectedOptions, 2)
+    assert.isTrue(combobox.querySelectorAll("role-option")[0].selected)
+    assert.equal(combobox.selectedOptions[0].content, "Blah")
+    assert.equal(combobox.selectedOptions[1].content, "Honeybadger")
+    assert.equal(combobox.triggerElement.value, "Blah, Honeybadger")
+  })
+
+  test("Both > Should maintain order of selected options", async () => {
+    const combobox = await fixture(html`
+      <role-combobox multiple name="combobox" autocomplete="both">
+        <input slot="trigger">
+        <div slot="listbox">
+          <role-option>Honeybadger</role-option>
+          <role-option>Rhino</role-option>
+          <role-option>Badger mole</role-option>
+          <role-option>Flamingo</role-option>
+          <role-option>Tortoise</role-option>
+          <role-option>Killer Whale</role-option>
+          <role-option>Opossum</role-option>
+        </div>
+      </role-combobox>
+    `)
+
+    combobox.triggerElement.focus()
+
+    const str = "Blah, Honeybadge"
+    await sendKeys({ type: str })
+
+    assert.lengthOf(combobox.selectedOptions, 2)
+    assert.isTrue(combobox.querySelectorAll("role-option")[0].selected)
+    assert.equal(combobox.selectedOptions[0].content, "Blah")
+    assert.equal(combobox.selectedOptions[1].content, "Honeybadger")
+    assert.equal(combobox.triggerElement.value, "Blah, Honeybadger")
+  })
+
+  test("autocomplete='inline' > Should remove auto selected option on backspace", async () => {
+    const combobox = await fixture(html`
+      <role-combobox multiple name="combobox" autocomplete="inline">
+        <input slot="trigger">
+        <div slot="listbox">
+          <role-option>Honeybadger</role-option>
+          <role-option>Rhino</role-option>
+          <role-option>Badger mole</role-option>
+          <role-option>Flamingo</role-option>
+          <role-option>Tortoise</role-option>
+          <role-option>Killer Whale</role-option>
+          <role-option>Opossum</role-option>
+        </div>
+      </role-combobox>
+    `)
+
+    combobox.triggerElement.focus()
+
+    const str = "Honeybadge"
+    await sendKeys({ type: str })
+
+    assert.isTrue(combobox.querySelectorAll("role-option")[0].selected)
+    assert.lengthOf(combobox.selectedOptions, 1)
+    assert.equal(combobox.selectedOptions[0].content, "Honeybadger")
+    await sendKeys({ press: "Backspace" })
+
+    assert.isFalse(combobox.querySelectorAll("role-option")[0].selected)
+    assert.lengthOf(combobox.selectedOptions, 1)
+    assert.equal(combobox.selectedOptions[0].content, "Honeybadge")
+
+    await sendKeys({ press: "Backspace" })
+
+    assert.isFalse(combobox.querySelectorAll("role-option")[0].selected)
+    assert.lengthOf(combobox.selectedOptions, 1)
+    assert.equal(combobox.selectedOptions[0].content, "Honeybadg")
+  })
+
+  test("autocomplete='both' > Should remove auto selected option on backspace", async () => {
+    const combobox = await fixture(html`
+      <role-combobox multiple name="combobox" autocomplete="both">
+        <input slot="trigger">
+        <div slot="listbox">
+          <role-option>Honeybadger</role-option>
+          <role-option>Rhino</role-option>
+          <role-option>Badger mole</role-option>
+          <role-option>Flamingo</role-option>
+          <role-option>Tortoise</role-option>
+          <role-option>Killer Whale</role-option>
+          <role-option>Opossum</role-option>
+        </div>
+      </role-combobox>
+    `)
+
+    combobox.triggerElement.focus()
+
+    const str = "Honeybadge"
+    await sendKeys({ type: str })
+
+    assert.isTrue(combobox.querySelectorAll("role-option")[0].selected)
+    assert.lengthOf(combobox.selectedOptions, 1)
+    assert.equal(combobox.selectedOptions[0].content, "Honeybadger")
+    await sendKeys({ press: "Backspace" })
+
+    assert.isFalse(combobox.querySelectorAll("role-option")[0].selected)
+    assert.lengthOf(combobox.selectedOptions, 1)
+    assert.equal(combobox.selectedOptions[0].content, "Honeybadge")
+
+    await sendKeys({ press: "Backspace" })
+
+    assert.isFalse(combobox.querySelectorAll("role-option")[0].selected)
+    assert.lengthOf(combobox.selectedOptions, 1)
+    assert.equal(combobox.selectedOptions[0].content, "Honeybadg")
+  })
 })

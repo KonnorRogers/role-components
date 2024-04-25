@@ -619,14 +619,14 @@ Make sure to add a `name` attribute to the combobox to get the FormData to work 
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
     <form>
-      <role-combobox multiple name="combobox" autocomplete="both" filter-results>
+      <role-combobox multiple name="combobox" autocomplete="both">
         <input slot="trigger">
         <div slot="listbox">
           <role-option>Capybara</role-option>
           <role-option>Rhino</role-option>
-          <role-option selected>Badger mole</role-option>
-          <role-option selected>Flamingo</role-option>
-          <role-option selected>Tortoise</role-option>
+          <role-option>Badger mole</role-option>
+          <role-option>Flamingo</role-option>
+          <role-option>Tortoise</role-option>
           <role-option>Killer Whale</role-option>
           <role-option>Opossum</role-option>
           <role-option>Turtle</role-option>

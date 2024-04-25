@@ -398,6 +398,33 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       }
     })
 
+    const finalString = splitValue[splitValue.length - 1]
+
+    /**
+     * @type {null | OptionObject}
+     */
+    let suggestedOption = null
+
+    const shouldSelectSuggestedOption = !(
+      event.inputType === "deleteContentBackward"
+      || !["list", "both", "inline"].includes(this.autocomplete)
+    ) && finalString
+
+    if (finalString && shouldSelectSuggestedOption) {
+      // @TODO: Should we show current string, or the autocompleted string?
+      suggestedOption = (this.options.find((option) => {
+        return (
+          // option.selected !== true
+          /* && */ option.content.match(this.stringToRegex(finalString))
+        )
+      })) || null
+    }
+
+    if (suggestedOption && shouldSelectSuggestedOption) {
+      newSelectedOptions.pop()
+      newSelectedOptions.push(suggestedOption)
+    }
+
     prevSelectedOptions.forEach((prevOption) => {
       if (newSelectedOptions.find((newOption) => newOption.id && prevOption.id && newOption.id === prevOption.id)) {
         return
@@ -408,6 +435,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
 
     let finalSelectedOptionInList = null
     let anyOptionExistsInList = false
+
     newSelectedOptions.forEach((opt, index) => {
       const isLastOption = newSelectedOptions.length - 1 === index
 
@@ -421,8 +449,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       this.select(opt)
     })
 
-
-    if (event.inputType === "deleteContentBackward" || !["list", "both", "inline"].includes(this.autocomplete)) {
+    if (!shouldSelectSuggestedOption) {
       if (!anyOptionExistsInList) {
         this.deselectAll()
       }
@@ -431,22 +458,11 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
         this.setCurrent(finalSelectedOptionInList)
       }
 
-      newSelectedOptions.forEach((opt) => this.select(opt))
       this.selectedOptions = newSelectedOptions
-      this.requestUpdate("selectedOptions")
       return
     }
 
-    /**
-     * @type {null | OptionObject}
-     */
-    let suggestedOption = null
-
-    const finalString = splitValue[splitValue.length - 1]
-
     if (!finalString) { return }
-
-    suggestedOption = this.options.find((option) => option.selected !== true && option.content.match(this.stringToRegex(finalString))) || null
 
     if ((this.autocomplete === "both" || this.autocomplete === "inline")) {
       if ("setSelectionRange" in triggerElement) {
@@ -463,6 +479,12 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     if (suggestedOption) {
       this.setCurrent(suggestedOption)
     }
+
+    if (finalSelectedOptionInList) {
+      this.setCurrent(finalSelectedOptionInList)
+    }
+
+    this.selectedOptions = newSelectedOptions
   }
 
   /**
@@ -1796,7 +1818,8 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     }
 
     if ("setSelectionRange" in triggerElement) {
-      if (!this.completionSelected) {
+      // The page will scroll to the input if we dont check that the input is currently focused.
+      if (!this.completionSelected && this.triggerElement?.matches(":focus-within")) {
         triggerElement.setSelectionRange(-1, -1)
       }
     }

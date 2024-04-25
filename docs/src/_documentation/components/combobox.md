@@ -1,6 +1,12 @@
 ---
 ---
 
+Things left to do:
+
+- [ ] - Sorting (Hard because of streamed / injected elements, so we never fully know when we're done)
+- [ ] - Virtualization (Most likely in a separate component)
+- [ ] - Tag only UI like TomSelect, instead of the current multiple editable UI, create a UI like Tom Select where you "inject" a placeholder option that can be selected.
+
 A default combobox is very similar to a `<select>`. It supports an "internal search buffer" where
 you can change how long it takes to "reset" searching for options.
 
@@ -157,7 +163,7 @@ you can change how long it takes to "reset" searching for options.
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
     <form>
-      <role-combobox multiple name="combobox" autocomplete="both">
+      <role-combobox name="combobox">
         <input slot="trigger">
         <div slot="listbox">
           <role-option href="#">Capybara</role-option>

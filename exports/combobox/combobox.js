@@ -1073,7 +1073,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
           this.toggleSelected(this.currentOption)
         }
 
-        if (this.isEditableMultipleCombobox) {
+        if (this.multiple) {
           this.updateMultipleValue(true)
         }
 

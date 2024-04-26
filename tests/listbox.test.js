@@ -1,6 +1,6 @@
 // // import from general testing library
 // // import "element-internals-polyfill"
-import { html, fixture, assert, aTimeout } from '@open-wc/testing';
+import { html, fixture, assert, aTimeout, waitUntil } from '@open-wc/testing';
 import { sendKeys } from "@web/test-runner-commands"
 
 import "../exports/listbox/listbox-register.js"
@@ -265,7 +265,7 @@ test("Should properly select and deselect all items", async () => {
 
   listbox.deselectAll()
 
-  await aTimeout(12)
+  await waitUntil(() => listbox.selectedOptions.length === 0)
 
   entries = new FormData(form)
   assert.lengthOf(listbox.value.getAll("select"), 0)

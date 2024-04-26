@@ -1,7 +1,7 @@
 ---
 ---
 
-Things left to do:
+## Things left to do:
 
 - [ ] - Sorting (Hard because of streamed / injected elements, so we never fully know when we're done)
 - [ ] - Virtualization (Most likely in a separate component)

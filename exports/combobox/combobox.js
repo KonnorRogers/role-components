@@ -157,6 +157,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     delimiter: {},
     spacer: {},
     showEmptyResults: { type: Boolean, attribute: "show-empty-results" },
+    multipleSelectionType: {attribute: "multiple-selection-type"},
 
     // Properties
     _hasFocused: { attribute: false, state: true },
@@ -182,6 +183,13 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
      * @type {'' | "off" | "inline" | "list" | "both"}
      */
     this.autocomplete = ''
+
+    /**
+     * If set to "freeflow", it will be one single text input with delimited values.
+     *   If set to "confirm", you will only enter 1 option at a time, and then need to confirm selection, and then the input will clear, and then you will add another selection.
+     * @type {"freeflow" | "confirm"}
+     */
+    this.multipleSelectionType = "freeflow"
 
     /**
      * If true, the `<input>` element provided is not treated as readonly, and rather as an editable input. This can be omitted
@@ -296,7 +304,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
 
     /**
      * Used for multiple selects. You can either have a string, or submit as multiple parameters in FormData
-     *   like a native `<select>`. The default is a "string"
+     *   like a native `<select>`. The default is a "string".
      * @type {"formdata" | "string"}
      */
     this.valueType = "string"
@@ -377,9 +385,108 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
   handleMultipleEditableInput (event, triggerElement) {
     if (!triggerElement) return
 
+    if (this.multipleSelectionType === "freeflow") {
+      this.__handleFreeflowInput(event, triggerElement)
+      return
+    }
+
+    if (this.multipleSelectionType === "confirm") {
+      this.__handleConfirmInput(event, triggerElement)
+    }
+  }
+
+  /**
+   * @param {string} finalString
+   * @param {InputEvent} event
+   * @private
+   */
+  __shouldSelectSuggestedOption (finalString, event) {
+    return Boolean(!(
+      event.inputType === "deleteContentBackward"
+      || !["list", "both", "inline"].includes(this.autocomplete)
+    ) && finalString)
+  }
+
+
+  /**
+   * @param {string} finalString
+   * @param {InputEvent} event
+   * @param {typeof this.selectedOptions} newSelectedOptions
+   */
+  __findSuggestedOption (finalString, event, newSelectedOptions) {
+    /**
+     * @type {null | OptionObject}
+     */
+    let suggestedOption = null
+
+    if (finalString && this.__shouldSelectSuggestedOption(finalString, event)) {
+      // @TODO: Should we show current string, or the autocompleted string?
+      suggestedOption = (this.options.find((option) => {
+        return (
+          // Check to make sure we're not trying to find an option we've already selected.
+          newSelectedOptions.findIndex((opt) => opt.id === option.id) === -1
+          && option.content.match(this.stringToRegex(finalString))
+        )
+      })) || null
+    }
+
+    return suggestedOption
+  }
+
+  /**
+   * @param {InputEvent} event
+   * @param {HTMLButtonElement | HTMLInputElement} triggerElement
+   */
+  __handleConfirmInput (event, triggerElement) {
+    const val = triggerElement.value
+
+    const finalString = val
+
+    const shouldSelectSuggestedOption = this.__shouldSelectSuggestedOption(finalString, event)
+    const suggestedOption = this.__findSuggestedOption(finalString, event, this.selectedOptions)
+
+    if (suggestedOption) {
+      this.selectedOptions.pop()
+      this.selectedOptions.push(suggestedOption)
+    }
+
+    if (!finalString) { return }
+
+    if ((this.autocomplete === "both" || this.autocomplete === "inline")) {
+      if ("setSelectionRange" in triggerElement) {
+        if (suggestedOption) {
+          const remainingString = suggestedOption.content.slice(finalString.length, suggestedOption.content.length)
+          const previousCharacters = finalString
+          const combinedString = previousCharacters + remainingString
+          this.updateTriggerElementTextContentAndValue(combinedString)
+          triggerElement.setSelectionRange(previousCharacters.length, combinedString.length)
+        }
+      }
+    }
+
+    if (suggestedOption) {
+      this.setCurrent(suggestedOption)
+    }
+
+    if (!suggestedOption && this.selectedOptions.length) {
+      this.setCurrent(this.selectedOptions[this.selectedOptions.length - 1])
+    }
+
+    this.requestUpdate("selectedOptions")
+  }
+
+
+
+  /**
+   * @param {InputEvent} event
+   * @param {HTMLButtonElement | HTMLInputElement} triggerElement
+   * @private
+   */
+  __handleFreeflowInput (event, triggerElement) {
     const val = triggerElement.value
 
     const prevSelectedOptions = this.selectedOptions
+
     const splitValue = this.splitValue(val)
 
     const newSelectedOptions = splitValue.filter(Boolean).map((str) => {
@@ -400,28 +507,10 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
 
     const finalString = splitValue[splitValue.length - 1]
 
-    /**
-     * @type {null | OptionObject}
-     */
-    let suggestedOption = null
+    const shouldSelectSuggestedOption = this.__shouldSelectSuggestedOption(finalString, event)
+    const suggestedOption = this.__findSuggestedOption(finalString, event, newSelectedOptions)
 
-    const shouldSelectSuggestedOption = !(
-      event.inputType === "deleteContentBackward"
-      || !["list", "both", "inline"].includes(this.autocomplete)
-    ) && finalString
-
-    if (finalString && shouldSelectSuggestedOption) {
-      // @TODO: Should we show current string, or the autocompleted string?
-      suggestedOption = (this.options.find((option) => {
-        return (
-          // Check to make sure we're not trying to find an option we've already selected.
-          newSelectedOptions.findIndex((opt) => opt.id === option.id) === -1
-          && option.content.match(this.stringToRegex(finalString))
-        )
-      })) || null
-    }
-
-    if (suggestedOption && shouldSelectSuggestedOption) {
+    if (suggestedOption) {
       newSelectedOptions.pop()
       newSelectedOptions.push(suggestedOption)
     }
@@ -1367,9 +1456,9 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
   select(option) {
     const optionElement = this.findOptionElement(option)
 
-    // We dont want to simulate if its not open.
+    // We dont want to simulate clicks if its not open.
     if (this.expanded && optionElement?.hasAttribute("href")) {
-      optionElement.simulateLinkClick()
+      optionElement.click()
     }
 
     if (!this.multiple) {
@@ -1800,6 +1889,10 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       this.value = delimiterSeparatedValue
     }
 
+    if (this.multipleSelectionType === "confirm") {
+      return
+    }
+
     if (force) {
       this.updateTriggerElementTextContentAndValue(delimiterSeparatedContent)
       return
@@ -1835,3 +1928,4 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
     }
   }
 }
+

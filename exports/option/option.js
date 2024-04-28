@@ -5,24 +5,97 @@ import { css, html } from "lit";
 import { hostStyles } from "../styles/host-styles.js";
 import { LitFormAssociatedMixin } from "form-associated-helpers/exports/mixins/lit-form-associated-mixin.js";
 
+
+// Using for passing along all relevant anchor attributes when faking a link click.
+const linkAttributes = /** @type {const} */ ([
+  "download",
+  "href",
+  "hreflang",
+  "ping",
+  "referrerpolicy",
+  "rel",
+  "target",
+  "type",
+])
+
+/**
+ * @typedef {object} LinkInterface
+ * @property {string | null} download
+ * @property {string | null} href
+ * @property {string | null} hreflang
+ * @property {string | null} ping
+ * @property {string | null} referrerpolicy
+ * @property {string | null} rel
+ * @property {string | null} target
+ * @property {string | null} type
+ */
+
+/**
+ * @template {{new (...args: any[]): any}} T
+ * @param {T} superclass
+ */
+function LinkMixin (superclass) {
+  return class extends superclass {
+    /**
+     * @param {any[]} args
+     */
+    constructor (...args) {
+      super(...args)
+      /** @type {string | null} */
+      this.download = null
+
+      /** @type {string | null} */
+      this.href = null
+
+      /** @type {string | null} */
+      this.hreflang = null
+
+      /** @type {string | null} */
+      this.ping = null
+
+      /** @type {string | null} */
+      this.referrerpolicy = null
+
+      /** @type {string | null} */
+      this.rel = null
+
+      /** @type {string | null} */
+      this.target = null
+
+      /** @type {string | null} */
+      this.type = null
+    }
+  }
+}
+
 /**
  * @customElement
  * @tagname role-option
  */
-export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
+export default class RoleOption extends LitFormAssociatedMixin(LinkMixin(BaseElement)) {
   static baseName = "role-option";
   static get validators () { return [] }
-  static properties = {
-    ...LitFormAssociatedMixin.formProperties,
-    defaultSelected: { type: Boolean, attribute: "selected", reflect: true },
-    selected: { type: Boolean },
-    current: { type: Boolean },
-    ariaCurrent: { reflect: true, attribute: "aria-current" },
-    ariaSelected: { reflect: true, attribute: "aria-selected" },
-    disabled: {type: Boolean},
-    label: {},
-    tabIndex: {attribute: "tabindex", reflect: true},
-    href: {reflect: true},
+  static get properties () {
+    // Link properties
+    /** @typedef {typeof linkAttributes[number]} linkAttrKeys  */
+    const linkProps = /** @type {Record<linkAttrKeys, import("lit").PropertyDeclaration>} */ ({})
+
+    linkAttributes.forEach((str) => {
+      linkProps[str] = /** @type {import("lit").PropertyDeclaration} */({})
+    })
+
+    return {
+      ...LitFormAssociatedMixin.formProperties,
+      ...linkProps,
+      defaultSelected: { type: Boolean, attribute: "selected", reflect: true },
+      selected: { type: Boolean },
+      current: { type: Boolean },
+      ariaCurrent: { reflect: true, attribute: "aria-current" },
+      ariaSelected: { reflect: true, attribute: "aria-selected" },
+      disabled: {type: Boolean},
+      label: {},
+      tabIndex: {attribute: "tabindex", reflect: true},
+    }
   };
 
   formResetCallback () {
@@ -72,21 +145,9 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
     super();
 
     /**
-     * @type {null | string}
+     * @type {typeof linkAttributes}
      */
-    this.href = null
-
-    // Using for passing along all relevant anchor attributes when faking a link click.
-    this.linkAttributes = [
-      "download",
-      "href",
-      "hreflang",
-      "ping",
-      "referrerpolicy",
-      "rel",
-      "target",
-      "type",
-    ]
+    this.linkAttributes = linkAttributes
 
     this.addEventListener("focus", this.eventHandler.get(this.handleFocus))
     this.addEventListener("blur", this.eventHandler.get(this.handleBlur))
@@ -127,7 +188,12 @@ export default class RoleOption extends LitFormAssociatedMixin(BaseElement) {
      */
     this.label = this.innerText
 
+    /**
+     * @type {number}
+     */
     this.tabIndex = -1
+
+    this.addEventListener("click", this.eventHandler.get(this.simulateLinkClick))
   }
 
   connectedCallback () {

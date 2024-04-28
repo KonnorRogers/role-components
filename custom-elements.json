@@ -94,77 +94,664 @@
     },
     {
       "kind": "javascript-module",
-      "path": "exports/index.js",
-      "declarations": [],
+      "path": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/styles/host-styles.js",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "hostStyles",
+          "default": "css`\n  :host {\n    --role-background-hover-color: #005a9c;\n    --role-border-focus-color: #005a9c;\n    display: block;\n  }\n\n  *,\n  *:after,\n  *:before {\n    box-sizing: border-box;\n  }\n\n  [hidden] {\n    display: none !important;\n  }\n\n  [invisible] {\n    visibility: hidden !important;\n  }\n\n  .visually-hidden:not(:focus-within):not(:active) {\n    clip: rect(0 0 0 0);\n    clip-path: inset(50%);\n    height: 1px;\n    overflow: hidden;\n    position: absolute;\n    white-space: nowrap;\n    width: 1px;\n  }\n`"
+        }
+      ],
       "exports": [
         {
           "kind": "js",
-          "name": "RoleCombobox",
+          "name": "hostStyles",
           "declaration": {
-            "name": "default",
-            "module": "\"./combobox/combobox-register.js\""
-          }
-        },
-        {
-          "kind": "js",
-          "name": "RoleListbox",
-          "declaration": {
-            "name": "default",
-            "module": "\"./listbox/listbox-register.js\""
-          }
-        },
-        {
-          "kind": "js",
-          "name": "RoleOptionGroup",
-          "declaration": {
-            "name": "default",
-            "module": "\"./option-group/option-group-register.js\""
-          }
-        },
-        {
-          "kind": "js",
-          "name": "RoleOption",
-          "declaration": {
-            "name": "default",
-            "module": "\"./option/option-register.js\""
-          }
-        },
-        {
-          "kind": "js",
-          "name": "RoleToolbar",
-          "declaration": {
-            "name": "default",
-            "module": "\"./toolbar/toolbar-register.js\""
-          }
-        },
-        {
-          "kind": "js",
-          "name": "RoleTooltip",
-          "declaration": {
-            "name": "default",
-            "module": "\"./tooltip/tooltip-register.js\""
+            "name": "hostStyles",
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/styles/host-styles.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/combobox/combobox-register.js",
-      "declarations": [],
+      "path": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/internal/uuid.js",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "uuidv4",
+          "description": "uuid generator for attaching unique ids to attachments that need uploading.",
+          "return": {
+            "type": {
+              "text": "string"
+            }
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "uuidv4",
+          "declaration": {
+            "name": "uuidv4",
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/internal/uuid.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/internal/wrap.js",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "wrap",
+          "parameters": [
+            {
+              "name": "min",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "current",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "max",
+              "type": {
+                "text": "number"
+              }
+            }
+          ],
+          "description": "If current > max, return min\nIf current < min, return max",
+          "return": {
+            "type": {
+              "text": "number"
+            }
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "wrap",
+          "declaration": {
+            "name": "wrap",
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/internal/wrap.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/internal/clamp.js",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "clamp",
+          "parameters": [
+            {
+              "name": "min",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "current",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "max",
+              "type": {
+                "text": "number"
+              }
+            }
+          ],
+          "description": "If current > max, return max\nIf current < min, return min",
+          "return": {
+            "type": {
+              "text": "number"
+            }
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "clamp",
+          "declaration": {
+            "name": "clamp",
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/internal/clamp.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/internal/is-mac-os.js",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "isMacOs",
+          "description": "Detects if on a macOS device so we can properly bind things like metaKey\nhttps://developer.mozilla.org/en-US/docs/Web/API/Navigator/platform\n> But there is one case where, among the options you could use, navigator.platform may be the least-bad option: When you need to show users advice about whether the modifier key for keyboard shortcuts is the ⌘ command key (found on Apple systems) rather than the ⌃ control key (on non-Apple systems):"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "isMacOs",
+          "declaration": {
+            "name": "isMacOs",
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/internal/is-mac-os.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/events/base-event.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "BaseEvent",
+          "superclass": {
+            "name": "Event",
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/events/base-event.js"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "BaseEvent",
+          "declaration": {
+            "name": "BaseEvent",
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/events/base-event.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/events/selected-event.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "SelectedEvent",
+          "members": [
+            {
+              "kind": "field",
+              "name": "selectedElement",
+              "type": {
+                "text": "null | RoleOption"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "selectedOption",
+              "type": {
+                "text": "null | OptionObject"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "BaseEvent",
+            "module": "//Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/events/base-event.js"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "SelectedEvent",
+          "declaration": {
+            "name": "SelectedEvent",
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/events/selected-event.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/option/option.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "RoleOption",
+          "members": [
+            {
+              "kind": "field",
+              "name": "baseName",
+              "type": {
+                "text": "string"
+              },
+              "static": true,
+              "default": "\"role-option\""
+            },
+            {
+              "kind": "field",
+              "name": "validators",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "formResetCallback"
+            },
+            {
+              "kind": "method",
+              "name": "handleSlotChange"
+            },
+            {
+              "kind": "method",
+              "name": "handleFocus",
+              "description": "Sends a bubbling focus event to be usable by the combobox."
+            },
+            {
+              "kind": "method",
+              "name": "handleBlur",
+              "description": "Sends a bubbling focus event to be usable by the combobox."
+            },
+            {
+              "kind": "method",
+              "name": "simulateLinkClick"
+            },
+            {
+              "kind": "method",
+              "name": "renderBase",
+              "parameters": [
+                {
+                  "name": "content",
+                  "type": {
+                    "text": "ReturnType<html>"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "linkAttributes",
+              "type": {
+                "text": "typeof linkAttributes"
+              },
+              "default": "([\n  \"download\",\n  \"href\",\n  \"hreflang\",\n  \"ping\",\n  \"referrerpolicy\",\n  \"rel\",\n  \"target\",\n  \"type\",\n])"
+            },
+            {
+              "kind": "field",
+              "name": "role",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"presentation\""
+            },
+            {
+              "kind": "field",
+              "name": "selected",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "aria-selected is preferred for single-select listboxes / comboboxes",
+              "default": "false",
+              "attribute": "selected"
+            },
+            {
+              "kind": "field",
+              "name": "defaultSelected",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "The selection state when the form is reset",
+              "attribute": "selected",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "current",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "aria-current to show the currently focused option",
+              "default": "false",
+              "attribute": "current"
+            },
+            {
+              "kind": "field",
+              "name": "hasFocus",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "null | string"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "tabIndex",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "attribute": "tabindex",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "",
+              "privacy": "public",
+              "attribute": ""
+            },
+            {
+              "kind": "field",
+              "name": "ariaCurrent",
+              "privacy": "public",
+              "attribute": "aria-current",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "ariaSelected",
+              "privacy": "public",
+              "attribute": "aria-selected",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "disabled"
+            },
+            {
+              "kind": "field",
+              "name": "download",
+              "type": {
+                "text": "string | null"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "LinkMixin",
+                "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/option/option.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "href",
+              "type": {
+                "text": "string | null"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "LinkMixin",
+                "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/option/option.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hreflang",
+              "type": {
+                "text": "string | null"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "LinkMixin",
+                "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/option/option.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "ping",
+              "type": {
+                "text": "string | null"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "LinkMixin",
+                "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/option/option.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "referrerpolicy",
+              "type": {
+                "text": "string | null"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "LinkMixin",
+                "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/option/option.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "rel",
+              "type": {
+                "text": "string | null"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "LinkMixin",
+                "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/option/option.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "target",
+              "type": {
+                "text": "string | null"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "LinkMixin",
+                "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/option/option.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "type",
+              "type": {
+                "text": "string | null"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "LinkMixin",
+                "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/option/option.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "static": true,
+              "type": {
+                "text": "Record<string, typeof HTMLElement>"
+              },
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "debounce",
+              "parameters": [
+                {
+                  "name": "callback",
+                  "type": {
+                    "text": "(...args: any[]) => any"
+                  }
+                },
+                {
+                  "name": "options",
+                  "type": {
+                    "text": "{ key: any, wait: number }"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "ReturnType<typeof setTimeout>"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "eventHandler",
+              "type": {
+                "text": "EventHandler<this>"
+              },
+              "default": "new EventHandler(this)",
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "__debounceMap__",
+              "type": {
+                "text": "null | Map<any, ReturnType<typeof setTimeout>>"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            }
+          ],
+          "events": [
+            {
+              "name": "role-focus",
+              "type": {
+                "text": "Event"
+              }
+            },
+            {
+              "name": "role-blur",
+              "type": {
+                "text": "Event"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "",
+              "fieldName": "",
+              "attribute": ""
+            },
+            {
+              "name": "selected",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "aria-selected is preferred for single-select listboxes / comboboxes",
+              "fieldName": "selected",
+              "default": "false"
+            },
+            {
+              "name": "current",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "aria-current to show the currently focused option",
+              "default": "false",
+              "fieldName": "current"
+            },
+            {
+              "name": "aria-current",
+              "fieldName": "ariaCurrent"
+            },
+            {
+              "name": "aria-selected",
+              "fieldName": "ariaSelected"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "disabled"
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "label"
+            },
+            {
+              "name": "tabindex",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "fieldName": "tabIndex"
+            }
+          ],
+          "mixins": [
+            {
+              "name": "LitFormAssociatedMixin",
+              "package": "form-associated-helpers/exports/mixins/lit-form-associated-mixin.js"
+            },
+            {
+              "name": "LinkMixin",
+              "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/option/option.js"
+            }
+          ],
+          "superclass": {
+            "name": "BaseElement",
+            "module": "//Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/base-element.js"
+          },
+          "tagName": "role-option",
+          "customElement": true
+        }
+      ],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "name": "RoleCombobox",
-            "module": "exports/combobox/combobox-register.js"
+            "name": "RoleOption",
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/option/option.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/combobox/combobox.js",
+      "path": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/combobox/combobox.js",
       "declarations": [
         {
           "kind": "class",
@@ -242,6 +829,86 @@
                   }
                 }
               ]
+            },
+            {
+              "kind": "method",
+              "name": "__shouldSelectSuggestedOption",
+              "parameters": [
+                {
+                  "name": "finalString",
+                  "type": {
+                    "text": "string"
+                  }
+                },
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "InputEvent"
+                  }
+                }
+              ],
+              "privacy": "private"
+            },
+            {
+              "kind": "method",
+              "name": "__findSuggestedOption",
+              "parameters": [
+                {
+                  "name": "finalString",
+                  "type": {
+                    "text": "string"
+                  }
+                },
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "InputEvent"
+                  }
+                },
+                {
+                  "name": "newSelectedOptions",
+                  "type": {
+                    "text": "typeof this.selectedOptions"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "__handleConfirmInput",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "InputEvent"
+                  }
+                },
+                {
+                  "name": "triggerElement",
+                  "type": {
+                    "text": "HTMLButtonElement | HTMLInputElement"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "__handleFreeflowInput",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "InputEvent"
+                  }
+                },
+                {
+                  "name": "triggerElement",
+                  "type": {
+                    "text": "HTMLButtonElement | HTMLInputElement"
+                  }
+                }
+              ],
+              "privacy": "private"
             },
             {
               "kind": "method",
@@ -785,6 +1452,17 @@
             },
             {
               "kind": "field",
+              "name": "multipleSelectionType",
+              "privacy": "public",
+              "type": {
+                "text": "\"freeflow\" | \"confirm\""
+              },
+              "description": "If set to \"freeflow\", it will be one single text input with delimited values.\n  If set to \"confirm\", you will only enter 1 option at a time, and then need to confirm selection, and then the input will clear, and then you will add another selection.",
+              "default": "\"freeflow\"",
+              "attribute": "multiple-selection-type"
+            },
+            {
+              "kind": "field",
               "name": "editable",
               "privacy": "public",
               "type": {
@@ -949,7 +1627,7 @@
               "type": {
                 "text": "\"formdata\" | \"string\""
               },
-              "description": "Used for multiple selects. You can either have a string, or submit as multiple parameters in FormData\n  like a native `<select>`. The default is a \"string\"",
+              "description": "Used for multiple selects. You can either have a string, or submit as multiple parameters in FormData\n  like a native `<select>`. The default is a \"string\".",
               "default": "\"string\"",
               "attribute": "value-type"
             },
@@ -1164,7 +1842,7 @@
               "type": {
                 "text": "\"formdata\" | \"string\""
               },
-              "description": "Used for multiple selects. You can either have a string, or submit as multiple parameters in FormData\n  like a native `<select>`. The default is a \"string\"",
+              "description": "Used for multiple selects. You can either have a string, or submit as multiple parameters in FormData\n  like a native `<select>`. The default is a \"string\".",
               "default": "\"string\"",
               "fieldName": "valueType"
             },
@@ -1194,6 +1872,15 @@
               "description": "If true, or `show-empty-results` attribute is present, it will show the \"no-results-found\" slot.",
               "default": "false",
               "fieldName": "showEmptyResults"
+            },
+            {
+              "name": "multiple-selection-type",
+              "type": {
+                "text": "\"freeflow\" | \"confirm\""
+              },
+              "description": "If set to \"freeflow\", it will be one single text input with delimited values.\n  If set to \"confirm\", you will only enter 1 option at a time, and then need to confirm selection, and then the input will clear, and then you will add another selection.",
+              "default": "\"freeflow\"",
+              "fieldName": "multipleSelectionType"
             }
           ],
           "mixins": [
@@ -1204,7 +1891,7 @@
           ],
           "superclass": {
             "name": "BaseElement",
-            "module": "/exports/base-element.js"
+            "module": "//Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/base-element.js"
           },
           "tagName": "role-combobox",
           "customElement": true
@@ -1216,95 +1903,29 @@
           "name": "default",
           "declaration": {
             "name": "RoleCombobox",
-            "module": "exports/combobox/combobox.js"
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/combobox/combobox.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/events/base-event.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "BaseEvent",
-          "superclass": {
-            "name": "Event",
-            "module": "exports/events/base-event.js"
-          }
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "BaseEvent",
-          "declaration": {
-            "name": "BaseEvent",
-            "module": "exports/events/base-event.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "exports/events/selected-event.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "SelectedEvent",
-          "members": [
-            {
-              "kind": "field",
-              "name": "selectedElement",
-              "type": {
-                "text": "null | RoleOption"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "selectedOption",
-              "type": {
-                "text": "null | OptionObject"
-              }
-            }
-          ],
-          "superclass": {
-            "name": "BaseEvent",
-            "module": "/exports/events/base-event.js"
-          }
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "SelectedEvent",
-          "declaration": {
-            "name": "SelectedEvent",
-            "module": "exports/events/selected-event.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "exports/listbox/listbox-register.js",
+      "path": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/combobox/combobox-register.js",
       "declarations": [],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "name": "RoleListbox",
-            "module": "exports/listbox/listbox-register.js"
+            "name": "RoleCombobox",
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/combobox/combobox-register.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/listbox/listbox.js",
+      "path": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/listbox/listbox.js",
       "declarations": [
         {
           "kind": "class",
@@ -1913,7 +2534,7 @@
           ],
           "superclass": {
             "name": "BaseElement",
-            "module": "/exports/base-element.js"
+            "module": "//Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/base-element.js"
           },
           "tagName": "role-listbox",
           "customElement": true
@@ -1925,393 +2546,29 @@
           "name": "default",
           "declaration": {
             "name": "RoleListbox",
-            "module": "exports/listbox/listbox.js"
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/listbox/listbox.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/option/option-register.js",
+      "path": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/listbox/listbox-register.js",
       "declarations": [],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "name": "RoleOption",
-            "module": "exports/option/option-register.js"
+            "name": "RoleListbox",
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/listbox/listbox-register.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/option/option.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "RoleOption",
-          "members": [
-            {
-              "kind": "field",
-              "name": "baseName",
-              "type": {
-                "text": "string"
-              },
-              "static": true,
-              "default": "\"role-option\""
-            },
-            {
-              "kind": "field",
-              "name": "validators",
-              "static": true,
-              "readonly": true
-            },
-            {
-              "kind": "method",
-              "name": "formResetCallback"
-            },
-            {
-              "kind": "method",
-              "name": "handleSlotChange"
-            },
-            {
-              "kind": "method",
-              "name": "handleFocus",
-              "description": "Sends a bubbling focus event to be usable by the combobox."
-            },
-            {
-              "kind": "method",
-              "name": "handleBlur",
-              "description": "Sends a bubbling focus event to be usable by the combobox."
-            },
-            {
-              "kind": "method",
-              "name": "simulateLinkClick"
-            },
-            {
-              "kind": "method",
-              "name": "renderBase",
-              "parameters": [
-                {
-                  "name": "content",
-                  "type": {
-                    "text": "ReturnType<html>"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "field",
-              "name": "href",
-              "privacy": "public",
-              "type": {
-                "text": "null | string"
-              },
-              "default": "null",
-              "attribute": "href",
-              "reflects": true
-            },
-            {
-              "kind": "field",
-              "name": "linkAttributes",
-              "type": {
-                "text": "array"
-              },
-              "default": "[\n      \"download\",\n      \"href\",\n      \"hreflang\",\n      \"ping\",\n      \"referrerpolicy\",\n      \"rel\",\n      \"target\",\n      \"type\",\n    ]"
-            },
-            {
-              "kind": "field",
-              "name": "role",
-              "type": {
-                "text": "string"
-              },
-              "default": "\"presentation\""
-            },
-            {
-              "kind": "field",
-              "name": "selected",
-              "privacy": "public",
-              "type": {
-                "text": "boolean"
-              },
-              "description": "aria-selected is preferred for single-select listboxes / comboboxes",
-              "default": "false",
-              "attribute": "selected"
-            },
-            {
-              "kind": "field",
-              "name": "defaultSelected",
-              "privacy": "public",
-              "type": {
-                "text": "boolean"
-              },
-              "description": "The selection state when the form is reset",
-              "attribute": "selected",
-              "reflects": true
-            },
-            {
-              "kind": "field",
-              "name": "current",
-              "privacy": "public",
-              "type": {
-                "text": "boolean"
-              },
-              "description": "aria-current to show the currently focused option",
-              "default": "false",
-              "attribute": "current"
-            },
-            {
-              "kind": "field",
-              "name": "hasFocus",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false"
-            },
-            {
-              "kind": "field",
-              "name": "value",
-              "type": {
-                "text": "null | string"
-              },
-              "default": "null"
-            },
-            {
-              "kind": "field",
-              "name": "label",
-              "privacy": "public",
-              "type": {
-                "text": "string"
-              },
-              "attribute": "label"
-            },
-            {
-              "kind": "field",
-              "name": "tabIndex",
-              "privacy": "public",
-              "type": {
-                "text": "number"
-              },
-              "default": "-1",
-              "attribute": "tabindex",
-              "reflects": true
-            },
-            {
-              "kind": "field",
-              "name": "",
-              "privacy": "public",
-              "attribute": ""
-            },
-            {
-              "kind": "field",
-              "name": "ariaCurrent",
-              "privacy": "public",
-              "attribute": "aria-current",
-              "reflects": true
-            },
-            {
-              "kind": "field",
-              "name": "ariaSelected",
-              "privacy": "public",
-              "attribute": "aria-selected",
-              "reflects": true
-            },
-            {
-              "kind": "field",
-              "name": "disabled",
-              "privacy": "public",
-              "type": {
-                "text": "boolean"
-              },
-              "attribute": "disabled"
-            },
-            {
-              "kind": "field",
-              "name": "dependencies",
-              "static": true,
-              "type": {
-                "text": "Record<string, typeof HTMLElement>"
-              },
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "debounce",
-              "parameters": [
-                {
-                  "name": "callback",
-                  "type": {
-                    "text": "(...args: any[]) => any"
-                  }
-                },
-                {
-                  "name": "options",
-                  "type": {
-                    "text": "{ key: any, wait: number }"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "ReturnType<typeof setTimeout>"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "eventHandler",
-              "type": {
-                "text": "EventHandler<this>"
-              },
-              "default": "new EventHandler(this)",
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "__debounceMap__",
-              "type": {
-                "text": "null | Map<any, ReturnType<typeof setTimeout>>"
-              },
-              "default": "null",
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            }
-          ],
-          "events": [
-            {
-              "name": "role-focus",
-              "type": {
-                "text": "Event"
-              }
-            },
-            {
-              "name": "role-blur",
-              "type": {
-                "text": "Event"
-              }
-            }
-          ],
-          "attributes": [
-            {
-              "name": "",
-              "fieldName": ""
-            },
-            {
-              "name": "selected",
-              "type": {
-                "text": "boolean"
-              },
-              "description": "aria-selected is preferred for single-select listboxes / comboboxes",
-              "fieldName": "selected",
-              "default": "false"
-            },
-            {
-              "name": "current",
-              "type": {
-                "text": "boolean"
-              },
-              "description": "aria-current to show the currently focused option",
-              "default": "false",
-              "fieldName": "current"
-            },
-            {
-              "name": "aria-current",
-              "fieldName": "ariaCurrent"
-            },
-            {
-              "name": "aria-selected",
-              "fieldName": "ariaSelected"
-            },
-            {
-              "name": "disabled",
-              "type": {
-                "text": "boolean"
-              },
-              "fieldName": "disabled"
-            },
-            {
-              "name": "label",
-              "type": {
-                "text": "string"
-              },
-              "fieldName": "label"
-            },
-            {
-              "name": "tabindex",
-              "type": {
-                "text": "number"
-              },
-              "default": "-1",
-              "fieldName": "tabIndex"
-            },
-            {
-              "name": "href",
-              "type": {
-                "text": "null | string"
-              },
-              "default": "null",
-              "fieldName": "href"
-            }
-          ],
-          "mixins": [
-            {
-              "name": "LitFormAssociatedMixin",
-              "package": "form-associated-helpers/exports/mixins/lit-form-associated-mixin.js"
-            }
-          ],
-          "superclass": {
-            "name": "BaseElement",
-            "module": "/exports/base-element.js"
-          },
-          "tagName": "role-option",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "RoleOption",
-            "module": "exports/option/option.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "exports/option-group/option-group-register.js",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "RoleOptionGroup",
-            "module": "exports/option-group/option-group-register.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "exports/option-group/option-group.js",
+      "path": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/option-group/option-group.js",
       "declarations": [
         {
           "kind": "class",
@@ -2415,7 +2672,7 @@
           ],
           "superclass": {
             "name": "BaseElement",
-            "module": "/exports/base-element.js"
+            "module": "//Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/base-element.js"
           },
           "tagName": "role-option-group",
           "customElement": true
@@ -2427,50 +2684,44 @@
           "name": "default",
           "declaration": {
             "name": "OptionGroup",
-            "module": "exports/option-group/option-group.js"
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/option-group/option-group.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/styles/host-styles.js",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "hostStyles",
-          "default": "css`\n  :host {\n    --role-background-hover-color: #005a9c;\n    --role-border-focus-color: #005a9c;\n    display: block;\n  }\n\n  *,\n  *:after,\n  *:before {\n    box-sizing: border-box;\n  }\n\n  [hidden] {\n    display: none !important;\n  }\n\n  [invisible] {\n    visibility: hidden !important;\n  }\n\n  .visually-hidden:not(:focus-within):not(:active) {\n    clip: rect(0 0 0 0);\n    clip-path: inset(50%);\n    height: 1px;\n    overflow: hidden;\n    position: absolute;\n    white-space: nowrap;\n    width: 1px;\n  }\n`"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "hostStyles",
-          "declaration": {
-            "name": "hostStyles",
-            "module": "exports/styles/host-styles.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "exports/toolbar/toolbar-register.js",
+      "path": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/option-group/option-group-register.js",
       "declarations": [],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "name": "RoleToolbar",
-            "module": "exports/toolbar/toolbar-register.js"
+            "name": "RoleOptionGroup",
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/option-group/option-group-register.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/toolbar/toolbar.js",
+      "path": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/option/option-register.js",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "RoleOption",
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/option/option-register.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/toolbar/toolbar.js",
       "declarations": [
         {
           "kind": "class",
@@ -2718,7 +2969,7 @@
           ],
           "superclass": {
             "name": "BaseElement",
-            "module": "/exports/base-element.js"
+            "module": "//Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/base-element.js"
           },
           "tagName": "role-toolbar",
           "customElement": true
@@ -2730,29 +2981,29 @@
           "name": "default",
           "declaration": {
             "name": "RoleToolbar",
-            "module": "exports/toolbar/toolbar.js"
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/toolbar/toolbar.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/tooltip/tooltip-register.js",
+      "path": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/toolbar/toolbar-register.js",
       "declarations": [],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "name": "RoleTooltip",
-            "module": "exports/tooltip/tooltip-register.js"
+            "name": "RoleToolbar",
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/toolbar/toolbar-register.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/tooltip/tooltip.js",
+      "path": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/tooltip/tooltip.js",
       "declarations": [
         {
           "kind": "class",
@@ -3093,7 +3344,7 @@
           ],
           "superclass": {
             "name": "BaseElement",
-            "module": "/exports/base-element.js"
+            "module": "//Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/base-element.js"
           },
           "tagName": "role-tooltip",
           "customElement": true
@@ -3105,53 +3356,77 @@
           "name": "default",
           "declaration": {
             "name": "RoleTooltip",
-            "module": "exports/tooltip/tooltip.js"
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/tooltip/tooltip.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "internal/clamp.js",
-      "declarations": [
-        {
-          "kind": "function",
-          "name": "clamp",
-          "parameters": [
-            {
-              "name": "min",
-              "type": {
-                "text": "number"
-              }
-            },
-            {
-              "name": "current",
-              "type": {
-                "text": "number"
-              }
-            },
-            {
-              "name": "max",
-              "type": {
-                "text": "number"
-              }
-            }
-          ],
-          "description": "If current > max, return max\nIf current < min, return min",
-          "return": {
-            "type": {
-              "text": "number"
-            }
-          }
-        }
-      ],
+      "path": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/tooltip/tooltip-register.js",
+      "declarations": [],
       "exports": [
         {
           "kind": "js",
-          "name": "clamp",
+          "name": "default",
           "declaration": {
-            "name": "clamp",
-            "module": "internal/clamp.js"
+            "name": "RoleTooltip",
+            "module": "/Users/konnor/projects/oss/doxxing-time-layouts/role-components/exports/tooltip/tooltip-register.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/index.js",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RoleCombobox",
+          "declaration": {
+            "name": "default",
+            "module": "\"./combobox/combobox-register.js\""
+          }
+        },
+        {
+          "kind": "js",
+          "name": "RoleListbox",
+          "declaration": {
+            "name": "default",
+            "module": "\"./listbox/listbox-register.js\""
+          }
+        },
+        {
+          "kind": "js",
+          "name": "RoleOptionGroup",
+          "declaration": {
+            "name": "default",
+            "module": "\"./option-group/option-group-register.js\""
+          }
+        },
+        {
+          "kind": "js",
+          "name": "RoleOption",
+          "declaration": {
+            "name": "default",
+            "module": "\"./option/option-register.js\""
+          }
+        },
+        {
+          "kind": "js",
+          "name": "RoleToolbar",
+          "declaration": {
+            "name": "default",
+            "module": "\"./toolbar/toolbar-register.js\""
+          }
+        },
+        {
+          "kind": "js",
+          "name": "RoleTooltip",
+          "declaration": {
+            "name": "default",
+            "module": "\"./tooltip/tooltip-register.js\""
           }
         }
       ]
@@ -3192,27 +3467,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "internal/is-mac-os.js",
-      "declarations": [
-        {
-          "kind": "function",
-          "name": "isMacOs",
-          "description": "Detects if on a macOS device so we can properly bind things like metaKey\nhttps://developer.mozilla.org/en-US/docs/Web/API/Navigator/platform\n> But there is one case where, among the options you could use, navigator.platform may be the least-bad option: When you need to show users advice about whether the modifier key for keyboard shortcuts is the ⌘ command key (found on Apple systems) rather than the ⌃ control key (on non-Apple systems):"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "isMacOs",
-          "declaration": {
-            "name": "isMacOs",
-            "module": "internal/is-mac-os.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "internal/string-map.js",
       "declarations": [
         {
@@ -3240,78 +3494,6 @@
           "declaration": {
             "name": "stringMap",
             "module": "internal/string-map.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "internal/uuid.js",
-      "declarations": [
-        {
-          "kind": "function",
-          "name": "uuidv4",
-          "description": "uuid generator for attaching unique ids to attachments that need uploading.",
-          "return": {
-            "type": {
-              "text": "string"
-            }
-          }
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "uuidv4",
-          "declaration": {
-            "name": "uuidv4",
-            "module": "internal/uuid.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "internal/wrap.js",
-      "declarations": [
-        {
-          "kind": "function",
-          "name": "wrap",
-          "parameters": [
-            {
-              "name": "min",
-              "type": {
-                "text": "number"
-              }
-            },
-            {
-              "name": "current",
-              "type": {
-                "text": "number"
-              }
-            },
-            {
-              "name": "max",
-              "type": {
-                "text": "number"
-              }
-            }
-          ],
-          "description": "If current > max, return min\nIf current < min, return max",
-          "return": {
-            "type": {
-              "text": "number"
-            }
-          }
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "wrap",
-          "declaration": {
-            "name": "wrap",
-            "module": "internal/wrap.js"
           }
         }
       ]

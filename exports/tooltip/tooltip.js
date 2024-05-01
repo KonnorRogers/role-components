@@ -58,6 +58,7 @@ export default class RoleTooltip extends BaseElement {
           --border-width: 1px;
           --arrow-size: 8px;
           color: white;
+          pointer-events: none;
         }
 
         .base {
@@ -70,7 +71,6 @@ export default class RoleTooltip extends BaseElement {
           background: var(--background-color);
           border-radius: 4px;
           font-size: 0.9em;
-          pointer-events: none;
           z-index: 1;
         }
 

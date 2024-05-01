@@ -40,6 +40,7 @@ export default class RoleTooltip extends BaseElement {
       inert: { reflect: true, type: Boolean },
       placement: { reflect: true },
       currentPlacement: { attribute: "current-placement", reflect: true },
+      open: { reflect: true, type: Boolean }
     };
   }
 
@@ -61,7 +62,6 @@ export default class RoleTooltip extends BaseElement {
         }
 
         .base {
-          display: none;
           position: absolute;
           left: 0px;
           top: 0px;
@@ -132,6 +132,7 @@ export default class RoleTooltip extends BaseElement {
 
     this.role = "tooltip";
     this.inert = true;
+    this.open = false
 
     /**
      * @type {import("@floating-ui/dom").Placement}
@@ -217,7 +218,7 @@ export default class RoleTooltip extends BaseElement {
 
   render() {
     return html`
-      <div part="base" class="base">
+      <div part="base" class="base ${this.open ? '' : 'visually-hidden'}">
         <slot></slot>
         <div class="arrow" part="arrow"></div>
       </div>
@@ -317,7 +318,7 @@ export default class RoleTooltip extends BaseElement {
 
       if (!base) return;
 
-      base.style.display = "none";
+      this.open = false
     });
   };
 
@@ -344,8 +345,6 @@ export default class RoleTooltip extends BaseElement {
 
     if (base == null) return;
     if (arrowEl == null) return;
-
-    base.style.display = "unset";
 
     const self = this
 
@@ -377,6 +376,7 @@ export default class RoleTooltip extends BaseElement {
         }
       }).then(({ x, y, middlewareData, placement }) => {
         self.currentPlacement = /** @type {"top" | "right" | "bottom" | "left"} */ (placement.split("-")[0])
+        self.open = true
 
         Object.assign(base.style, {
           left: `${x}px`,

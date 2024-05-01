@@ -39,6 +39,7 @@ export default class RoleTooltip extends BaseElement {
       role: { reflect: true },
       inert: { reflect: true, type: Boolean },
       placement: { reflect: true },
+      currentPlacement: { attribute: "current-placement", reflect: true },
     };
   }
 
@@ -53,7 +54,10 @@ export default class RoleTooltip extends BaseElement {
       css`
         :host {
           --background-color: #222;
+          --border-color: transparent;
+          --border-width: 1px;
           --arrow-size: 8px;
+          color: white;
         }
 
         .base {
@@ -63,8 +67,8 @@ export default class RoleTooltip extends BaseElement {
           top: 0px;
           max-width: calc(100vw - 10px);
           padding: 0.4em 0.6em;
+          border: 1px solid var(--border-color);
           background: var(--background-color);
-          color: white;
           border-radius: 4px;
           font-size: 0.9em;
           pointer-events: none;
@@ -81,6 +85,27 @@ export default class RoleTooltip extends BaseElement {
           width: var(--arrow-size);
           height: var(--arrow-size);
           transform: rotate(45deg);
+          border: var(--border-width) solid var(--border-color);
+        }
+
+        :host([current-placement="top"]) .arrow {
+          border-top: 0px;
+          border-left: 0px;
+        }
+
+        :host([current-placement="bottom"]) .arrow {
+          border-bottom: 0px;
+          border-right: 0px;
+        }
+
+        :host([current-placement="left"]) .arrow {
+          border-bottom: 0px;
+          border-left: 0px;
+        }
+
+        :host([current-placement="right"]) .arrow {
+          border-top: 0px;
+          border-right: 0px;
         }
       `,
     ];
@@ -112,6 +137,13 @@ export default class RoleTooltip extends BaseElement {
      * @type {import("@floating-ui/dom").Placement}
      */
     this.placement = "top";
+
+
+    /**
+     * The current placement based on calculations by floating ui.
+     * @type {null | import("@floating-ui/dom").Placement}
+     */
+    this.currentPlacement = null
 
     const show = this.eventHandler.get(this.show)
     const hide = this.eventHandler.get(this.hide)
@@ -315,23 +347,22 @@ export default class RoleTooltip extends BaseElement {
 
     base.style.display = "unset";
 
-    const placement = this.placement || "top";
-
-    const strategy = this.hasAttribute("hoist") ? "fixed" : "absolute"
-    //
-    // Use custom positioning logic if the strategy is absolute. Otherwise, fall back to the default logic.
-    //
-    // More info: https://github.com/shoelace-style/shoelace/issues/1135
-    //
-    const getOffsetParent =
-      strategy === 'absolute'
-        ? (/** @type {Element} */ element) => platform.getOffsetParent(element, offsetParent)
-        : platform.getOffsetParent;
-
+    const self = this
 
     this.cleanup = autoUpdate(target, base, () => {
+      const strategy = this.hasAttribute("hoist") ? "fixed" : "absolute"
+      //
+      // Use custom positioning logic if the strategy is absolute. Otherwise, fall back to the default logic.
+      //
+      // More info: https://github.com/shoelace-style/shoelace/issues/1135
+      //
+      const getOffsetParent =
+        strategy === 'absolute'
+          ? (/** @type {Element} */ element) => platform.getOffsetParent(element, offsetParent)
+          : platform.getOffsetParent;
+
       computePosition(target, base, {
-        placement,
+        placement: self.placement || "top",
         middleware: [
           offset(6),
           flip({
@@ -345,6 +376,8 @@ export default class RoleTooltip extends BaseElement {
           getOffsetParent
         }
       }).then(({ x, y, middlewareData, placement }) => {
+        self.currentPlacement = /** @type {"top" | "right" | "bottom" | "left"} */ (placement.split("-")[0])
+
         Object.assign(base.style, {
           left: `${x}px`,
           top: `${y}px`,

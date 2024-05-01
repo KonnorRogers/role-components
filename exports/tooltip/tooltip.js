@@ -37,7 +37,6 @@ export default class RoleTooltip extends BaseElement {
       tooltipAnchors: { state: true },
       rootElement: { state: true },
       role: { reflect: true },
-      inert: { reflect: true, type: Boolean },
       placement: { reflect: true },
       currentPlacement: { attribute: "current-placement", reflect: true },
       open: { reflect: true, type: Boolean }
@@ -131,7 +130,6 @@ export default class RoleTooltip extends BaseElement {
     this._rootElement = undefined;
 
     this.role = "tooltip";
-    this.inert = true;
     this.open = false
 
     /**

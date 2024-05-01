@@ -94,66 +94,146 @@
     },
     {
       "kind": "javascript-module",
-      "path": "exports/index.js",
-      "declarations": [],
+      "path": "/Users/konnor/projects/role-components/exports/styles/host-styles.js",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "hostStyles",
+          "default": "css`\n  :host {\n    --role-background-hover-color: #005a9c;\n    --role-border-focus-color: #005a9c;\n    display: block;\n  }\n\n  *,\n  *:after,\n  *:before {\n    box-sizing: border-box;\n  }\n\n  [hidden] {\n    display: none !important;\n  }\n\n  [invisible] {\n    visibility: hidden !important;\n  }\n\n  .visually-hidden:not(:focus-within):not(:active) {\n    clip: rect(0 0 0 0);\n    clip-path: inset(50%);\n    height: 1px;\n    overflow: hidden;\n    position: absolute;\n    white-space: nowrap;\n    width: 1px;\n  }\n`"
+        }
+      ],
       "exports": [
         {
           "kind": "js",
-          "name": "RoleListbox",
+          "name": "hostStyles",
           "declaration": {
-            "name": "default",
-            "module": "\"./listbox/listbox-register.js\""
-          }
-        },
-        {
-          "kind": "js",
-          "name": "RoleOptionGroup",
-          "declaration": {
-            "name": "default",
-            "module": "\"./option-group/option-group-register.js\""
-          }
-        },
-        {
-          "kind": "js",
-          "name": "RoleOption",
-          "declaration": {
-            "name": "default",
-            "module": "\"./option/option-register.js\""
-          }
-        },
-        {
-          "kind": "js",
-          "name": "RoleToolbar",
-          "declaration": {
-            "name": "default",
-            "module": "\"./toolbar/toolbar-register.js\""
-          }
-        },
-        {
-          "kind": "js",
-          "name": "RoleTooltip",
-          "declaration": {
-            "name": "default",
-            "module": "\"./tooltip/tooltip-register.js\""
+            "name": "hostStyles",
+            "module": "/Users/konnor/projects/role-components/exports/styles/host-styles.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/combobox/combobox-register.js",
-      "declarations": [],
-      "exports": []
+      "path": "/Users/konnor/projects/role-components/internal/wrap.js",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "wrap",
+          "parameters": [
+            {
+              "name": "min",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "current",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "max",
+              "type": {
+                "text": "number"
+              }
+            }
+          ],
+          "description": "If current > max, return min\nIf current < min, return max",
+          "return": {
+            "type": {
+              "text": "number"
+            }
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "wrap",
+          "declaration": {
+            "name": "wrap",
+            "module": "/Users/konnor/projects/role-components/internal/wrap.js"
+          }
+        }
+      ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/combobox/combobox.js",
-      "declarations": [],
-      "exports": []
+      "path": "/Users/konnor/projects/role-components/internal/clamp.js",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "clamp",
+          "parameters": [
+            {
+              "name": "min",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "current",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "max",
+              "type": {
+                "text": "number"
+              }
+            }
+          ],
+          "description": "If current > max, return max\nIf current < min, return min",
+          "return": {
+            "type": {
+              "text": "number"
+            }
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "clamp",
+          "declaration": {
+            "name": "clamp",
+            "module": "/Users/konnor/projects/role-components/internal/clamp.js"
+          }
+        }
+      ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/events/base-event.js",
+      "path": "/Users/konnor/projects/role-components/internal/uuid.js",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "uuidv4",
+          "description": "uuid generator for attaching unique ids to attachments that need uploading.",
+          "return": {
+            "type": {
+              "text": "string"
+            }
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "uuidv4",
+          "declaration": {
+            "name": "uuidv4",
+            "module": "/Users/konnor/projects/role-components/internal/uuid.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "/Users/konnor/projects/role-components/exports/events/base-event.js",
       "declarations": [
         {
           "kind": "class",
@@ -161,7 +241,7 @@
           "name": "BaseEvent",
           "superclass": {
             "name": "Event",
-            "module": "exports/events/base-event.js"
+            "module": "/Users/konnor/projects/role-components/exports/events/base-event.js"
           }
         }
       ],
@@ -171,14 +251,14 @@
           "name": "BaseEvent",
           "declaration": {
             "name": "BaseEvent",
-            "module": "exports/events/base-event.js"
+            "module": "/Users/konnor/projects/role-components/exports/events/base-event.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/events/selected-event.js",
+      "path": "/Users/konnor/projects/role-components/exports/events/selected-event.js",
       "declarations": [
         {
           "kind": "class",
@@ -195,7 +275,7 @@
           ],
           "superclass": {
             "name": "BaseEvent",
-            "module": "/exports/events/base-event.js"
+            "module": "//Users/konnor/projects/role-components/exports/events/base-event.js"
           }
         }
       ],
@@ -205,29 +285,302 @@
           "name": "SelectedEvent",
           "declaration": {
             "name": "SelectedEvent",
-            "module": "exports/events/selected-event.js"
+            "module": "/Users/konnor/projects/role-components/exports/events/selected-event.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/listbox/listbox-register.js",
-      "declarations": [],
+      "path": "/Users/konnor/projects/role-components/internal/is-mac-os.js",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "isMacOs",
+          "description": "Detects if on a macOS device so we can properly bind things like metaKey\nhttps://developer.mozilla.org/en-US/docs/Web/API/Navigator/platform\n> But there is one case where, among the options you could use, navigator.platform may be the least-bad option: When you need to show users advice about whether the modifier key for keyboard shortcuts is the ⌘ command key (found on Apple systems) rather than the ⌃ control key (on non-Apple systems):"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "isMacOs",
+          "declaration": {
+            "name": "isMacOs",
+            "module": "/Users/konnor/projects/role-components/internal/is-mac-os.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "/Users/konnor/projects/role-components/exports/option/option.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "RoleOption",
+          "members": [
+            {
+              "kind": "field",
+              "name": "baseName",
+              "type": {
+                "text": "string"
+              },
+              "static": true,
+              "default": "\"role-option\""
+            },
+            {
+              "kind": "method",
+              "name": "handleSlotChange"
+            },
+            {
+              "kind": "field",
+              "name": "role",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"option\"",
+              "attribute": "role",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "internals",
+              "type": {
+                "text": "object"
+              },
+              "default": "{}"
+            },
+            {
+              "kind": "field",
+              "name": "tabIndex",
+              "privacy": "public",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "attribute": "tabindex",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "selected",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "aria-selected is preferred for single-select listboxes / comboboxes",
+              "default": "false",
+              "attribute": "selected"
+            },
+            {
+              "kind": "field",
+              "name": "current",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "aria-current to show the currently focused option",
+              "default": "false",
+              "attribute": "current"
+            },
+            {
+              "kind": "field",
+              "name": "hasFocus",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "privacy": "public",
+              "type": {
+                "text": "null | string"
+              },
+              "default": "\"\"",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "privacy": "public",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "defaultSelected",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "attribute": "selected"
+            },
+            {
+              "kind": "field",
+              "name": "ariaCurrent",
+              "privacy": "public",
+              "attribute": "aria-current",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "ariaSelected",
+              "privacy": "public",
+              "attribute": "aria-selected",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "static": true,
+              "type": {
+                "text": "Record<string, typeof HTMLElement>"
+              },
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "debounce",
+              "parameters": [
+                {
+                  "name": "callback",
+                  "type": {
+                    "text": "(...args: any[]) => any"
+                  }
+                },
+                {
+                  "name": "options",
+                  "type": {
+                    "text": "{ key: any, wait: number }"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "ReturnType<typeof setTimeout>"
+                }
+              },
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "eventHandler",
+              "type": {
+                "text": "EventHandler<this>"
+              },
+              "default": "new EventHandler(this)",
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "__debounceMap__",
+              "type": {
+                "text": "null | Map<any, ReturnType<typeof setTimeout>>"
+              },
+              "default": "null",
+              "inheritedFrom": {
+                "name": "BaseElement",
+                "module": "exports/base-element.js"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "role",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"option\"",
+              "fieldName": "role"
+            },
+            {
+              "name": "selected",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "selected",
+              "description": "aria-selected is preferred for single-select listboxes / comboboxes",
+              "default": "false"
+            },
+            {
+              "name": "current",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "aria-current to show the currently focused option",
+              "default": "false",
+              "fieldName": "current"
+            },
+            {
+              "name": "aria-current",
+              "fieldName": "ariaCurrent"
+            },
+            {
+              "name": "aria-selected",
+              "fieldName": "ariaSelected"
+            },
+            {
+              "name": "tabindex",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1",
+              "fieldName": "tabIndex"
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "label"
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "null | string"
+              },
+              "default": "\"\"",
+              "fieldName": "value"
+            }
+          ],
+          "superclass": {
+            "name": "BaseElement",
+            "module": "//Users/konnor/projects/role-components/exports/base-element.js"
+          },
+          "tagName": "role-option",
+          "customElement": true
+        }
+      ],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "name": "RoleListbox",
-            "module": "exports/listbox/listbox-register.js"
+            "name": "RoleOption",
+            "module": "/Users/konnor/projects/role-components/exports/option/option.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/listbox/listbox.js",
+      "path": "/Users/konnor/projects/role-components/exports/listbox/listbox.js",
       "declarations": [
         {
           "kind": "class",
@@ -278,13 +631,6 @@
                 "text": "HTMLElement | null | undefined"
               },
               "readonly": true
-            },
-            {
-              "kind": "method",
-              "name": "click",
-              "type": {
-                "text": "HTMLButtonElement[\"click\"]"
-              }
             },
             {
               "kind": "method",
@@ -847,7 +1193,7 @@
           ],
           "superclass": {
             "name": "BaseElement",
-            "module": "/exports/base-element.js"
+            "module": "//Users/konnor/projects/role-components/exports/base-element.js"
           },
           "tagName": "role-listbox",
           "customElement": true
@@ -859,311 +1205,29 @@
           "name": "default",
           "declaration": {
             "name": "RoleListbox",
-            "module": "exports/listbox/listbox.js"
+            "module": "/Users/konnor/projects/role-components/exports/listbox/listbox.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/option/option-register.js",
+      "path": "/Users/konnor/projects/role-components/exports/listbox/listbox-register.js",
       "declarations": [],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "name": "RoleOption",
-            "module": "exports/option/option-register.js"
+            "name": "RoleListbox",
+            "module": "/Users/konnor/projects/role-components/exports/listbox/listbox-register.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/option/option.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "RoleOption",
-          "members": [
-            {
-              "kind": "field",
-              "name": "baseName",
-              "type": {
-                "text": "string"
-              },
-              "static": true,
-              "default": "\"role-option\""
-            },
-            {
-              "kind": "method",
-              "name": "handleSlotChange"
-            },
-            {
-              "kind": "field",
-              "name": "role",
-              "privacy": "public",
-              "type": {
-                "text": "string"
-              },
-              "default": "\"option\"",
-              "attribute": "role",
-              "reflects": true
-            },
-            {
-              "kind": "field",
-              "name": "internals",
-              "type": {
-                "text": "object"
-              },
-              "default": "{}"
-            },
-            {
-              "kind": "field",
-              "name": "tabIndex",
-              "privacy": "public",
-              "type": {
-                "text": "number"
-              },
-              "default": "-1",
-              "attribute": "tabindex",
-              "reflects": true
-            },
-            {
-              "kind": "field",
-              "name": "selected",
-              "privacy": "public",
-              "type": {
-                "text": "boolean"
-              },
-              "description": "aria-selected is preferred for single-select listboxes / comboboxes",
-              "default": "false",
-              "attribute": "selected"
-            },
-            {
-              "kind": "field",
-              "name": "current",
-              "privacy": "public",
-              "type": {
-                "text": "boolean"
-              },
-              "description": "aria-current to show the currently focused option",
-              "default": "false",
-              "attribute": "current"
-            },
-            {
-              "kind": "field",
-              "name": "hasFocus",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false"
-            },
-            {
-              "kind": "field",
-              "name": "value",
-              "privacy": "public",
-              "type": {
-                "text": "null | string"
-              },
-              "default": "\"\"",
-              "attribute": "value"
-            },
-            {
-              "kind": "field",
-              "name": "label",
-              "privacy": "public",
-              "type": {
-                "text": "string"
-              },
-              "attribute": "label"
-            },
-            {
-              "kind": "field",
-              "name": "defaultSelected",
-              "privacy": "public",
-              "type": {
-                "text": "boolean"
-              },
-              "attribute": "selected"
-            },
-            {
-              "kind": "field",
-              "name": "ariaCurrent",
-              "privacy": "public",
-              "attribute": "aria-current",
-              "reflects": true
-            },
-            {
-              "kind": "field",
-              "name": "ariaSelected",
-              "privacy": "public",
-              "attribute": "aria-selected",
-              "reflects": true
-            },
-            {
-              "kind": "field",
-              "name": "dependencies",
-              "static": true,
-              "type": {
-                "text": "Record<string, typeof HTMLElement>"
-              },
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "debounce",
-              "parameters": [
-                {
-                  "name": "callback",
-                  "type": {
-                    "text": "(...args: any[]) => any"
-                  }
-                },
-                {
-                  "name": "options",
-                  "type": {
-                    "text": "{ key: any, wait: number }"
-                  }
-                }
-              ],
-              "return": {
-                "type": {
-                  "text": "ReturnType<typeof setTimeout>"
-                }
-              },
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "eventHandler",
-              "type": {
-                "text": "EventHandler<this>"
-              },
-              "default": "new EventHandler(this)",
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "__debounceMap__",
-              "type": {
-                "text": "null | Map<any, ReturnType<typeof setTimeout>>"
-              },
-              "default": "null",
-              "inheritedFrom": {
-                "name": "BaseElement",
-                "module": "exports/base-element.js"
-              }
-            }
-          ],
-          "attributes": [
-            {
-              "name": "role",
-              "type": {
-                "text": "string"
-              },
-              "default": "\"option\"",
-              "fieldName": "role"
-            },
-            {
-              "name": "selected",
-              "type": {
-                "text": "boolean"
-              },
-              "fieldName": "selected",
-              "description": "aria-selected is preferred for single-select listboxes / comboboxes",
-              "default": "false"
-            },
-            {
-              "name": "current",
-              "type": {
-                "text": "boolean"
-              },
-              "description": "aria-current to show the currently focused option",
-              "default": "false",
-              "fieldName": "current"
-            },
-            {
-              "name": "aria-current",
-              "fieldName": "ariaCurrent"
-            },
-            {
-              "name": "aria-selected",
-              "fieldName": "ariaSelected"
-            },
-            {
-              "name": "tabindex",
-              "type": {
-                "text": "number"
-              },
-              "default": "-1",
-              "fieldName": "tabIndex"
-            },
-            {
-              "name": "label",
-              "type": {
-                "text": "string"
-              },
-              "fieldName": "label"
-            },
-            {
-              "name": "value",
-              "type": {
-                "text": "null | string"
-              },
-              "default": "\"\"",
-              "fieldName": "value"
-            }
-          ],
-          "superclass": {
-            "name": "BaseElement",
-            "module": "/exports/base-element.js"
-          },
-          "tagName": "role-option",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "RoleOption",
-            "module": "exports/option/option.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "exports/option-group/option-group-register.js",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "RoleOptionGroup",
-            "module": "exports/option-group/option-group-register.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "exports/option-group/option-group.js",
+      "path": "/Users/konnor/projects/role-components/exports/option-group/option-group.js",
       "declarations": [
         {
           "kind": "class",
@@ -1267,7 +1331,7 @@
           ],
           "superclass": {
             "name": "BaseElement",
-            "module": "/exports/base-element.js"
+            "module": "//Users/konnor/projects/role-components/exports/base-element.js"
           },
           "tagName": "role-option-group",
           "customElement": true
@@ -1279,50 +1343,44 @@
           "name": "default",
           "declaration": {
             "name": "OptionGroup",
-            "module": "exports/option-group/option-group.js"
+            "module": "/Users/konnor/projects/role-components/exports/option-group/option-group.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/styles/host-styles.js",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "hostStyles",
-          "default": "css`\n  :host {\n    --role-background-hover-color: #005a9c;\n    --role-border-focus-color: #005a9c;\n    display: block;\n  }\n\n  *,\n  *:after,\n  *:before {\n    box-sizing: border-box;\n  }\n\n  [hidden] {\n    display: none !important;\n  }\n\n  [invisible] {\n    visibility: hidden !important;\n  }\n\n  .visually-hidden:not(:focus-within):not(:active) {\n    clip: rect(0 0 0 0);\n    clip-path: inset(50%);\n    height: 1px;\n    overflow: hidden;\n    position: absolute;\n    white-space: nowrap;\n    width: 1px;\n  }\n`"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "hostStyles",
-          "declaration": {
-            "name": "hostStyles",
-            "module": "exports/styles/host-styles.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "exports/toolbar/toolbar-register.js",
+      "path": "/Users/konnor/projects/role-components/exports/option-group/option-group-register.js",
       "declarations": [],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "name": "RoleToolbar",
-            "module": "exports/toolbar/toolbar-register.js"
+            "name": "RoleOptionGroup",
+            "module": "/Users/konnor/projects/role-components/exports/option-group/option-group-register.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/toolbar/toolbar.js",
+      "path": "/Users/konnor/projects/role-components/exports/option/option-register.js",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "RoleOption",
+            "module": "/Users/konnor/projects/role-components/exports/option/option-register.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "/Users/konnor/projects/role-components/exports/toolbar/toolbar.js",
       "declarations": [
         {
           "kind": "class",
@@ -1570,7 +1628,7 @@
           ],
           "superclass": {
             "name": "BaseElement",
-            "module": "/exports/base-element.js"
+            "module": "//Users/konnor/projects/role-components/exports/base-element.js"
           },
           "tagName": "role-toolbar",
           "customElement": true
@@ -1582,29 +1640,29 @@
           "name": "default",
           "declaration": {
             "name": "RoleToolbar",
-            "module": "exports/toolbar/toolbar.js"
+            "module": "/Users/konnor/projects/role-components/exports/toolbar/toolbar.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/tooltip/tooltip-register.js",
+      "path": "/Users/konnor/projects/role-components/exports/toolbar/toolbar-register.js",
       "declarations": [],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "name": "RoleTooltip",
-            "module": "exports/tooltip/tooltip-register.js"
+            "name": "RoleToolbar",
+            "module": "/Users/konnor/projects/role-components/exports/toolbar/toolbar-register.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "exports/tooltip/tooltip.js",
+      "path": "/Users/konnor/projects/role-components/exports/tooltip/tooltip.js",
       "declarations": [
         {
           "kind": "class",
@@ -1807,6 +1865,17 @@
             },
             {
               "kind": "field",
+              "name": "open",
+              "privacy": "public",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "open",
+              "reflects": true
+            },
+            {
+              "kind": "field",
               "name": "placement",
               "privacy": "public",
               "type": {
@@ -1814,6 +1883,18 @@
               },
               "default": "\"top\"",
               "attribute": "placement",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "currentPlacement",
+              "privacy": "public",
+              "type": {
+                "text": "null | Placement"
+              },
+              "description": "The current placement based on calculations by floating ui.",
+              "default": "null",
+              "attribute": "current-placement",
               "reflects": true
             },
             {
@@ -1941,11 +2022,28 @@
               },
               "default": "\"top\"",
               "fieldName": "placement"
+            },
+            {
+              "name": "current-placement",
+              "type": {
+                "text": "null | Placement"
+              },
+              "description": "The current placement based on calculations by floating ui.",
+              "default": "null",
+              "fieldName": "currentPlacement"
+            },
+            {
+              "name": "open",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "open"
             }
           ],
           "superclass": {
             "name": "BaseElement",
-            "module": "/exports/base-element.js"
+            "module": "//Users/konnor/projects/role-components/exports/base-element.js"
           },
           "tagName": "role-tooltip",
           "customElement": true
@@ -1957,56 +2055,84 @@
           "name": "default",
           "declaration": {
             "name": "RoleTooltip",
-            "module": "exports/tooltip/tooltip.js"
+            "module": "/Users/konnor/projects/role-components/exports/tooltip/tooltip.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "internal/clamp.js",
-      "declarations": [
-        {
-          "kind": "function",
-          "name": "clamp",
-          "parameters": [
-            {
-              "name": "min",
-              "type": {
-                "text": "number"
-              }
-            },
-            {
-              "name": "current",
-              "type": {
-                "text": "number"
-              }
-            },
-            {
-              "name": "max",
-              "type": {
-                "text": "number"
-              }
-            }
-          ],
-          "description": "If current > max, return max\nIf current < min, return min",
-          "return": {
-            "type": {
-              "text": "number"
-            }
-          }
-        }
-      ],
+      "path": "/Users/konnor/projects/role-components/exports/tooltip/tooltip-register.js",
+      "declarations": [],
       "exports": [
         {
           "kind": "js",
-          "name": "clamp",
+          "name": "default",
           "declaration": {
-            "name": "clamp",
-            "module": "internal/clamp.js"
+            "name": "RoleTooltip",
+            "module": "/Users/konnor/projects/role-components/exports/tooltip/tooltip-register.js"
           }
         }
       ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/index.js",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "RoleListbox",
+          "declaration": {
+            "name": "default",
+            "module": "\"./listbox/listbox-register.js\""
+          }
+        },
+        {
+          "kind": "js",
+          "name": "RoleOptionGroup",
+          "declaration": {
+            "name": "default",
+            "module": "\"./option-group/option-group-register.js\""
+          }
+        },
+        {
+          "kind": "js",
+          "name": "RoleOption",
+          "declaration": {
+            "name": "default",
+            "module": "\"./option/option-register.js\""
+          }
+        },
+        {
+          "kind": "js",
+          "name": "RoleToolbar",
+          "declaration": {
+            "name": "default",
+            "module": "\"./toolbar/toolbar-register.js\""
+          }
+        },
+        {
+          "kind": "js",
+          "name": "RoleTooltip",
+          "declaration": {
+            "name": "default",
+            "module": "\"./tooltip/tooltip-register.js\""
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/combobox/combobox-register.js",
+      "declarations": [],
+      "exports": []
+    },
+    {
+      "kind": "javascript-module",
+      "path": "exports/combobox/combobox.js",
+      "declarations": [],
+      "exports": []
     },
     {
       "kind": "javascript-module",
@@ -2044,27 +2170,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "internal/is-mac-os.js",
-      "declarations": [
-        {
-          "kind": "function",
-          "name": "isMacOs",
-          "description": "Detects if on a macOS device so we can properly bind things like metaKey\nhttps://developer.mozilla.org/en-US/docs/Web/API/Navigator/platform\n> But there is one case where, among the options you could use, navigator.platform may be the least-bad option: When you need to show users advice about whether the modifier key for keyboard shortcuts is the ⌘ command key (found on Apple systems) rather than the ⌃ control key (on non-Apple systems):"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "isMacOs",
-          "declaration": {
-            "name": "isMacOs",
-            "module": "internal/is-mac-os.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "internal/string-map.js",
       "declarations": [
         {
@@ -2092,78 +2197,6 @@
           "declaration": {
             "name": "stringMap",
             "module": "internal/string-map.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "internal/uuid.js",
-      "declarations": [
-        {
-          "kind": "function",
-          "name": "uuidv4",
-          "description": "uuid generator for attaching unique ids to attachments that need uploading.",
-          "return": {
-            "type": {
-              "text": "string"
-            }
-          }
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "uuidv4",
-          "declaration": {
-            "name": "uuidv4",
-            "module": "internal/uuid.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "internal/wrap.js",
-      "declarations": [
-        {
-          "kind": "function",
-          "name": "wrap",
-          "parameters": [
-            {
-              "name": "min",
-              "type": {
-                "text": "number"
-              }
-            },
-            {
-              "name": "current",
-              "type": {
-                "text": "number"
-              }
-            },
-            {
-              "name": "max",
-              "type": {
-                "text": "number"
-              }
-            }
-          ],
-          "description": "If current > max, return min\nIf current < min, return max",
-          "return": {
-            "type": {
-              "text": "number"
-            }
-          }
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "wrap",
-          "declaration": {
-            "name": "wrap",
-            "module": "internal/wrap.js"
           }
         }
       ]

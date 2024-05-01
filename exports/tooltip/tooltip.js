@@ -314,10 +314,6 @@ export default class RoleTooltip extends BaseElement {
     window.requestAnimationFrame(() => {
       if (this.willShow === true) return;
 
-      const base = this.base;
-
-      if (!base) return;
-
       this.open = false
     });
   };
@@ -329,7 +325,8 @@ export default class RoleTooltip extends BaseElement {
     if (!("key" in event)) {
       return;
     }
-    if (event.key != null && event.key.toLowerCase() === "escape") {
+
+    if (event.key != null && event.key === "Escape") {
       event.preventDefault();
       this.hide();
     }
@@ -347,6 +344,7 @@ export default class RoleTooltip extends BaseElement {
     if (arrowEl == null) return;
 
     const self = this
+    this.open = true
 
     this.cleanup = autoUpdate(target, base, () => {
       const strategy = this.hasAttribute("hoist") ? "fixed" : "absolute"
@@ -376,7 +374,6 @@ export default class RoleTooltip extends BaseElement {
         }
       }).then(({ x, y, middlewareData, placement }) => {
         self.currentPlacement = /** @type {"top" | "right" | "bottom" | "left"} */ (placement.split("-")[0])
-        self.open = true
 
         Object.assign(base.style, {
           left: `${x}px`,

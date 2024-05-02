@@ -285,6 +285,7 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
         border: var(--__border-width) solid var(--__border-color);
         rotate: 45deg;
         z-index: -1;
+        margin: 0;
       }
 
       /* Hover bridge */

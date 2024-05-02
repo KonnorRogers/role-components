@@ -55,7 +55,7 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
       hostStyles,
       css`
         :host {
-          --background-color: #222;
+          --background: #222;
           --border-color: transparent;
           --border-width: 1px;
           --arrow-size: 8px;
@@ -100,6 +100,8 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
     this.__anchor = null
 
     this.arrow = true
+
+    this.distance = 10
 
     const show = this.eventHandler.get(this.show)
     const hide = this.eventHandler.get(this.hide)
@@ -179,7 +181,7 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
           popover,
           arrow
         "
-        .anchor=${this.anchor}
+        .anchor=${this.__anchor}
         .active=${this.active}
         .placement=${this.placement}
         .strategy=${this.strategy}

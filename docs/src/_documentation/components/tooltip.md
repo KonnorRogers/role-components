@@ -22,7 +22,7 @@ Let's see what that looks like in action:
   <template slot="code">
     <style>
       role-tooltip {
-        --background-color: Canvas;
+        --background: white;
         --border-color: gray;
         color: CanvasText;
       }

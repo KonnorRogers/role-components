@@ -311,22 +311,22 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
         );
       }
 
-      :host([data-current-placement="top"]) .arrow {
+      :host([data-current-placement="top"]) .popover__arrow {
         border-top: 0px;
         border-left: 0px;
       }
 
-      :host([data-current-placement="bottom"]) .arrow {
+      :host([data-current-placement="bottom"]) .popover__arrow {
         border-bottom: 0px;
         border-right: 0px;
       }
 
-      :host([data-current-placement="left"]) .arrow {
+      :host([data-current-placement="left"]) .popover__arrow {
         border-bottom: 0px;
         border-left: 0px;
       }
 
-      :host([data-current-placement="right"]) .arrow {
+      :host([data-current-placement="right"]) .popover__arrow {
         border-top: 0px;
         border-right: 0px;
       }
@@ -439,23 +439,23 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
     if (this.anchor && typeof this.anchor === 'string') {
       // Locate the anchor by id
       const root = /** @type {Document | ShadowRoot} */ (this.getRootNode())
-      this.anchorEl = root.getElementById(this.anchor);
+      this.__anchorEl = root.getElementById(this.anchor);
     } else if (this.anchor instanceof Element || isVirtualElement(this.anchor)) {
       // Use the anchor's reference
-      this.anchorEl = this.anchor;
+      this.__anchorEl = this.anchor;
     } else {
       // Look for a slotted anchor
-      this.anchorEl = /** @type {HTMLElement} */ (this.querySelector('[slot="anchor"]'));
+      this.__anchorEl = /** @type {HTMLElement} */ (this.querySelector('[slot="anchor"]'));
     }
 
     // If the anchor is a <slot>, we'll use the first assigned element as the target since slots use `display: contents`
     // and positioning can't be calculated on them
-    if (this.anchorEl instanceof HTMLSlotElement) {
-      this.anchorEl = /** @type {HTMLElement} */ (this.anchorEl.assignedElements({ flatten: true })[0])
+    if (this.__anchorEl instanceof HTMLSlotElement) {
+      this.__anchorEl = /** @type {HTMLElement} */ (this.__anchorEl.assignedElements({ flatten: true })[0])
     }
 
     // If the anchor is valid, start it up
-    if (this.anchorEl) {
+    if (this.__anchorEl) {
       this.__start();
     }
   }
@@ -465,11 +465,15 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
    */
   __start() {
     // We can't start the positioner without an anchor
-    if (!this.anchorEl) {
+    if (!this.__anchorEl) {
       return;
     }
 
-    this.cleanup = autoUpdate(this.anchorEl, this.popover, () => {
+    if (!this.popoverElement) {
+      return
+    }
+
+    this.cleanup = autoUpdate(this.__anchorEl, this.popoverElement, () => {
       this.reposition();
     });
   }
@@ -496,7 +500,7 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
   /** Forces the popover to recalculate and reposition itself. */
   reposition() {
     // Nothing to do if the popover is inactive or the anchor doesn't exist
-    if (!this.active || !this.anchorEl) {
+    if (!this.active || !this.__anchorEl || !this.popoverElement) {
       return;
     }
 
@@ -515,15 +519,15 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
           apply: ({ rects }) => {
             const syncWidth = this.sync === 'width' || this.sync === 'both';
             const syncHeight = this.sync === 'height' || this.sync === 'both';
-            this.popover.style.width = syncWidth ? `${rects.reference.width}px` : '';
-            this.popover.style.height = syncHeight ? `${rects.reference.height}px` : '';
+            this.popoverElement.style.width = syncWidth ? `${rects.reference.width}px` : '';
+            this.popoverElement.style.height = syncHeight ? `${rects.reference.height}px` : '';
           }
         })
       );
     } else {
       // Cleanup styles if we're not matching width/height
-      this.popover.style.width = '';
-      this.popover.style.height = '';
+      this.popoverElement.style.width = '';
+      this.popoverElement.style.height = '';
     }
 
     // Then we flip
@@ -577,10 +581,10 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
     }
 
     // Finally, we add an arrow
-    if (this.arrow) {
+    if (this.arrow && this.arrowElement) {
       middleware.push(
         arrow({
-          element: this.arrowEl,
+          element: this.arrowElement,
           padding: this.arrowPadding
         })
       );
@@ -597,7 +601,7 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
         ? (/** @type {Element} */ element) => platform.getOffsetParent(element, offsetParent)
         : platform.getOffsetParent;
 
-    computePosition(this.anchorEl, this.popover, {
+    computePosition(this.__anchorEl, this.popoverElement, {
       placement: this.placement,
       middleware,
       strategy: this.strategy,
@@ -618,7 +622,7 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
 
       this.setAttribute('data-current-placement', placement);
 
-      Object.assign(this.popover.style, {
+      Object.assign(this.popoverElement.style, {
         left: `${x}px`,
         top: `${y}px`
       });
@@ -653,7 +657,7 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
           top = typeof arrowY === 'number' ? `${arrowY}px` : '';
         }
 
-        Object.assign(this.arrowEl.style, {
+        Object.assign(this.arrowElement.style, {
           top,
           right,
           bottom,
@@ -666,13 +670,13 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
     // Wait until the new position is drawn before updating the hover bridge, otherwise it can get out of sync
     requestAnimationFrame(() => this.updateHoverBridge());
 
-    this.emit('sl-reposition');
+    // this.emit('sl-reposition');
   }
 
   updateHoverBridge = () => {
-    if (this.hoverBridge && this.anchorEl) {
-      const anchorRect = this.anchorEl.getBoundingClientRect();
-      const popoverRect = this.popover.getBoundingClientRect();
+    if (this.hoverBridge && this.__anchorEl) {
+      const anchorRect = this.__anchorEl.getBoundingClientRect();
+      const popoverRect = this.popoverElement.getBoundingClientRect();
       const isVertical = this.placement.includes('top') || this.placement.includes('bottom');
       let topLeftX = 0;
       let topLeftY = 0;

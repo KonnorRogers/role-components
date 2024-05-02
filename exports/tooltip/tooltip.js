@@ -64,7 +64,8 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
         }
 
         [part~="base"]::part(popover) {
-          padding: 0.4em 0.6em;
+          padding: 0.2em 0.4em;
+          border-radius: 4px;
         }
       `,
     ];

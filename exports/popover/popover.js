@@ -60,6 +60,7 @@ function PopoverProperties (superclass) {
       /**
        * Determines how the popup is positioned. The `absolute` strategy works well in most cases, but if overflow is
        * clipped, using a `fixed` position strategy can often workaround it.
+       * @type {import("@floating-ui/dom").Strategy}
        */
       this.strategy = "absolute"
 
@@ -245,7 +246,68 @@ PopoverProperties.properties = {
  *  available when using `auto-size`.
  */
 export default class RolePopover extends PopoverProperties(BaseElement) {
-  static styles =  [hostStyles, css``];
+  static styles =  [
+    hostStyles,
+    css`
+      :host {
+        --arrow-color: CanvasText;
+        --arrow-size: 6px;
+
+        /*
+        * These properties are computed to account for the arrow's dimensions after being rotated 45º. The constant
+        * 0.7071 is derived from sin(45), which is the diagonal size of the arrow's container after rotating.
+        */
+        --arrow-size-diagonal: calc(var(--arrow-size) * 0.7071);
+        --arrow-padding-offset: calc(var(--arrow-size-diagonal) - var(--arrow-size));
+
+        display: contents;
+      }
+
+      .popup {
+        position: absolute;
+        isolation: isolate;
+        max-width: var(--auto-size-available-width, none);
+        max-height: var(--auto-size-available-height, none);
+      }
+
+      .popup--fixed {
+        position: fixed;
+      }
+
+      .popup:not(.popup--active) {
+        display: none;
+      }
+
+      .popup__arrow {
+        position: absolute;
+        width: calc(var(--arrow-size-diagonal) * 2);
+        height: calc(var(--arrow-size-diagonal) * 2);
+        rotate: 45deg;
+        background: var(--arrow-color);
+        z-index: -1;
+      }
+
+      /* Hover bridge */
+      .popup-hover-bridge:not(.popup-hover-bridge--visible) {
+        display: none;
+      }
+
+      .popup-hover-bridge {
+        position: fixed;
+        z-index: calc(var(--sl-z-index-dropdown) - 1);
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        clip-path: polygon(
+          var(--hover-bridge-top-left-x, 0) var(--hover-bridge-top-left-y, 0),
+          var(--hover-bridge-top-right-x, 0) var(--hover-bridge-top-right-y, 0),
+          var(--hover-bridge-bottom-right-x, 0) var(--hover-bridge-bottom-right-y, 0),
+          var(--hover-bridge-bottom-left-x, 0) var(--hover-bridge-bottom-left-y, 0)
+        );
+      }
+    `
+  ];
 
   static properties = {
     ...PopoverProperties.properties,
@@ -500,7 +562,8 @@ export default class RolePopover extends PopoverProperties(BaseElement) {
     //
     const getOffsetParent =
       this.strategy === 'absolute'
-        ? (element: Element) => platform.getOffsetParent(element, offsetParent)
+
+        ? (/** @type {Element} */ element) => platform.getOffsetParent(element, offsetParent)
         : platform.getOffsetParent;
 
     computePosition(this.anchorEl, this.popup, {
@@ -519,7 +582,8 @@ export default class RolePopover extends PopoverProperties(BaseElement) {
       // Source: https://github.com/floating-ui/floating-ui/blob/cb3b6ab07f95275730d3e6e46c702f8d4908b55c/packages/dom/src/utils/getDocumentRect.ts#L31
       //
       const isRtl = getComputedStyle(this).direction === 'rtl';
-      const staticSide = { top: 'bottom', right: 'left', bottom: 'top', left: 'right' }[placement.split('-')[0]]!;
+
+      const staticSide = { top: 'bottom', right: 'left', bottom: 'top', left: 'right' }[placement.split('-')[0]] || this.placement;
 
       this.setAttribute('data-current-placement', placement);
 
@@ -528,9 +592,9 @@ export default class RolePopover extends PopoverProperties(BaseElement) {
         top: `${y}px`
       });
 
-      if (this.arrow) {
-        const arrowX = middlewareData.arrow!.x;
-        const arrowY = middlewareData.arrow!.y;
+      if (this.arrow && middlewareData.arrow) {
+        const arrowX = middlewareData.arrow.x;
+        const arrowY = middlewareData.arrow.y;
         let top = '';
         let right = '';
         let bottom = '';
@@ -574,7 +638,7 @@ export default class RolePopover extends PopoverProperties(BaseElement) {
     this.emit('sl-reposition');
   }
 
-  private updateHoverBridge = () => {
+  updateHoverBridge = () => {
     if (this.hoverBridge && this.anchorEl) {
       const anchorRect = this.anchorEl.getBoundingClientRect();
       const popupRect = this.popup.getBoundingClientRect();

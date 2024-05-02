@@ -39,7 +39,8 @@ export default class RoleTooltip extends BaseElement {
       role: { reflect: true },
       placement: { reflect: true },
       currentPlacement: { attribute: "current-placement", reflect: true },
-      open: { reflect: true, type: Boolean }
+      active: { reflect: true, type: Boolean },
+      __triggerSource: { attribute: false, state: true },
     };
   }
 
@@ -130,7 +131,7 @@ export default class RoleTooltip extends BaseElement {
     this._rootElement = undefined;
 
     this.role = "tooltip";
-    this.open = false
+    this.active = false
 
     /**
      * @type {import("@floating-ui/dom").Placement}
@@ -143,6 +144,12 @@ export default class RoleTooltip extends BaseElement {
      * @type {null | import("@floating-ui/dom").Placement}
      */
     this.currentPlacement = null
+
+    /**
+     * If the tooltip was trigger by focus
+     * @type {null | "focus" | "hover"}
+     */
+    this.__triggerSource = null
 
     const show = this.eventHandler.get(this.show)
     const hide = this.eventHandler.get(this.hide)
@@ -216,7 +223,7 @@ export default class RoleTooltip extends BaseElement {
 
   render() {
     return html`
-      <div part="base" class="base ${this.open ? '' : 'visually-hidden'}">
+      <div part="base" class="base ${this.active ? '' : 'visually-hidden'}">
         <slot></slot>
         <div class="arrow" part="arrow"></div>
       </div>
@@ -283,36 +290,75 @@ export default class RoleTooltip extends BaseElement {
    * @returns {void}
    */
   show = (eventOrElement) => {
-    if (
-      eventOrElement instanceof Event &&
-      eventOrElement.currentTarget instanceof Element
-    ) {
-      eventOrElement = eventOrElement.currentTarget;
-    }
+    /**
+     * Used to track how to close the tooltip.
+     * @type {typeof this.__triggerSource}
+     */
+    let triggerSource = null
 
     /**
-     * @type {Element}
+     * @type {null | Element}
      */
-    // @ts-expect-error
-    const target = eventOrElement;
+    let element = null
+
+    if (
+      eventOrElement instanceof Event
+    ) {
+
+      if (eventOrElement.currentTarget instanceof Element) {
+        /**
+        * pointer* -> hover
+        * focus* -> focus
+        */
+        triggerSource = eventOrElement.type.startsWith("pointer") ? "hover" : "focus"
+        element = eventOrElement.currentTarget;
+      }
+    } else {
+      element = eventOrElement
+    }
+
+    if (!element) { return }
+
+    // We only want to overwrite `__triggerSource` if its not "focus", "focus" takes priority over everything.
+    if (this.__triggerSource !== "focus") {
+      this.__triggerSource = triggerSource
+    }
 
     this.willShow = true;
-
-    this.computeTooltipPosition(target);
+    this.computeTooltipPosition(element);
   };
 
   /**
-   * @param {Event} [_event]
+   * @param {Event} [event]
    * @returns {void}
    */
-  hide = (_event) => {
+  hide = (event) => {
+    /**
+     * @type {typeof this.__triggerSource}
+     */
+    let eventTriggerSource = null
+
+    if (event) {
+      eventTriggerSource = event.type.startsWith("pointer") ? "hover" : "focus"
+    }
+
+    // We don't want to hide the tooltip if it was triggered by focus.
+    if (this.__triggerSource === "focus" && eventTriggerSource === "hover") {
+      return
+    }
+
+    /**
+     * Reset the trigger source before we start to hide everything.
+     */
+    this.__triggerSource = null
+
     this.willShow = false;
     this.cleanup?.();
 
     window.requestAnimationFrame(() => {
       if (this.willShow === true) return;
 
-      this.open = false
+      this.active = false
     });
   };
 
@@ -342,7 +388,7 @@ export default class RoleTooltip extends BaseElement {
     if (arrowEl == null) return;
 
     const self = this
-    this.open = true
+    this.active = true
 
     this.cleanup = autoUpdate(target, base, () => {
       const strategy = this.hasAttribute("hoist") ? "fixed" : "absolute"
@@ -356,12 +402,16 @@ export default class RoleTooltip extends BaseElement {
           ? (/** @type {Element} */ element) => platform.getOffsetParent(element, offsetParent)
           : platform.getOffsetParent;
 
+      // const padding
+      // const offset
+      // const flip
+
+
       computePosition(target, base, {
         placement: self.placement || "top",
         middleware: [
           offset(6),
-          flip({
-          }),
+          flip(),
           shift({ padding: 5 }),
           arrow({ element: arrowEl }),
         ],

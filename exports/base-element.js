@@ -47,8 +47,12 @@ export class BaseElement extends DefineableMixin(LitElement) {
     return {}
   }
 
-  constructor() {
-    super();
+  /**
+   * @param {...any[]} args
+   */
+  constructor(...args) {
+    /** @ts-expect-error allows us to play nice with mixins. */
+    super(...args);
 
     Object.entries(/** @type {typeof BaseElement} */ (this.constructor).dependencies).forEach(([key, ctor]) => {
       if (!customElements.get(key)) {

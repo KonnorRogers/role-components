@@ -277,10 +277,6 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
         position: fixed;
       }
 
-      .popover:not(.popover--active) {
-        display: none;
-      }
-
       .popover__arrow {
         position: absolute;
         width: calc(var(--arrow-size-diagonal) * 2);
@@ -314,21 +310,25 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
       :host([data-current-placement="top"]) .popover__arrow {
         border-top: 0px;
         border-left: 0px;
+        margin-bottom: calc(var(--border-width) * -1);
       }
 
       :host([data-current-placement="bottom"]) .popover__arrow {
         border-bottom: 0px;
         border-right: 0px;
+        margin-top: calc(var(--__border-width) * -1);
       }
 
       :host([data-current-placement="left"]) .popover__arrow {
         border-bottom: 0px;
         border-left: 0px;
+        margin-right: calc(var(--__border-width) * -1);
       }
 
       :host([data-current-placement="right"]) .popover__arrow {
         border-top: 0px;
         border-right: 0px;
+        margin-left: calc(var(--__border-width) * -1);
       }
     `
   ];
@@ -766,7 +766,8 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
           popover: true,
           'popover--active': this.active,
           'popover--fixed': this.strategy === 'fixed',
-          'popover--has-arrow': this.arrow
+          'popover--has-arrow': this.arrow,
+          'visually-hidden': !this.active
         })}
       >
         <slot></slot>

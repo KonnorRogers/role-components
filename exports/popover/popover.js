@@ -29,7 +29,7 @@ function isVirtualElement(e) {
  * @template {Omit<typeof BaseElement, "new"> & {new (...args: any[]): any }} T
  * @param {T} superclass
  */
-function PopoverProperties (superclass) {
+export function PopoverMixin (superclass) {
   return class extends superclass {
     /**
      * @param {any[]} args
@@ -38,7 +38,7 @@ function PopoverProperties (superclass) {
       super(...args)
 
       /**
-       * The preferred placement of the popup. Note that the actual placement will vary as configured to keep the
+       * The preferred placement of the popover. Note that the actual placement will vary as configured to keep the
        * panel inside of the viewport.
        * @type {
           'top'
@@ -58,7 +58,7 @@ function PopoverProperties (superclass) {
       this.placement = "top"
 
       /**
-       * Determines how the popup is positioned. The `absolute` strategy works well in most cases, but if overflow is
+       * Determines how the popover is positioned. The `absolute` strategy works well in most cases, but if overflow is
        * clipped, using a `fixed` position strategy can often workaround it.
        * @type {import("@floating-ui/dom").Strategy}
        */
@@ -71,8 +71,8 @@ function PopoverProperties (superclass) {
       this.skidding = 0;
 
       /**
-      * Attaches an arrow to the popup. The arrow's size and color can be customized using the `--arrow-size` and
-      * `--arrow-color` custom properties. For additional customizations, you can also target the arrow using
+      * Attaches an arrow to the popover. The arrow's size and color can be customized using the `--arrow-size` and
+      * `--background-color` custom properties. For additional customizations, you can also target the arrow using
       * `::part(arrow)` in your stylesheet.
       */
       this.arrow = false;
@@ -86,19 +86,19 @@ function PopoverProperties (superclass) {
       this.arrowPlacement = 'anchor';
 
       /**
-       * The amount of padding between the arrow and the edges of the popup. If the popup has a border-radius, for example,
+       * The amount of padding between the arrow and the edges of the popover. If the popover has a border-radius, for example,
        * this will prevent it from overflowing the corners.
        */
       this.arrowPadding = 10
 
       /**
-      * When set, placement of the popup will flip to the opposite site to keep it in view. You can use
+      * When set, placement of the popover will flip to the opposite site to keep it in view. You can use
       * `flipFallbackPlacements` to further configure how the fallback placement is determined.
       */
       this.flip = false;
 
       /**
-      * If the preferred placement doesn't fit, popup will be tested in these fallback placements until one fits. Must be a
+      * If the preferred placement doesn't fit, popover will be tested in these fallback placements until one fits. Must be a
       * string of any number of placements separated by a space, e.g. "top bottom left". If no placement fits, the flip
       * fallback strategy will be used instead.
       */
@@ -106,7 +106,7 @@ function PopoverProperties (superclass) {
 
       /**
       * When neither the preferred placement nor the fallback placements fit, this value will be used to determine whether
-      * the popup should be positioned using the best available fit based on available space or as it was initially
+      * the popover should be positioned using the best available fit based on available space or as it was initially
       * preferred.
       * @type {'best-fit' | 'initial'}
       */
@@ -123,7 +123,7 @@ function PopoverProperties (superclass) {
       /** The amount of padding, in pixels, to exceed before the flip behavior will occur. */
       this.flipPadding = 0;
 
-      /** Moves the popup along the axis to keep it in view when clipped. */
+      /** Moves the popover along the axis to keep it in view when clipped. */
       this.shift = false;
 
 
@@ -139,13 +139,13 @@ function PopoverProperties (superclass) {
       this.shiftPadding = 0;
 
       /**
-        * When set, this will cause the popup to automatically resize itself to prevent it from overflowing.
+        * When set, this will cause the popover to automatically resize itself to prevent it from overflowing.
         * @type {'horizontal' | 'vertical' | 'both'}
         */
       this.autoSize
 
       /**
-       * Syncs the popup's width or height to that of the anchor element.
+       * Syncs the popover's width or height to that of the anchor element.
        * @type {'width' | 'height' | 'both'}
        */
       this.sync
@@ -163,7 +163,7 @@ function PopoverProperties (superclass) {
       this.autoSizePadding = 0;
 
       /**
-       * When a gap exists between the anchor and the popup element, this option will add a "hover bridge" that fills the
+       * When a gap exists between the anchor and the popover element, this option will add a "hover bridge" that fills the
        * gap using an invisible element. This makes listening for events such as `mouseenter` and `mouseleave` more sane
        * because the pointer never technically leaves the element. The hover bridge will only be drawn when the popover is
        * active.
@@ -173,7 +173,7 @@ function PopoverProperties (superclass) {
   }
 }
 
-PopoverProperties.properties = {
+export const PopoverProperties = () => ({
   placement: { reflect: true },
   strategy: { reflect: true },
   distance: { type: Number },
@@ -213,88 +213,92 @@ PopoverProperties.properties = {
   autoSizeBoundary: { type: Object },
   autoSizePadding: { attribute: 'auto-size-padding', type: Number },
   hoverBridge: { attribute: 'hover-bridge', type: Boolean },
-}
+})
 
 
 /**
- * @summary Popup is a utility that lets you declaratively anchor "popup" containers to another element.
- * @documentation https://shoelace.style/components/popup
+ * @summary Popup is a utility that lets you declaratively anchor "popover" containers to another element.
+ * @documentation https://shoelace.style/components/popover
  * @status stable
  * @since 2.0
  *
- * @event role-reposition - Emitted when the popup is repositioned. This event can fire a lot, so avoid putting expensive
+ * @event role-reposition - Emitted when the popover is repositioned. This event can fire a lot, so avoid putting expensive
  *  operations in your listener or consider debouncing it.
  *
- * @slot - The popup's content.
- * @slot anchor - The element the popup will be anchored to. If the anchor lives outside of the popup, you can use the
+ * @slot - The popover's content.
+ * @slot anchor - The element the popover will be anchored to. If the anchor lives outside of the popover, you can use the
  *  `anchor` attribute or property instead.
  *
  * @csspart arrow - The arrow's container. Avoid setting `top|bottom|left|right` properties, as these values are
- *  assigned dynamically as the popup moves. This is most useful for applying a background color to match the popup, and
+ *  assigned dynamically as the popover moves. This is most useful for applying a background color to match the popover, and
  *  maybe a border or box shadow.
- * @csspart popup - The popup's container. Useful for setting a background color, box shadow, etc.
+ * @csspart popover - The popover's container. Useful for setting a background color, box shadow, etc.
  * @csspart hover-bridge - The hover bridge element. Only available when the `hover-bridge` option is enabled.
  *
  * @cssproperty [--arrow-size=6px] - The size of the arrow. Note that an arrow won't be shown unless the `arrow`
  *  attribute is used.
- * @cssproperty [--arrow-color=var(--sl-color-neutral-0)] - The color of the arrow.
  * @cssproperty [--auto-size-available-width] - A read-only custom property that determines the amount of width the
- *  popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only
+ *  popover can be before overflowing. Useful for positioning child elements that need to overflow. This property is only
  *  available when using `auto-size`.
  * @cssproperty [--auto-size-available-height] - A read-only custom property that determines the amount of height the
- *  popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only
+ *  popover can be before overflowing. Useful for positioning child elements that need to overflow. This property is only
  *  available when using `auto-size`.
  */
-export default class RolePopover extends PopoverProperties(BaseElement) {
+export default class RolePopover extends PopoverMixin(BaseElement) {
   static styles =  [
     hostStyles,
     css`
       :host {
-        --arrow-color: CanvasText;
-        --arrow-size: 6px;
+        --__background: var(--background, #222);
+        --__border-color: var(--border-color, transparent);
+        --__border-width: var(--border-width, 1px);
+        --__arrow-size: var(--arrow-size, 8px);
 
         /*
         * These properties are computed to account for the arrow's dimensions after being rotated 45º. The constant
         * 0.7071 is derived from sin(45), which is the diagonal size of the arrow's container after rotating.
         */
-        --arrow-size-diagonal: calc(var(--arrow-size) * 0.7071);
-        --arrow-padding-offset: calc(var(--arrow-size-diagonal) - var(--arrow-size));
+        --arrow-size-diagonal: calc(var(--__arrow-size) * 0.7071);
+        --arrow-padding-offset: calc(var(--arrow-size-diagonal) - var(--__arrow-size));
 
         display: contents;
       }
 
-      .popup {
+      .popover {
         position: absolute;
         isolation: isolate;
         max-width: var(--auto-size-available-width, none);
         max-height: var(--auto-size-available-height, none);
+        border: var(--__border-width) solid var(--__border-color);
+        background: var(--__background);
       }
 
-      .popup--fixed {
+      .popover--fixed {
         position: fixed;
       }
 
-      .popup:not(.popup--active) {
+      .popover:not(.popover--active) {
         display: none;
       }
 
-      .popup__arrow {
+      .popover__arrow {
         position: absolute;
         width: calc(var(--arrow-size-diagonal) * 2);
         height: calc(var(--arrow-size-diagonal) * 2);
+        background: var(--__background);
+        border: var(--__border-width) solid var(--__border-color);
         rotate: 45deg;
-        background: var(--arrow-color);
         z-index: -1;
       }
 
       /* Hover bridge */
-      .popup-hover-bridge:not(.popup-hover-bridge--visible) {
+      .popover-hover-bridge:not(.popover-hover-bridge--visible) {
         display: none;
       }
 
-      .popup-hover-bridge {
+      .popover-hover-bridge {
         position: fixed;
-        z-index: calc(var(--sl-z-index-dropdown) - 1);
+        z-index: calc(var(--z-index-dropdown, 900) - 1);
         top: 0;
         right: 0;
         bottom: 0;
@@ -306,11 +310,31 @@ export default class RolePopover extends PopoverProperties(BaseElement) {
           var(--hover-bridge-bottom-left-x, 0) var(--hover-bridge-bottom-left-y, 0)
         );
       }
+
+      :host([data-current-placement="top"]) .arrow {
+        border-top: 0px;
+        border-left: 0px;
+      }
+
+      :host([data-current-placement="bottom"]) .arrow {
+        border-bottom: 0px;
+        border-right: 0px;
+      }
+
+      :host([data-current-placement="left"]) .arrow {
+        border-bottom: 0px;
+        border-left: 0px;
+      }
+
+      :host([data-current-placement="right"]) .arrow {
+        border-top: 0px;
+        border-right: 0px;
+      }
     `
   ];
 
   static properties = {
-    ...PopoverProperties.properties,
+    ...(PopoverProperties()),
     anchor: { attribute: false, state: true },
     active: { type: Boolean, reflect: true }
   }
@@ -318,19 +342,26 @@ export default class RolePopover extends PopoverProperties(BaseElement) {
   constructor () {
     super()
 
+    // Needed by floating-ui
+    // @ts-expect-error
+    if (window.process == null) window.process = {};
+    // @ts-expect-error
+    if (window.process.env == null) window.process.env = "development";
+
+
     this.active = false
 
     /**
-    * The element the popup will be anchored to. If the anchor lives outside of the popup, you can provide the anchor
-    * element `id`, a DOM element reference, or a `VirtualElement`. If the anchor lives inside the popup, use the
+    * The element the popover will be anchored to. If the anchor lives outside of the popover, you can provide the anchor
+    * element `id`, a DOM element reference, or a `VirtualElement`. If the anchor lives inside the popover, use the
     * `anchor` slot instead.
     * @type {null | Element | string | VirtualElement}
     */
     this.anchor = null
 
     /**
-    * Activates the positioning logic and shows the popup. When this attribute is removed, the positioning logic is torn
-    * down and the popup will be hidden.
+    * Activates the positioning logic and shows the popover. When this attribute is removed, the positioning logic is torn
+    * down and the popover will be hidden.
     */
     this.active = false;
 
@@ -388,15 +419,15 @@ export default class RolePopover extends PopoverProperties(BaseElement) {
   }
 
   /**
-   * A reference to the internal popup container. Useful for animating and styling the popup with JavaScript.
+   * A reference to the internal popover container. Useful for animating and styling the popover with JavaScript.
    *
    */
-  get popupElement () {
-    return this.shadowRoot?.querySelector(".popup") || null
+  get popoverElement () {
+    return this.shadowRoot?.querySelector(".popover") || null
   }
 
   get arrowElement () {
-    return this.shadowRoot?.querySelector('.popup__arrow') || null
+    return this.shadowRoot?.querySelector('.popover__arrow') || null
   }
 
   /**
@@ -438,7 +469,7 @@ export default class RolePopover extends PopoverProperties(BaseElement) {
       return;
     }
 
-    this.cleanup = autoUpdate(this.anchorEl, this.popup, () => {
+    this.cleanup = autoUpdate(this.anchorEl, this.popover, () => {
       this.reposition();
     });
   }
@@ -462,9 +493,9 @@ export default class RolePopover extends PopoverProperties(BaseElement) {
     });
   }
 
-  /** Forces the popup to recalculate and reposition itself. */
+  /** Forces the popover to recalculate and reposition itself. */
   reposition() {
-    // Nothing to do if the popup is inactive or the anchor doesn't exist
+    // Nothing to do if the popover is inactive or the anchor doesn't exist
     if (!this.active || !this.anchorEl) {
       return;
     }
@@ -484,15 +515,15 @@ export default class RolePopover extends PopoverProperties(BaseElement) {
           apply: ({ rects }) => {
             const syncWidth = this.sync === 'width' || this.sync === 'both';
             const syncHeight = this.sync === 'height' || this.sync === 'both';
-            this.popup.style.width = syncWidth ? `${rects.reference.width}px` : '';
-            this.popup.style.height = syncHeight ? `${rects.reference.height}px` : '';
+            this.popover.style.width = syncWidth ? `${rects.reference.width}px` : '';
+            this.popover.style.height = syncHeight ? `${rects.reference.height}px` : '';
           }
         })
       );
     } else {
       // Cleanup styles if we're not matching width/height
-      this.popup.style.width = '';
-      this.popup.style.height = '';
+      this.popover.style.width = '';
+      this.popover.style.height = '';
     }
 
     // Then we flip
@@ -566,7 +597,7 @@ export default class RolePopover extends PopoverProperties(BaseElement) {
         ? (/** @type {Element} */ element) => platform.getOffsetParent(element, offsetParent)
         : platform.getOffsetParent;
 
-    computePosition(this.anchorEl, this.popup, {
+    computePosition(this.anchorEl, this.popover, {
       placement: this.placement,
       middleware,
       strategy: this.strategy,
@@ -587,7 +618,7 @@ export default class RolePopover extends PopoverProperties(BaseElement) {
 
       this.setAttribute('data-current-placement', placement);
 
-      Object.assign(this.popup.style, {
+      Object.assign(this.popover.style, {
         left: `${x}px`,
         top: `${y}px`
       });
@@ -641,7 +672,7 @@ export default class RolePopover extends PopoverProperties(BaseElement) {
   updateHoverBridge = () => {
     if (this.hoverBridge && this.anchorEl) {
       const anchorRect = this.anchorEl.getBoundingClientRect();
-      const popupRect = this.popup.getBoundingClientRect();
+      const popoverRect = this.popover.getBoundingClientRect();
       const isVertical = this.placement.includes('top') || this.placement.includes('bottom');
       let topLeftX = 0;
       let topLeftY = 0;
@@ -653,23 +684,23 @@ export default class RolePopover extends PopoverProperties(BaseElement) {
       let bottomRightY = 0;
 
       if (isVertical) {
-        if (anchorRect.top < popupRect.top) {
+        if (anchorRect.top < popoverRect.top) {
           // Anchor is above
           topLeftX = anchorRect.left;
           topLeftY = anchorRect.bottom;
           topRightX = anchorRect.right;
           topRightY = anchorRect.bottom;
 
-          bottomLeftX = popupRect.left;
-          bottomLeftY = popupRect.top;
-          bottomRightX = popupRect.right;
-          bottomRightY = popupRect.top;
+          bottomLeftX = popoverRect.left;
+          bottomLeftY = popoverRect.top;
+          bottomRightX = popoverRect.right;
+          bottomRightY = popoverRect.top;
         } else {
           // Anchor is below
-          topLeftX = popupRect.left;
-          topLeftY = popupRect.bottom;
-          topRightX = popupRect.right;
-          topRightY = popupRect.bottom;
+          topLeftX = popoverRect.left;
+          topLeftY = popoverRect.bottom;
+          topRightX = popoverRect.right;
+          topRightY = popoverRect.bottom;
 
           bottomLeftX = anchorRect.left;
           bottomLeftY = anchorRect.top;
@@ -677,26 +708,26 @@ export default class RolePopover extends PopoverProperties(BaseElement) {
           bottomRightY = anchorRect.top;
         }
       } else {
-        if (anchorRect.left < popupRect.left) {
+        if (anchorRect.left < popoverRect.left) {
           // Anchor is on the left
           topLeftX = anchorRect.right;
           topLeftY = anchorRect.top;
-          topRightX = popupRect.left;
-          topRightY = popupRect.top;
+          topRightX = popoverRect.left;
+          topRightY = popoverRect.top;
 
           bottomLeftX = anchorRect.right;
           bottomLeftY = anchorRect.bottom;
-          bottomRightX = popupRect.left;
-          bottomRightY = popupRect.bottom;
+          bottomRightX = popoverRect.left;
+          bottomRightY = popoverRect.bottom;
         } else {
           // Anchor is on the right
-          topLeftX = popupRect.right;
-          topLeftY = popupRect.top;
+          topLeftX = popoverRect.right;
+          topLeftY = popoverRect.top;
           topRightX = anchorRect.left;
           topRightY = anchorRect.top;
 
-          bottomLeftX = popupRect.right;
-          bottomLeftY = popupRect.bottom;
+          bottomLeftX = popoverRect.right;
+          bottomLeftY = popoverRect.bottom;
           bottomRightX = anchorRect.left;
           bottomRightY = anchorRect.bottom;
         }
@@ -720,22 +751,22 @@ export default class RolePopover extends PopoverProperties(BaseElement) {
       <span
         part="hover-bridge"
         class=${classMap({
-          'popup-hover-bridge': true,
-          'popup-hover-bridge--visible': this.hoverBridge && this.active
+          'popover-hover-bridge': true,
+          'popover-hover-bridge--visible': this.hoverBridge && this.active
         })}
       ></span>
 
       <div
-        part="popup"
+        part="popover"
         class=${classMap({
-          popup: true,
-          'popup--active': this.active,
-          'popup--fixed': this.strategy === 'fixed',
-          'popup--has-arrow': this.arrow
+          popover: true,
+          'popover--active': this.active,
+          'popover--fixed': this.strategy === 'fixed',
+          'popover--has-arrow': this.arrow
         })}
       >
         <slot></slot>
-        ${this.arrow ? html`<div part="arrow" class="popup__arrow" role="presentation"></div>` : ''}
+        ${this.arrow ? html`<div part="arrow" class="popover__arrow" role="presentation"></div>` : ''}
       </div>
     `;
   }

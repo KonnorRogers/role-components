@@ -4,16 +4,11 @@ import { hostStyles } from "../styles/host-styles.js";
 
 import { css, html } from "lit";
 
-import { offsetParent } from 'composed-offset-position';
-import {
-  arrow,
-  computePosition,
-  flip,
-  shift,
-  offset,
-  autoUpdate,
-  platform,
-} from "@floating-ui/dom";
+
+import RolePopover, {
+  PopoverProperties,
+  PopoverMixin,
+} from "../popover/popover.js"
 
 /**
  * Due to accessibility reasons with aria-describedby, the tooltip must be the same
@@ -30,9 +25,14 @@ import {
  * @cssprop [--background-color=#222]
  * @cssprop [--arrow-size=8px]
  */
-export default class RoleTooltip extends BaseElement {
+export default class RoleTooltip extends PopoverMixin(BaseElement) {
+  static dependencies = {
+    'role-popover': RolePopover
+  }
+
   static get properties() {
     return {
+      ...(PopoverProperties()),
       id: { reflect: true },
       tooltipAnchors: { state: true },
       rootElement: { state: true },
@@ -40,6 +40,7 @@ export default class RoleTooltip extends BaseElement {
       placement: { reflect: true },
       currentPlacement: { attribute: "current-placement", reflect: true },
       active: { reflect: true, type: Boolean },
+      __anchor: { attribute: false, state: true },
       __triggerSource: { attribute: false, state: true },
     };
   }
@@ -62,50 +63,8 @@ export default class RoleTooltip extends BaseElement {
           pointer-events: none;
         }
 
-        .base {
-          position: absolute;
-          left: 0px;
-          top: 0px;
-          max-width: calc(100vw - 10px);
+        [part~="base"]::part(popover) {
           padding: 0.4em 0.6em;
-          border: 1px solid var(--border-color);
-          background: var(--background-color);
-          border-radius: 4px;
-          font-size: 0.9em;
-          z-index: 1;
-        }
-
-        :host([hoist]) .base {
-          position: fixed;
-        }
-
-        .arrow {
-          position: absolute;
-          background: var(--background-color);
-          width: var(--arrow-size);
-          height: var(--arrow-size);
-          transform: rotate(45deg);
-          border: var(--border-width) solid var(--border-color);
-        }
-
-        :host([current-placement="top"]) .arrow {
-          border-top: 0px;
-          border-left: 0px;
-        }
-
-        :host([current-placement="bottom"]) .arrow {
-          border-bottom: 0px;
-          border-right: 0px;
-        }
-
-        :host([current-placement="left"]) .arrow {
-          border-bottom: 0px;
-          border-left: 0px;
-        }
-
-        :host([current-placement="right"]) .arrow {
-          border-top: 0px;
-          border-right: 0px;
         }
       `,
     ];
@@ -113,12 +72,6 @@ export default class RoleTooltip extends BaseElement {
 
   constructor() {
     super();
-
-    // Needed by floating-ui
-    // @ts-expect-error
-    if (window.process == null) window.process = {};
-    // @ts-expect-error
-    if (window.process.env == null) window.process.env = "development";
 
     /**
      * @type {Element[]}
@@ -134,22 +87,19 @@ export default class RoleTooltip extends BaseElement {
     this.active = false
 
     /**
-     * @type {import("@floating-ui/dom").Placement}
-     */
-    this.placement = "top";
-
-
-    /**
-     * The current placement based on calculations by floating ui.
-     * @type {null | import("@floating-ui/dom").Placement}
-     */
-    this.currentPlacement = null
-
-    /**
+     * @private
      * If the tooltip was trigger by focus
      * @type {null | "focus" | "hover"}
      */
     this.__triggerSource = null
+
+    /**
+     * @private
+     * @type {null | Element}
+     */
+    this.__anchor = null
+
+    this.arrow = true
 
     const show = this.eventHandler.get(this.show)
     const hide = this.eventHandler.get(this.hide)
@@ -223,10 +173,38 @@ export default class RoleTooltip extends BaseElement {
 
   render() {
     return html`
-      <div part="base" class="base ${this.active ? '' : 'visually-hidden'}">
+      <role-popover
+        part="${`base ${this.active ? "popover--active" : ""}`}"
+        exportparts="
+          popover,
+          arrow
+        "
+        .anchor=${this.anchor}
+        .active=${this.active}
+        .placement=${this.placement}
+        .strategy=${this.strategy}
+        .distance=${this.distance}
+        .skidding=${this.skidding}
+        .arrow=${this.arrow}
+        .arrowPlacement=${this.arrowPlacement}
+        .arrowPadding=${this.arrowPadding}
+        .flip=${this.flip}
+        .flipFallbackPlacements=${this.flipFallbackPlacements}
+        .flipFallbackStrategy=${this.flipFallbackStrategy}
+        .flipBoundary=${this.flipBoundary}
+        .flipPadding=${this.flipPadding}
+        .shift=${this.shift}
+        .shiftBoundary=${this.shiftBoundary}
+        .shiftPadding=${this.shiftPadding}
+        .autoSize=${this.autoSize}
+        .sync=${this.sync}
+        .autoSizeBoundary=${this.autoSizeBoundary}
+        .autoSizePadding=${this.autoSizePadding}
+        .hoverBridge=${this.hoverBridge}
+        class="${this.active ? '' : 'visually-hidden'}"
+      >
         <slot></slot>
-        <div class="arrow" part="arrow"></div>
-      </div>
+      </role-popover>
     `;
   }
 
@@ -280,11 +258,6 @@ export default class RoleTooltip extends BaseElement {
     });
   }
 
-  /** @returns {HTMLElement | undefined | null} */
-  get arrow() {
-    return this.shadowRoot?.querySelector(".arrow");
-  }
-
   /**
    * @param {Event|Element} eventOrElement
    * @returns {void}
@@ -325,7 +298,8 @@ export default class RoleTooltip extends BaseElement {
     }
 
     this.willShow = true;
-    this.computeTooltipPosition(element);
+    this.__anchor = element
+    this.active = true
   };
 
   /**
@@ -353,12 +327,12 @@ export default class RoleTooltip extends BaseElement {
     this.__triggerSource = null
 
     this.willShow = false;
-    this.cleanup?.();
 
     window.requestAnimationFrame(() => {
       if (this.willShow === true) return;
 
       this.active = false
+      this.__anchor = null
     });
   };
 
@@ -375,84 +349,4 @@ export default class RoleTooltip extends BaseElement {
       this.hide();
     }
   };
-
-  /**
-   * @param {Element} target
-   * @returns {void}
-   */
-  computeTooltipPosition(target) {
-    const arrowEl = this.arrow;
-    const base = this.base;
-
-    if (base == null) return;
-    if (arrowEl == null) return;
-
-    const self = this
-    this.active = true
-
-    this.cleanup = autoUpdate(target, base, () => {
-      const strategy = this.hasAttribute("hoist") ? "fixed" : "absolute"
-      //
-      // Use custom positioning logic if the strategy is absolute. Otherwise, fall back to the default logic.
-      //
-      // More info: https://github.com/shoelace-style/shoelace/issues/1135
-      //
-      const getOffsetParent =
-        strategy === 'absolute'
-          ? (/** @type {Element} */ element) => platform.getOffsetParent(element, offsetParent)
-          : platform.getOffsetParent;
-
-      // const padding
-      // const offset
-      // const flip
-
-
-      computePosition(target, base, {
-        placement: self.placement || "top",
-        middleware: [
-          offset(6),
-          flip(),
-          shift({ padding: 5 }),
-          arrow({ element: arrowEl }),
-        ],
-        strategy,
-        platform: {
-          ...platform,
-          getOffsetParent
-        }
-      }).then(({ x, y, middlewareData, placement }) => {
-        self.currentPlacement = /** @type {"top" | "right" | "bottom" | "left"} */ (placement.split("-")[0])
-
-        Object.assign(base.style, {
-          left: `${x}px`,
-          top: `${y}px`,
-        });
-
-        const arrowX = middlewareData.arrow?.x;
-        const arrowY = middlewareData.arrow?.y;
-
-        // Always the opposite of the placement the user provides.
-        const staticSide =
-          {
-            top: "bottom",
-            right: "left",
-            bottom: "top",
-            left: "right",
-          }[placement.split("-")[0]] || "top";
-
-        Object.assign(arrowEl.style, {
-          left: arrowX != null ? `${arrowX}px` : "",
-          top: arrowY != null ? `${arrowY}px` : "",
-          [staticSide]: "-4px",
-        });
-      });
-    });
-  }
-
-  /**
-   * @return {HTMLElement | null | undefined}
-   */
-  get base() {
-    return this.shadowRoot?.querySelector(".base");
-  }
 }

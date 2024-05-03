@@ -95,7 +95,7 @@ export function PopoverMixin (superclass) {
       * When set, placement of the popover will flip to the opposite site to keep it in view. You can use
       * `flipFallbackPlacements` to further configure how the fallback placement is determined.
       */
-      this.flip = false;
+      this.flip = true;
 
       /**
       * If the preferred placement doesn't fit, popover will be tested in these fallback placements until one fits. Must be a
@@ -124,7 +124,7 @@ export function PopoverMixin (superclass) {
       this.flipPadding = 0;
 
       /** Moves the popover along the axis to keep it in view when clipped. */
-      this.shift = false;
+      this.shift = true;
 
 
       /**
@@ -168,7 +168,7 @@ export function PopoverMixin (superclass) {
        * because the pointer never technically leaves the element. The hover bridge will only be drawn when the popover is
        * active.
        */
-      this.hoverBridge = false
+      this.hoverBridge = true
     }
   }
 }
@@ -250,7 +250,7 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
     css`
       :host {
         --__background: var(--background, #222);
-        --__border-color: var(--border-color, transparent);
+        --__border-color: var(--border-color, #222);
         --__border-width: var(--border-width, 1px);
         --__arrow-size: var(--arrow-size, 8px);
 
@@ -294,6 +294,7 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
       }
 
       .popover-hover-bridge {
+        background: tomato;
         position: fixed;
         z-index: calc(var(--z-index-dropdown, 900) - 1);
         top: 0;
@@ -675,7 +676,7 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
   }
 
   updateHoverBridge = () => {
-    if (this.hoverBridge && this.__anchorEl) {
+    if (this.hoverBridge && this.__anchorEl && this.popoverElement) {
       const anchorRect = this.__anchorEl.getBoundingClientRect();
       const popoverRect = this.popoverElement.getBoundingClientRect();
       const isVertical = this.placement.includes('top') || this.placement.includes('bottom');

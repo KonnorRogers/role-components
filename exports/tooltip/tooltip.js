@@ -61,6 +61,7 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
           --arrow-size: 8px;
           color: white;
           pointer-events: none;
+          display: contents;
         }
 
         [part~="base"]::part(popover) {
@@ -113,9 +114,10 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
      */
     this.listeners = [
       ["pointerenter", show],
-      ["pointerleave", hide],
-      ["pointercancel", hide],
-      ["pointerup", hide],
+      // ["pointermove", hide],
+      // ["pointerleave", hide],
+      // ["pointercancel", hide],
+      // ["pointerup", hide],
       ["focusin", show],
       ["focusout", hide],
       ["keydown", keyboardHide],
@@ -127,6 +129,7 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
 
     this.updateAnchors();
 
+    document.addEventListener("pointermove", this.hide)
     this.attachListeners();
   }
 
@@ -141,6 +144,7 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
     super.disconnectedCallback();
 
     this.removeListeners();
+    document.removeEventListener("pointermove", this.hide)
   }
 
   /**
@@ -310,6 +314,13 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
    * @returns {void}
    */
   hide = (event) => {
+    if (event && event.type === "pointermove") {
+      const composedPath = event.composedPath()
+      if (composedPath.includes(this) || (this.__anchor && composedPath.includes(this.__anchor))) {
+        console.log("return")
+        return
+      }
+    }
     /**
      * @type {typeof this.__triggerSource}
      */

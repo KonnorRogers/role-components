@@ -60,7 +60,6 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
           --border-width: 1px;
           --arrow-size: 8px;
           color: white;
-          pointer-events: none;
           display: contents;
         }
 
@@ -114,22 +113,21 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
      */
     this.listeners = [
       ["pointerenter", show],
-      // ["pointermove", hide],
-      // ["pointerleave", hide],
-      // ["pointercancel", hide],
-      // ["pointerup", hide],
+      ["pointercancel", hide],
+      ["click", hide],
       ["focusin", show],
       ["focusout", hide],
       ["keydown", keyboardHide],
     ];
+
   }
 
   connectedCallback() {
     super.connectedCallback();
 
+    document.addEventListener("pointermove", this.eventHandler.get(this.hide))
     this.updateAnchors();
 
-    document.addEventListener("pointermove", this.hide)
     this.attachListeners();
   }
 
@@ -144,7 +142,7 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
     super.disconnectedCallback();
 
     this.removeListeners();
-    document.removeEventListener("pointermove", this.hide)
+    document.removeEventListener("pointermove", this.eventHandler.get(this.hide))
   }
 
   /**
@@ -317,7 +315,6 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
     if (event && event.type === "pointermove") {
       const composedPath = event.composedPath()
       if (composedPath.includes(this) || (this.__anchor && composedPath.includes(this.__anchor))) {
-        console.log("return")
         return
       }
     }
@@ -332,6 +329,7 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
 
     // We don't want to hide the tooltip if it was triggered by focus.
     if (this.__triggerSource === "focus" && eventTriggerSource === "hover") {
+      console.log(this.__triggerSource, eventTriggerSource)
       return
     }
 

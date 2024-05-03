@@ -141,7 +141,6 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
     super.disconnectedCallback();
 
     this.removeListeners();
-    document.removeEventListener("pointermove", this.eventHandler.get(this.hide))
   }
 
   /**
@@ -236,7 +235,7 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
    * @returns {void}
    */
   attachListeners() {
-    document.addEventListener("pointermove", this.eventHandler.get(this.hide))
+    document.addEventListener("pointermove", this.eventHandler.get(this.hide), {passive: true })
 
     this.listeners.forEach(([event, listener]) => {
       // Remove listeners. Do it in the same loop for perf stuff.
@@ -256,7 +255,8 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
    * @returns {void}
    */
   removeListeners() {
-    document.addEventListener("pointermove", this.eventHandler.get(this.hide))
+    // @ts-expect-error
+    document.removeEventListener("pointermove", this.eventHandler.get(this.hide), { passive: true })
 
     this.listeners.forEach(([event, listener]) => {
       // don't recompute anchors.
@@ -332,7 +332,6 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
 
     // We don't want to hide the tooltip if it was triggered by focus.
     if (this.__triggerSource === "focus" && eventTriggerSource === "hover") {
-      console.log(this.__triggerSource, eventTriggerSource)
       return
     }
 

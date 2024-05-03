@@ -125,7 +125,6 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
   connectedCallback() {
     super.connectedCallback();
 
-    document.addEventListener("pointermove", this.eventHandler.get(this.hide))
     this.updateAnchors();
 
     this.attachListeners();
@@ -237,6 +236,8 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
    * @returns {void}
    */
   attachListeners() {
+    document.addEventListener("pointermove", this.eventHandler.get(this.hide))
+
     this.listeners.forEach(([event, listener]) => {
       // Remove listeners. Do it in the same loop for perf stuff.
 
@@ -255,6 +256,8 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
    * @returns {void}
    */
   removeListeners() {
+    document.addEventListener("pointermove", this.eventHandler.get(this.hide))
+
     this.listeners.forEach(([event, listener]) => {
       // don't recompute anchors.
       this.tooltipAnchors.forEach((el) =>

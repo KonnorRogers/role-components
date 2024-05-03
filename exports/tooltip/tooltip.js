@@ -235,8 +235,6 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
    * @returns {void}
    */
   attachListeners() {
-    document.addEventListener("pointermove", this.eventHandler.get(this.hide), {passive: true })
-
     this.listeners.forEach(([event, listener]) => {
       // Remove listeners. Do it in the same loop for perf stuff.
 
@@ -309,6 +307,20 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
     this.__anchor = element
     this.active = true
   };
+
+  /**
+   * @param {import("lit").PropertyValues<this>} changedProperties
+   */
+  willUpdate (changedProperties) {
+    if (changedProperties.has("active")) {
+      if (this.active) {
+        document.addEventListener("pointermove", this.eventHandler.get(this.hide), {passive: true })
+      } else {
+        // @ts-expect-error
+        document.removeEventListener("pointermove", this.eventHandler.get(this.hide), {passive: true })
+      }
+    }
+  }
 
   /**
    * @param {Event} [event]

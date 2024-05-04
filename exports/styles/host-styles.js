@@ -5,6 +5,7 @@ export const hostStyles = css`
     --role-background-hover-color: #005a9c;
     --role-border-focus-color: #005a9c;
     display: block;
+    box-sizing: border-box;
   }
 
   *,

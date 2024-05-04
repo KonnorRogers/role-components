@@ -4,6 +4,7 @@ import { html, css } from 'lit';
 import { offsetParent } from 'composed-offset-position';
 import { BaseElement } from "../base-element.js";
 import { hostStyles } from "../styles/host-styles.js";
+import { stringMap } from '../../internal/string-map.js';
 
 /**
  * @typedef {object} VirtualElement
@@ -29,7 +30,7 @@ function isVirtualElement(e) {
  * @template {Omit<typeof BaseElement, "new"> & {new (...args: any[]): any }} T
  * @param {T} superclass
  */
-export function PopoverMixin (superclass) {
+export function AnchoredRegionMixin (superclass) {
   return class extends superclass {
     /**
      * @param {any[]} args
@@ -62,7 +63,7 @@ export function PopoverMixin (superclass) {
        * clipped, using a `fixed` position strategy can often workaround it.
        * @type {import("@floating-ui/dom").Strategy}
        */
-      this.strategy = "absolute"
+      this.strategy = "fixed"
 
       /** The distance in pixels from which to offset the panel away from its anchor. */
       this.distance = 0;
@@ -173,7 +174,7 @@ export function PopoverMixin (superclass) {
   }
 }
 
-export const PopoverProperties = () => ({
+export const AnchoredRegionProperties = () => ({
   placement: { reflect: true },
   strategy: { reflect: true },
   distance: { type: Number },
@@ -244,7 +245,7 @@ export const PopoverProperties = () => ({
  *  popover can be before overflowing. Useful for positioning child elements that need to overflow. This property is only
  *  available when using `auto-size`.
  */
-export default class RolePopover extends PopoverMixin(BaseElement) {
+export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement) {
   static styles =  [
     hostStyles,
     css`
@@ -264,7 +265,7 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
         display: contents;
       }
 
-      .popover {
+      [part~="popover"] {
         position: absolute;
         isolation: isolate;
         max-width: var(--auto-size-available-width, none);
@@ -273,11 +274,11 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
         background: var(--__background);
       }
 
-      .popover--fixed {
+      [part~="popover--fixed"] {
         position: fixed;
       }
 
-      .popover__arrow {
+      [part~="arrow"] {
         position: absolute;
         width: calc(var(--arrow-size-diagonal) * 2);
         height: calc(var(--arrow-size-diagonal) * 2);
@@ -289,11 +290,11 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
       }
 
       /* Hover bridge */
-      .popover-hover-bridge:not(.popover-hover-bridge--visible) {
+      [part~="hover-bridge"]:not([part~="hover-bridge--visible"]) {
         display: none;
       }
 
-      .popover-hover-bridge {
+      [part~="hover-bridge"] {
         background: tomato;
         position: fixed;
         z-index: calc(var(--z-index-dropdown, 900) - 1);
@@ -309,25 +310,25 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
         );
       }
 
-      :host([data-current-placement="top"]) .popover__arrow {
+      :host([data-current-placement="top"]) [part~="arrow"] {
         border-top: 0px;
         border-left: 0px;
         margin-bottom: calc(var(--border-width) * -1);
       }
 
-      :host([data-current-placement="bottom"]) .popover__arrow {
+      :host([data-current-placement="bottom"]) [part~="arrow"] {
         border-bottom: 0px;
         border-right: 0px;
         margin-top: calc(var(--__border-width) * -1);
       }
 
-      :host([data-current-placement="left"]) .popover__arrow {
+      :host([data-current-placement="left"]) [part~="arrow"] {
         border-bottom: 0px;
         border-left: 0px;
         margin-right: calc(var(--__border-width) * -1);
       }
 
-      :host([data-current-placement="right"]) .popover__arrow {
+      :host([data-current-placement="right"]) [part~="arrow"] {
         border-top: 0px;
         border-right: 0px;
         margin-left: calc(var(--__border-width) * -1);
@@ -336,7 +337,7 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
   ];
 
   static properties = {
-    ...(PopoverProperties()),
+    ...(AnchoredRegionProperties()),
     anchor: { attribute: false, state: true },
     active: { type: Boolean, reflect: true }
   }
@@ -425,11 +426,11 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
    *
    */
   get popoverElement () {
-    return this.shadowRoot?.querySelector(".popover") || null
+    return /** @type {null | HTMLElement} */ (this.shadowRoot?.querySelector('[part~="popover"]') || null)
   }
 
   get arrowElement () {
-    return this.shadowRoot?.querySelector('.popover__arrow') || null
+    return /** @type {null | HTMLElement} */ (this.shadowRoot?.querySelector('[part~="arrow"]') || null)
   }
 
   /**
@@ -444,7 +445,7 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
       this.__anchorEl = root.getElementById(this.anchor);
     } else if (this.anchor instanceof Element || isVirtualElement(this.anchor)) {
       // Use the anchor's reference
-      this.__anchorEl = this.anchor;
+      this.__anchorEl = /** @type {Element | VirtualElement} */ (this.anchor);
     } else {
       // Look for a slotted anchor
       this.__anchorEl = /** @type {HTMLElement} */ (this.querySelector('[slot="anchor"]'));
@@ -501,8 +502,9 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
 
   /** Forces the popover to recalculate and reposition itself. */
   reposition() {
+    const popoverElement = this.popoverElement
     // Nothing to do if the popover is inactive or the anchor doesn't exist
-    if (!this.active || !this.__anchorEl || !this.popoverElement) {
+    if (!this.active || !this.__anchorEl || !popoverElement) {
       return;
     }
 
@@ -521,15 +523,15 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
           apply: ({ rects }) => {
             const syncWidth = this.sync === 'width' || this.sync === 'both';
             const syncHeight = this.sync === 'height' || this.sync === 'both';
-            this.popoverElement.style.width = syncWidth ? `${rects.reference.width}px` : '';
-            this.popoverElement.style.height = syncHeight ? `${rects.reference.height}px` : '';
+            popoverElement.style.width = syncWidth ? `${rects.reference.width}px` : '';
+            popoverElement.style.height = syncHeight ? `${rects.reference.height}px` : '';
           }
         })
       );
     } else {
       // Cleanup styles if we're not matching width/height
-      this.popoverElement.style.width = '';
-      this.popoverElement.style.height = '';
+      popoverElement.style.width = '';
+      popoverElement.style.height = '';
     }
 
     // Then we flip
@@ -603,7 +605,7 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
         ? (/** @type {Element} */ element) => platform.getOffsetParent(element, offsetParent)
         : platform.getOffsetParent;
 
-    computePosition(this.__anchorEl, this.popoverElement, {
+    computePosition(this.__anchorEl, popoverElement, {
       placement: this.placement,
       middleware,
       strategy: this.strategy,
@@ -624,7 +626,7 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
 
       this.setAttribute('data-current-placement', placement);
 
-      Object.assign(this.popoverElement.style, {
+      Object.assign(popoverElement.style, {
         left: `${x}px`,
         top: `${y}px`
       });
@@ -659,20 +661,22 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
           top = typeof arrowY === 'number' ? `${arrowY}px` : '';
         }
 
-        Object.assign(this.arrowElement.style, {
-          top,
-          right,
-          bottom,
-          left,
-          [staticSide]: 'calc(var(--arrow-size-diagonal) * -1)'
-        });
+        if (this.arrowElement) {
+          Object.assign(this.arrowElement.style, {
+            top,
+            right,
+            bottom,
+            left,
+            [staticSide]: 'calc(var(--arrow-size-diagonal) * -1)'
+          });
+        }
       }
     });
 
     // Wait until the new position is drawn before updating the hover bridge, otherwise it can get out of sync
     requestAnimationFrame(() => this.updateHoverBridge());
 
-    // this.emit('sl-reposition');
+    this.dispatchEvent(new Event('role-reposition', { bubbles: true, composed: true, cancelable: false }));
   }
 
   updateHoverBridge = () => {
@@ -755,25 +759,25 @@ export default class RolePopover extends PopoverMixin(BaseElement) {
       <slot name="anchor" @slotchange=${this.__handleAnchorChange}></slot>
 
       <span
-        part="hover-bridge"
-        class=${classMap({
-          'popover-hover-bridge': true,
-          'popover-hover-bridge--visible': this.hoverBridge && this.active
+        part=${stringMap({
+          'hover-bridge': true,
+          'hover-bridge--visible': this.hoverBridge && this.active
         })}
       ></span>
 
       <div
-        part="popover"
-        class=${classMap({
+        part=${stringMap({
           popover: true,
           'popover--active': this.active,
           'popover--fixed': this.strategy === 'fixed',
           'popover--has-arrow': this.arrow,
+        })}
+        class=${classMap({
           'visually-hidden': !this.active
         })}
       >
         <slot></slot>
-        ${this.arrow ? html`<div part="arrow" class="popover__arrow" role="presentation"></div>` : ''}
+        ${this.arrow ? html`<div part="arrow" role="presentation"></div>` : ''}
       </div>
     `;
   }

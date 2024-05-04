@@ -5,10 +5,56 @@ import { hostStyles } from "../styles/host-styles.js";
 import { css, html } from "lit";
 
 
-import RolePopover, {
-  PopoverProperties,
-  PopoverMixin,
-} from "../popover/popover.js"
+import RoleAnchoredRegion, {
+  AnchoredRegionProperties,
+  AnchoredRegionMixin,
+} from "../anchored-region/anchored-region.js"
+
+
+/**
+ * This is a polyfill until popovers support "triggerElements"
+ * @param {Event} e
+ */
+function handlePopoverTriggerClick (e) {
+  const triggerElement = /** @type {HTMLElement} */ (e.target).closest("[popovertarget]")
+
+  if (!triggerElement) { return }
+
+  const rootNode = /** @type {Element} */ (triggerElement.getRootNode())
+
+  const popoverTarget = triggerElement.getAttribute("popovertarget")
+
+  if (!popoverTarget) { return }
+
+  const popover = rootNode.querySelector(`#${popoverTarget}`)
+
+  if (!popover) { return }
+
+  const roleToggleEvent = new Event("role-popover-trigger", {
+    bubbles: true,
+    composed: true,
+    cancelable: false,
+  })
+
+  roleToggleEvent.triggerElement = triggerElement
+  popover.dispatchEvent(roleToggleEvent)
+}
+
+/**
+ * @param {Document | ShadowRoot} rootNode
+ */
+function patchRootNode (rootNode) {
+  // @ts-expect-error
+  if (rootNode.__POPOVER_PATCHED_BY_ROLE_COMPONENTS__) {
+    return
+  }
+
+  // @ts-expect-error
+  rootNode.__POPOVER_PATCHED_BY_ROLE_COMPONENTS__ = true
+  rootNode.addEventListener("click", handlePopoverTriggerClick)
+}
+
+
 
 /**
  * Due to accessibility reasons with aria-describedby, the tooltip must be the same
@@ -25,21 +71,21 @@ import RolePopover, {
  * @cssprop [--background-color=#222]
  * @cssprop [--arrow-size=8px]
  */
-export default class RoleTooltip extends PopoverMixin(BaseElement) {
+export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
   static dependencies = {
-    'role-popover': RolePopover
+    'role-anchored-region': RoleAnchoredRegion
   }
 
   static get properties() {
     return {
-      ...(PopoverProperties()),
+      ...(AnchoredRegionProperties()),
       id: { reflect: true },
       tooltipAnchors: { state: true },
-      rootElement: { state: true },
       role: { reflect: true },
       placement: { reflect: true },
       currentPlacement: { attribute: "current-placement", reflect: true },
       active: { reflect: true, type: Boolean },
+      popover: { reflect: true },
       __anchor: { attribute: false, state: true },
       __triggerSource: { attribute: false, state: true },
     };
@@ -60,8 +106,11 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
           --border-width: 1px;
           --arrow-size: 8px;
           color: white;
-          pointer-events: none;
-          display: contents;
+          margin: 0;
+        }
+
+        :host(:not([active])) {
+          display: none;
         }
 
         [part~="base"]::part(popover) {
@@ -75,15 +124,12 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
   constructor() {
     super();
 
+    this.popover = "auto"
+
     /**
      * @type {Element[]}
      */
     this.tooltipAnchors = [];
-
-    /**
-     * @type {ShadowRoot | Document | undefined}
-     */
-    this._rootElement = undefined;
 
     this.role = "tooltip";
     this.active = false
@@ -105,85 +151,103 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
 
     this.distance = 10
 
-    const show = this.eventHandler.get(this.show)
-    const hide = this.eventHandler.get(this.hide)
-    const keyboardHide = this.eventHandler.get(this.keyboardHide)
+    // const show = this.eventHandler.get(this.show)
+    // const hide = this.eventHandler.get(this.hide)
 
-    /**
-     * @type {Array<[keyof GlobalEventHandlersEventMap, (evt: Event | KeyboardEvent) => void]>}
-     */
-    this.listeners = [
-      ["pointerenter", show],
-      // ["pointermove", hide],
-      // ["pointerleave", hide],
-      // ["pointercancel", hide],
-      // ["pointerup", hide],
-      ["focusin", show],
-      ["focusout", hide],
-      ["keydown", keyboardHide],
-    ];
+    // this.listeners = [
+    //   ["pointerenter", show],
+    //   ["pointermove", hide],
+    //   // ["pointerleave", hide],
+    //   // ["pointercancel", hide],
+    //   // ["pointerup", hide],
+    //   ["focusin", show],
+    //   ["focusout", hide],
+    // ];
+
+    this.__anchor = null
+
+    this.addEventListener("role-popover-trigger", (e) => {
+      this.__anchor = e.triggerElement
+      this.__triggerSource = "focus"
+    })
+
+    this.addEventListener("beforetoggle", (e) => {
+      this.active = !(this.matches(":popover-open"))
+    })
+
+    this.addEventListener("role-reposition", () => {
+      const anchoredRegion = this.anchoredRegion
+
+      if (!anchoredRegion) { return }
+
+      const popoverElement = anchoredRegion.popoverElement
+
+      if (!popoverElement) { return }
+
+      window.requestAnimationFrame(() => {
+        const { height, width, left, top } = popoverElement.getBoundingClientRect()
+
+        this.style.minHeight = `${height}px`
+        this.style.minWidth = `${width}px`
+        this.style.left = `${left}px`
+        this.style.top = `${top}px`
+      })
+    })
+
+  }
+
+  get anchoredRegion () {
+    return /** @type {RoleAnchoredRegion | null} */ (this.shadowRoot?.querySelector("[part~='base']") || null)
   }
 
   connectedCallback() {
     super.connectedCallback();
 
-    this.updateAnchors();
+    const rootNode = /** @type {Document | ShadowRoot} */ (this.getRootNode())
+    patchRootNode(rootNode)
 
-    document.addEventListener("pointermove", this.hide)
-    this.attachListeners();
-  }
-
-  updateAnchors() {
-    if (this.rootElement) {
-      this.tooltipAnchors =
-        Array.from(this.rootElement.querySelectorAll(this.query)) || [];
+    if (this.__eventAbortController == null) {
+      this.__eventAbortController = new AbortController()
     }
-  }
 
-  disconnectedCallback() {
-    super.disconnectedCallback();
+    const { signal } = this.__eventAbortController
 
-    this.removeListeners();
-    document.removeEventListener("pointermove", this.hide)
+    rootNode.addEventListener("focusin", this.eventHandler.get(this.show), { signal })
+    rootNode.addEventListener("focusout", this.eventHandler.get(this.hide), { signal })
+
+    rootNode.addEventListener("pointerover", this.eventHandler.get(this.show), { passive: true, signal })
+
+    rootNode.addEventListener("pointermove", this.eventHandler.get(this.hide), { passive: true, signal })
+    document.addEventListener("pointermove", this.eventHandler.get(this.hide), { passive: true, signal })
   }
 
   /**
-   * @type {string}
+   * @param {Event} e
    */
-  get query() {
-    return `[aria-describedby~='${this.id}']`;
+  findPopoverTriggerFromEvent (e) {
+    const composedPath = e.composedPath()
+
+    const popoverTrigger = /** @type {Element} */ (composedPath.find((el) => "getAttribute" in el && /** @type {Element} */ (el).getAttribute("popovertarget") === this.id))
+
+    return (popoverTrigger || null)
   }
 
-  /** @returns {ShadowRoot | Document | undefined} */
-  get rootElement() {
-    if (this._rootElement == null) {
-      const oldVal = this._rootElement;
-
-      /**
-       * @type {ShadowRoot | Document | undefined}
-       */
-      // @ts-expect-error
-      this._rootElement = this.getRootNode() || document;
-      this.requestUpdate("rootElement", oldVal);
-    }
-
-    return this._rootElement;
-  }
-
-  /** @returns {void} */
-  set rootElement(newVal) {
-    const oldVal = this._rootElement;
-
-    this._rootElement = newVal;
-    this.requestUpdate("rootElement", oldVal);
+  disconnectedCallback () {
+    super.disconnectedCallback()
+    this.__eventAbortController?.abort()
   }
 
   render() {
     return html`
-      <role-popover
+      <role-anchored-region
         part="${`base ${this.active ? "popover--active" : ""}`}"
         exportparts="
           popover,
+          hover-bridge,
+          hover-bridge--visible,
+          popover--active,
+          popover--fixed,
+          popover--has-arrow,
           arrow
         "
         .anchor=${this.__anchor}
@@ -211,58 +275,8 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
         class="${this.active ? '' : 'visually-hidden'}"
       >
         <slot></slot>
-      </role-popover>
+      </role-anchored-region>
     `;
-  }
-
-  /**
-   * @param {Parameters<import("lit").LitElement["update"]>} args
-   * @return {ReturnType<import("lit").LitElement["update"]>}
-   */
-  update(...args) {
-    const [changedProperties] = args;
-
-    const shouldUpdateProperties = ["id", "tooltipAnchors", "rootElement"];
-    const shouldReattachListeners = shouldUpdateProperties.some((str) =>
-      changedProperties.has(str),
-    );
-
-    if (shouldReattachListeners) {
-      this.attachListeners();
-    }
-
-    super.update(...args);
-  }
-
-  /**
-   * Used for re-initialized event listeners
-   * @returns {void}
-   */
-  attachListeners() {
-    this.listeners.forEach(([event, listener]) => {
-      // Remove listeners. Do it in the same loop for perf stuff.
-
-      // In case there's old anchors
-      this.tooltipAnchors.forEach((el) =>
-        el.removeEventListener(event, listener),
-      );
-
-      // Attach to new anchors
-      this.tooltipAnchors.forEach((el) => el.addEventListener(event, listener));
-    });
-  }
-
-  /**
-   * Used for cleaning up
-   * @returns {void}
-   */
-  removeListeners() {
-    this.listeners.forEach(([event, listener]) => {
-      // don't recompute anchors.
-      this.tooltipAnchors.forEach((el) =>
-        el.removeEventListener(event, listener),
-      );
-    });
   }
 
   /**
@@ -284,15 +298,12 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
     if (
       eventOrElement instanceof Event
     ) {
-
-      if (eventOrElement.currentTarget instanceof Element) {
-        /**
-        * pointer* -> hover
-        * focus* -> focus
-        */
-        triggerSource = eventOrElement.type.startsWith("pointer") ? "hover" : "focus"
-        element = eventOrElement.currentTarget;
-      }
+      /**
+      * pointer* -> hover
+      * focus* -> focus
+      */
+      triggerSource = eventOrElement.type.startsWith("pointer") ? "hover" : "focus"
+      element = this.findPopoverTriggerFromEvent(eventOrElement)
     } else {
       element = eventOrElement
     }
@@ -304,8 +315,12 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
       this.__triggerSource = triggerSource
     }
 
-    this.willShow = true;
+    // if (this.__triggerSource === "focus") {
+    //   this.addEventListener()
+    // }
+
     this.__anchor = element
+    this.showPopover()
     this.active = true
   };
 
@@ -314,10 +329,12 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
    * @returns {void}
    */
   hide = (event) => {
-    if (event && event.type === "pointermove") {
+    if (event && event.type.startsWith("pointer")) {
       const composedPath = event.composedPath()
-      if (composedPath.includes(this) || (this.__anchor && composedPath.includes(this.__anchor))) {
-        console.log("return")
+      if (
+        composedPath.includes(this) ||
+        (this.__anchor && composedPath.includes(this.__anchor))
+      ) {
         return
       }
     }
@@ -331,7 +348,7 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
     }
 
     // We don't want to hide the tooltip if it was triggered by focus.
-    if (this.__triggerSource === "focus" && eventTriggerSource === "hover") {
+    if (this.active && this.__triggerSource === "focus" && eventTriggerSource === "hover") {
       return
     }
 
@@ -340,27 +357,7 @@ export default class RoleTooltip extends PopoverMixin(BaseElement) {
      */
     this.__triggerSource = null
 
-    this.willShow = false;
-
-    window.requestAnimationFrame(() => {
-      if (this.willShow === true) return;
-
-      this.active = false
-      this.__anchor = null
-    });
-  };
-
-  /**
-   * @param {Event | KeyboardEvent} event
-   */
-  keyboardHide = (event) => {
-    if (!("key" in event)) {
-      return;
-    }
-
-    if (event.key != null && event.key === "Escape") {
-      event.preventDefault();
-      this.hide();
-    }
+    this.hidePopover()
+    this.active = false
   };
 }

@@ -7,9 +7,9 @@ Tooltips are intended for re-use and are close to how you would make a native to
 
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
-    <button aria-describedby="tooltip">I'm a button.</button>
-    <button aria-describedby="tooltip">I'm also a button.</button>
-    <role-tooltip id="tooltip" strategy="fixed"> My tooltip </role-tooltip>
+    <button id="btn-1" popovertarget="tooltip">I'm a button.</button>
+    <button id="btn-2" popovertarget="tooltip">I'm also a button.</button>
+    <role-tooltip id="tooltip"> My tooltip </role-tooltip>
   </template>
 </light-preview>
 
@@ -22,21 +22,18 @@ Let's see what that looks like in action:
   <template slot="code">
     <style>
       role-tooltip {
-        --background: white;
-        --border-color: gray;
-        color: CanvasText;
       }
     </style>
-    <button aria-describedby="tooltip-left">Tooltip Left</button>
+    <button popovertarget="tooltip-left">Tooltip Left</button>
     <role-tooltip id="tooltip-left" placement="left">Tooltip Left</role-tooltip>
     <br><br>
-    <button aria-describedby="tooltip-right">Tooltip Right</button>
+    <button popovertarget="tooltip-right">Tooltip Right</button>
     <role-tooltip id="tooltip-right" placement="right">Tooltip Right</role-tooltip>
     <br><br>
-    <button aria-describedby="tooltip-top">Tooltip Top</button>
+    <button popovertarget="tooltip-top">Tooltip Top</button>
     <role-tooltip id="tooltip-top" placement="top">Tooltip Top</role-tooltip>
     <br><br>
-    <button aria-describedby="tooltip-bottom">Tooltip Bottom</button>
+    <button popovertarget="tooltip-bottom">Tooltip Bottom</button>
     <role-tooltip id="tooltip-bottom" placement="bottom">Tooltip Bottom</role-tooltip>
   </template>
 </light-preview>

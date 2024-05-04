@@ -80,7 +80,6 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     return {
       ...(AnchoredRegionProperties()),
       id: { reflect: true },
-      tooltipAnchors: { state: true },
       role: { reflect: true },
       placement: { reflect: true },
       currentPlacement: { attribute: "current-placement", reflect: true },
@@ -107,10 +106,18 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
           --arrow-size: 8px;
           color: white;
           margin: 0;
+          border: none;
+          background: transparent;
+          display: contents;
         }
 
-        :host(:not([active])) {
-          display: none;
+        :host {
+          opacity: 0;
+          transition: opacity var(--transition-speed, 200ms) var(--transition-timing, ease-in-out) var(--transition-delay, 300ms);
+        }
+
+        :host([active]) {
+          opacity: 1;
         }
 
         [part~="base"]::part(popover) {
@@ -121,15 +128,14 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     ];
   }
 
+  get popoverIsOpen () {
+    return this.matches(":popover-open")
+  }
+
   constructor() {
     super();
 
     this.popover = "auto"
-
-    /**
-     * @type {Element[]}
-     */
-    this.tooltipAnchors = [];
 
     this.role = "tooltip";
     this.active = false
@@ -159,7 +165,7 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     })
 
     this.addEventListener("beforetoggle", (e) => {
-      this.active = !(this.matches(":popover-open"))
+      this.active = !(this.popoverIsOpen)
     })
 
     this.addEventListener("role-reposition", () => {
@@ -302,13 +308,11 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
       this.__triggerSource = triggerSource
     }
 
-    // if (this.__triggerSource === "focus") {
-    //   this.addEventListener()
-    // }
-
     this.__anchor = element
     this.showPopover()
-    this.active = true
+    // setTimeout(() => {
+      this.active = true
+    // })
   };
 
   /**
@@ -317,10 +321,22 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
   willUpdate (changedProperties) {
     if (changedProperties.has("active")) {
       if (this.active) {
-        document.addEventListener("pointermove", this.eventHandler.get(this.hide), {passive: true })
+        // TLDR: we set aria-expanded in case the trigger isn't a button.
+        // We use aria-describedby because aria-details isn't well supported.
+        // https://hidde.blog/popover-accessibility/
+        if (!this.popoverIsOpen) {
+          this.showPopover()
+        }
+        this.__anchor?.setAttribute("aria-expanded", "true")
+        const ids = this.__anchor?.getAttribute("aria-describedby") || ""
+        if (!ids.split(/\s+/).includes(this.id)) {
+          this.__anchor?.setAttribute("aria-describedby", ids + " " + this.id)
+        }
       } else {
-        // @ts-expect-error
-        document.removeEventListener("pointermove", this.eventHandler.get(this.hide), {passive: true })
+        if (this.popoverIsOpen) {
+          this.hidePopover()
+        }
+        this.__anchor?.setAttribute("aria-expanded", "false")
       }
     }
   }
@@ -358,7 +374,9 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
      */
     this.__triggerSource = null
 
+    // setTimeout(() => {
+      this.active = false
+    // })
     this.hidePopover()
-    this.active = false
   };
 }

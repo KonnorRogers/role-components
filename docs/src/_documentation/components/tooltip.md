@@ -7,8 +7,8 @@ Tooltips are intended for re-use and are close to how you would make a native to
 
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
-    <button id="btn-1" popovertarget="tooltip">I'm a button.</button>
-    <button id="btn-2" popovertarget="tooltip">I'm also a button.</button>
+    <button popovertarget="tooltip">I'm a button.</button>
+    <button popovertarget="tooltip">I'm also a button.</button>
     <role-tooltip id="tooltip"> My tooltip </role-tooltip>
   </template>
 </light-preview>
@@ -22,6 +22,9 @@ Let's see what that looks like in action:
   <template slot="code">
     <style>
       role-tooltip {
+        --background: Canvas;
+        --border-color: gray;
+        color: CanvasText;
       }
     </style>
     <button popovertarget="tooltip-left">Tooltip Left</button>

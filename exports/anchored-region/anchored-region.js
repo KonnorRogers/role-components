@@ -59,16 +59,15 @@ export function AnchoredRegionMixin (superclass) {
       this.placement = "top"
 
       /**
-       * Determines how the popover is positioned. The `absolute` strategy works well in most cases, but if overflow is
-       * clipped, using a `fixed` position strategy can often workaround it.
+       * Determines how the popover is positioned. Because you native "popover" API uses a fixed strategy, we use it as the default.
        * @type {import("@floating-ui/dom").Strategy}
        */
       this.strategy = "fixed"
 
-      /** The distance in pixels from which to offset the panel away from its anchor. */
+      /** The distance in pixels from which to offset along the "main axis". Usually its equivalent to offsetY */
       this.distance = 0;
 
-      /** The distance in pixels from which to offset the panel along its anchor. */
+      /** The distance in pixels from which to offset along the "cross axis". Usually its equivalent to offsetX. */
       this.skidding = 0;
 
       /**
@@ -295,7 +294,7 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
       }
 
       [part~="hover-bridge"] {
-        background: tomato;
+        /* background: tomato; */
         position: fixed;
         z-index: calc(var(--z-index-dropdown, 900) - 1);
         top: 0;

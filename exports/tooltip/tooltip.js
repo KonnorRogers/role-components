@@ -151,19 +151,6 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
 
     this.distance = 10
 
-    // const show = this.eventHandler.get(this.show)
-    // const hide = this.eventHandler.get(this.hide)
-
-    // this.listeners = [
-    //   ["pointerenter", show],
-    //   ["pointermove", hide],
-    //   // ["pointerleave", hide],
-    //   // ["pointercancel", hide],
-    //   // ["pointerup", hide],
-    //   ["focusin", show],
-    //   ["focusout", hide],
-    // ];
-
     this.__anchor = null
 
     this.addEventListener("role-popover-trigger", (e) => {
@@ -323,6 +310,20 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     this.showPopover()
     this.active = true
   };
+
+  /**
+   * @param {import("lit").PropertyValues<this>} changedProperties
+   */
+  willUpdate (changedProperties) {
+    if (changedProperties.has("active")) {
+      if (this.active) {
+        document.addEventListener("pointermove", this.eventHandler.get(this.hide), {passive: true })
+      } else {
+        // @ts-expect-error
+        document.removeEventListener("pointermove", this.eventHandler.get(this.hide), {passive: true })
+      }
+    }
+  }
 
   /**
    * @param {Event} [event]

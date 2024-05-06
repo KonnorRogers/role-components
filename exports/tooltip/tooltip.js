@@ -339,7 +339,7 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
       * focus* -> focus
       */
       triggerSource = eventOrElement.type.startsWith("pointer") ? "hover" : "focus"
-      element = this.findTriggerElementFromEvent(eventOrElement)
+      element = findTriggerElementFromEvent(eventOrElement)
     } else {
       element = eventOrElement
     }

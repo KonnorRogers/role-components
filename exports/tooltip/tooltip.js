@@ -112,7 +112,6 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     return {
       ...(AnchoredRegionProperties()),
       role: { reflect: true },
-      placement: { reflect: true },
       active: { reflect: true, type: Boolean },
       popover: { reflect: true },
       anchor: { attribute: false, state: true },
@@ -339,7 +338,7 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
       * focus* -> focus
       */
       triggerSource = eventOrElement.type.startsWith("pointer") ? "hover" : "focus"
-      element = findTriggerElementFromEvent(eventOrElement)
+      element = this.findTriggerForTooltip(eventOrElement)
     } else {
       element = eventOrElement
     }
@@ -355,6 +354,26 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     this.showPopover()
     this.active = true
   };
+
+  /**
+   * @param {Event} e
+   */
+  findTriggerForTooltip (e) {
+    const target = /** @type {Element | null} */ (e.target)
+
+    if (!target) { return null }
+
+    const popoverTriggerElement = target.closest("[popovertarget]")
+
+    if (!popoverTriggerElement) { return null }
+
+    const popoverTriggerAttribute = popoverTriggerElement.getAttribute("popovertarget")
+
+    if (!popoverTriggerAttribute) { return null }
+    if (popoverTriggerAttribute !== this.id) { return null}
+
+    return popoverTriggerElement
+  }
 
   /**
    * @param {import("lit").PropertyValues<this>} changedProperties

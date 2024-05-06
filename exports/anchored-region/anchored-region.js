@@ -61,7 +61,7 @@ export function AnchoredRegionMixin (superclass) {
       /**
       * @attr
       * @reflect
-      * @type {typeof this.placement | null}
+      * @type {__AnchoredRegionMixin__["placement"] | null}
       */
       this.currentPlacement = null
 

@@ -15,7 +15,7 @@ Tooltips are intended for re-use and are close to how you would make a native to
 
 ## Styling the tooltip
 
-Generally, the 2 things you want to pass to the tooltip are `var(--background-color)` and `var(--border-color)`.
+Generally, the 2 things you want to pass to the tooltip are `var(--background)` and `var(--border-color)`.
 Let's see what that looks like in action:
 
 <light-preview preview-mode="shadow-dom">

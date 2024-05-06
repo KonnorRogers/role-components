@@ -31,17 +31,17 @@ function isVirtualElement(e) {
  * @param {T} superclass
  */
 export function AnchoredRegionMixin (superclass) {
-  return class extends superclass {
+  return class __AnchoredRegionMixin__ extends superclass {
     /**
      * @param {any[]} args
      */
     constructor (...args) {
       super(...args)
-
       /**
-       * The preferred placement of the popover. Note that the actual placement will vary as configured to keep the
-       * panel inside of the viewport.
-       * @type {
+        * The preferred placement of the popover. Note that the actual placement will vary as configured to keep the
+        * panel inside of the viewport.
+        * @attr
+        * @type {
           'top'
           | 'top-start'
           | 'top-end'
@@ -54,26 +54,42 @@ export function AnchoredRegionMixin (superclass) {
           | 'left'
           | 'left-start'
           | 'left-end'
-       }
-       */
+        }
+        */
       this.placement = "top"
 
       /**
-       * Determines how the popover is positioned. Because you native "popover" API uses a fixed strategy, we use it as the default.
-       * @type {import("@floating-ui/dom").Strategy}
-       */
+      * @attr
+      * @reflect
+      * @type {typeof this.placement | null}
+      */
+      this.currentPlacement = null
+
+      /**
+        * Determines how the popover is positioned. Because you native "popover" API uses a fixed strategy, we use it as the default.
+        * @attr
+        * @type {import("@floating-ui/dom").Strategy}
+        */
       this.strategy = "fixed"
 
-      /** The distance in pixels from which to offset along the "main axis". Usually its equivalent to offsetY */
+      /**
+        * The distance in pixels from which to offset along the "main axis". Usually its equivalent to offsetY
+        * @attr
+        * @type {number}
+        */
       this.distance = 0;
 
-      /** The distance in pixels from which to offset along the "cross axis". Usually its equivalent to offsetX. */
+      /**
+      * The distance in pixels from which to offset along the "cross axis". Usually its equivalent to offsetX.
+      * @attr
+      */
       this.skidding = 0;
 
       /**
       * Attaches an arrow to the popover. The arrow's size and color can be customized using the `--arrow-size` and
       * `--background-color` custom properties. For additional customizations, you can also target the arrow using
       * `::part(arrow)` in your stylesheet.
+      * @attr
       */
       this.arrow = false;
 
@@ -81,19 +97,22 @@ export function AnchoredRegionMixin (superclass) {
       * The placement of the arrow. The default is `anchor`, which will align the arrow as close to the center of the
       * anchor as possible, considering available space and `arrow-padding`. A value of `start`, `end`, or `center` will
       * align the arrow to the start, end, or center of the popover instead.
+      * @attr arrow-placement
       * @type {'start' | 'end' | 'center' | 'anchor'}
       */
       this.arrowPlacement = 'anchor';
 
       /**
-       * The amount of padding between the arrow and the edges of the popover. If the popover has a border-radius, for example,
-       * this will prevent it from overflowing the corners.
-       */
+        * The amount of padding between the arrow and the edges of the popover. If the popover has a border-radius, for example,
+        * this will prevent it from overflowing the corners.
+        * @attr arrow-padding
+        */
       this.arrowPadding = 10
 
       /**
       * When set, placement of the popover will flip to the opposite site to keep it in view. You can use
       * `flipFallbackPlacements` to further configure how the fallback placement is determined.
+      * @attr
       */
       this.flip = true;
 
@@ -101,6 +120,7 @@ export function AnchoredRegionMixin (superclass) {
       * If the preferred placement doesn't fit, popover will be tested in these fallback placements until one fits. Must be a
       * string of any number of placements separated by a space, e.g. "top bottom left". If no placement fits, the flip
       * fallback strategy will be used instead.
+      * @attr flip-fallback-placements
       */
       this.flipFallbackPlacements = '';
 
@@ -109,6 +129,7 @@ export function AnchoredRegionMixin (superclass) {
       * the popover should be positioned using the best available fit based on available space or as it was initially
       * preferred.
       * @type {'best-fit' | 'initial'}
+      * @attr flip-fallback-strategy
       */
       this.flipFallbackStrategy = 'best-fit';
 
@@ -116,14 +137,21 @@ export function AnchoredRegionMixin (superclass) {
       * The flip boundary describes clipping element(s) that overflow will be checked relative to when flipping. By
       * default, the boundary includes overflow ancestors that will cause the element to be clipped. If needed, you can
       * change the boundary by passing a reference to one or more elements to this property.
-      * @type {Element | Element[]}
+      * @type {undefined | Element | Element[]}
+      * @prop
       */
-      this.flipBoundary
+      this.flipBoundary = undefined
 
-      /** The amount of padding, in pixels, to exceed before the flip behavior will occur. */
+      /**
+        * The amount of padding, in pixels, to exceed before the flip behavior will occur.
+        * @attr flip-padding
+        */
       this.flipPadding = 0;
 
-      /** Moves the popover along the axis to keep it in view when clipped. */
+      /**
+        * Moves the popover along the axis to keep it in view when clipped.
+        * @attr
+        */
       this.shift = true;
 
 
@@ -131,50 +159,61 @@ export function AnchoredRegionMixin (superclass) {
       * The shift boundary describes clipping element(s) that overflow will be checked relative to when shifting. By
       * default, the boundary includes overflow ancestors that will cause the element to be clipped. If needed, you can
       * change the boundary by passing a reference to one or more elements to this property.
-      * @type {Element | Element[]}
+      * @type {undefined | Element | Element[]}
+      * @property
       */
-      this.shiftBoundary
+      this.shiftBoundary = undefined
 
-      /** The amount of padding, in pixels, to exceed before the shift behavior will occur. */
+      /**
+        * The amount of padding, in pixels, to exceed before the shift behavior will occur.
+        * @attr shift-padding
+        */
       this.shiftPadding = 0;
 
       /**
         * When set, this will cause the popover to automatically resize itself to prevent it from overflowing.
-        * @type {'horizontal' | 'vertical' | 'both'}
+        * @type {null | 'horizontal' | 'vertical' | 'both'}
+        * @attr auto-size
         */
-      this.autoSize
+      this.autoSize = null
 
       /**
-       * Syncs the popover's width or height to that of the anchor element.
-       * @type {'width' | 'height' | 'both'}
-       */
-      this.sync
+        * Syncs the popover's width or height to that of the anchor element.
+        * @attr
+        * @type {null | 'width' | 'height' | 'both'}
+        */
+      this.sync = null
 
       /**
-       * The auto-size boundary describes clipping element(s) that overflow will be checked relative to when resizing. By
-       * default, the boundary includes overflow ancestors that will cause the element to be clipped. If needed, you can
-       * change the boundary by passing a reference to one or more elements to this property.
-       * @type {Element | Element[]}
-       */
-      this.autoSizeBoundary
+        * The auto-size boundary describes clipping element(s) that overflow will be checked relative to when resizing. By
+        * default, the boundary includes overflow ancestors that will cause the element to be clipped. If needed, you can
+        * change the boundary by passing a reference to one or more elements to this property.
+        * @type {undefined | Element | Element[]}
+        * @prop
+        */
+      this.autoSizeBoundary = undefined
 
-
-      /** The amount of padding, in pixels, to exceed before the auto-size behavior will occur. */
+      /**
+        * The amount of padding, in pixels, to exceed before the auto-size behavior will occur.
+        * @attr auto-size-padding
+        */
       this.autoSizePadding = 0;
 
       /**
-       * When a gap exists between the anchor and the popover element, this option will add a "hover bridge" that fills the
-       * gap using an invisible element. This makes listening for events such as `mouseenter` and `mouseleave` more sane
-       * because the pointer never technically leaves the element. The hover bridge will only be drawn when the popover is
-       * active.
-       */
+        * When a gap exists between the anchor and the popover element, this option will add a "hover bridge" that fills the
+        * gap using an invisible element. This makes listening for events such as `mouseenter` and `mouseleave` more sane
+        * because the pointer never technically leaves the element. The hover bridge will only be drawn when the popover is
+        * active.
+        * @attr hover-bridge
+        */
       this.hoverBridge = true
     }
   }
 }
 
-export const AnchoredRegionProperties = () => ({
+export const AnchoredRegionProperties = () => /** @const */ ({
   placement: { reflect: true },
+  currentPlacement: { attribute: "current-placement", reflect: true },
   strategy: { reflect: true },
   distance: { type: Number },
   skidding: { type: Number },
@@ -203,10 +242,10 @@ export const AnchoredRegionProperties = () => ({
     }
   },
   flipFallbackStrategy: { attribute: 'flip-fallback-strategy' },
-  flipBoundary: { type: Object },
+  flipBoundary: { attribute: false, type: Object },
   flipPadding: { attribute: 'flip-padding', type: Number },
   shift: { type: Boolean },
-  shiftBoundary: { type: Object },
+  shiftBoundary: { attribute: false, type: Object },
   shiftPadding: { attribute: 'shift-padding', type: Number },
   autoSize: { attribute: 'auto-size' },
   sync: {},
@@ -309,25 +348,25 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
         );
       }
 
-      :host([data-current-placement="top"]) [part~="arrow"] {
+      :host([current-placement="top"]) [part~="arrow"] {
         border-top: 0px;
         border-left: 0px;
         margin-bottom: calc(var(--border-width) * -1);
       }
 
-      :host([data-current-placement="bottom"]) [part~="arrow"] {
+      :host([current-placement="bottom"]) [part~="arrow"] {
         border-bottom: 0px;
         border-right: 0px;
         margin-top: calc(var(--__border-width) * -1);
       }
 
-      :host([data-current-placement="left"]) [part~="arrow"] {
+      :host([current-placement="left"]) [part~="arrow"] {
         border-bottom: 0px;
         border-left: 0px;
         margin-right: calc(var(--__border-width) * -1);
       }
 
-      :host([data-current-placement="right"]) [part~="arrow"] {
+      :host([current-placement="right"]) [part~="arrow"] {
         border-top: 0px;
         border-right: 0px;
         margin-left: calc(var(--__border-width) * -1);
@@ -350,8 +389,6 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
     // @ts-expect-error
     if (window.process.env == null) window.process.env = "development";
 
-
-    this.active = false
 
     /**
     * The element the popover will be anchored to. If the anchor lives outside of the popover, you can provide the anchor
@@ -489,7 +526,7 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
       if (this.cleanup) {
         this.cleanup();
         this.cleanup = undefined;
-        this.removeAttribute('data-current-placement');
+        this.currentPlacement = null
         this.style.removeProperty('--auto-size-available-width');
         this.style.removeProperty('--auto-size-available-height');
         requestAnimationFrame(() => resolve());
@@ -621,9 +658,10 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
       //
       const isRtl = getComputedStyle(this).direction === 'rtl';
 
+      this.currentPlacement = placement
+
       const staticSide = { top: 'bottom', right: 'left', bottom: 'top', left: 'right' }[placement.split('-')[0]] || this.placement;
 
-      this.setAttribute('data-current-placement', placement);
 
       Object.assign(popoverElement.style, {
         left: `${x}px`,

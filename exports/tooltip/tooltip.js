@@ -88,13 +88,11 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
   static get properties() {
     return {
       ...(AnchoredRegionProperties()),
-      id: { reflect: true },
       role: { reflect: true },
       placement: { reflect: true },
-      currentPlacement: { attribute: "current-placement", reflect: true },
       active: { reflect: true, type: Boolean },
       popover: { reflect: true },
-      __anchor: { attribute: false, state: true },
+      anchor: { attribute: false, state: true },
       triggerSource: { attribute: "trigger-source", reflect: true },
     };
   }
@@ -141,50 +139,52 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     ];
   }
 
-  get popoverIsOpen () {
-    return this.matches(":popover-open")
-  }
-
-  constructor() {
-    super();
-
+  constructor () {
+    super()
+    /**
+    * A popover attribute can have values "auto" (default) or "manual". Popovers that have the auto state can be "light dismissed" by selecting outside the popover area, and generally only allow one popover to be displayed on-screen at a time. By contrast, manual popovers must always be explicitly hidden, but allow for use cases such as nested popovers in menus
+    * @type {"manual" | "auto"}
+    */
     this.popover = "auto"
 
+    /**
+    * The "role" attribute. Default is "tooltip" and generally shouldn't be overriden.
+    * @type {string}
+    */
     this.role = "tooltip";
+
+    /**
+    * Whether or not to show the tooltip
+    * @type {boolean}
+    */
     this.active = false
 
     /**
-     * @private
-     * If the tooltip was trigger by focus
-     * @type {null | "focus" | "hover"}
-     */
+    * @private
+    * If the tooltip was trigger by focus
+    * @type {null | "focus" | "hover"}
+    */
     this.triggerSource = null
 
-    /**
-     * @private
-     * @type {null | Element}
-     */
-    this.__anchor = null
-
     this.arrow = true
-
     this.distance = 10
 
-    this.__anchor = null
+    /**
+    * @type {Element | null}
+    */
+    this.anchor = null
 
-    this.addEventListener("role-popover-trigger", (e) => {
-    })
-
-    this.addEventListener("beforetoggle", this.eventHandler.get(this.handleBeforeToggle))
+    this.addEventListener("role-popover-trigger", this.eventHandler.get(this.handlePopoverTriggerEvent))
+    this.addEventListener("toggle", this.eventHandler.get(this.handleToggle))
     this.addEventListener("role-reposition", this.eventHandler.get(this.handleReposition))
   }
 
   /**
    * @param {RolePopoverTriggerEvent} e
    */
-  handlePopoverTrigger (e) {
-      this.__anchor = e.triggerElement
-      this.triggerSource = "focus"
+  handlePopoverTriggerEvent (e) {
+    this.anchor = e.triggerElement
+    this.triggerSource = "focus"
   }
 
   handleReposition () {
@@ -211,9 +211,14 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
   /**
    * @param {ToggleEvent} e
    */
-  handleBeforeToggle (e) {
-    this.active = !(e.oldState)
+  handleToggle (e) {
+    this.active = (e.newState === "open")
   }
+
+  get popoverIsOpen () {
+    return this.matches(":popover-open")
+  }
+
 
   get anchoredRegion () {
     return /** @type {RoleAnchoredRegion | null} */ (this.shadowRoot?.querySelector("[part~='base']") || null)
@@ -269,7 +274,7 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
           popover--has-arrow,
           arrow
         "
-        .anchor=${this.__anchor}
+        .anchor=${this.anchor}
         .active=${this.active}
         .placement=${this.placement}
         .strategy=${this.strategy}
@@ -334,7 +339,7 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
       this.triggerSource = triggerSource
     }
 
-    this.__anchor = element
+    this.anchor = element
     this.showPopover()
     this.active = true
   };
@@ -351,16 +356,16 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
         if (!this.popoverIsOpen) {
           this.showPopover()
         }
-        this.__anchor?.setAttribute("aria-expanded", "true")
-        const ids = this.__anchor?.getAttribute("aria-describedby") || ""
+        this.anchor?.setAttribute("aria-expanded", "true")
+        const ids = this.anchor?.getAttribute("aria-describedby") || ""
         if (!ids.split(/\s+/).includes(this.id)) {
-          this.__anchor?.setAttribute("aria-describedby", ids + " " + this.id)
+          this.anchor?.setAttribute("aria-describedby", ids + " " + this.id)
         }
       } else {
         if (this.popoverIsOpen) {
           this.hidePopover()
         }
-        this.__anchor?.setAttribute("aria-expanded", "false")
+        this.anchor?.setAttribute("aria-expanded", "false")
       }
     }
   }
@@ -374,7 +379,7 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
       const composedPath = event.composedPath()
       if (
         composedPath.includes(this) ||
-        (this.__anchor && composedPath.includes(this.__anchor))
+        (this.anchor && composedPath.includes(this.anchor))
       ) {
         return
       }

@@ -16,14 +16,14 @@ class Builders::ComponentGenerator < SiteBuilder
   end
 
   def build
-    # hook :resources, :post_init do
-    #   root = File.expand_path("../../../", __dir__)
-    #   `cd #{root} && pnpm run build`
-    # end
+    custom_elements_manifest_path = File.expand_path("../../../custom-elements.json", __dir__)
 
     generator do
-      custom_elements_manifest_path = File.read(File.expand_path("../../../custom-elements.json", __dir__))
-      manifest = JSON.parse(custom_elements_manifest_path)
+      if !File.exist?(custom_elements_manifest_path)
+        root = File.expand_path("../../../", __dir__)
+        `cd #{root} && pnpm run build`
+      end
+      manifest = JSON.parse(File.read(custom_elements_manifest_path))
 
       parser = CustomElementsManifestParser.parse(manifest)
       elements = parser.find_all_tag_names

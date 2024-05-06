@@ -13,29 +13,52 @@ import RoleAnchoredRegion, {
 import { BaseEvent } from "../events/base-event.js";
 
 /**
- * This is a polyfill until popovers supports "triggerElements"
  * @param {Event} e
  */
-function patchPopoverTriggerClick (e) {
+function findTriggerElementFromEvent (e) {
   const triggerElement = /** @type {HTMLElement} */ (e.target).closest("[popovertarget]")
 
-  if (!triggerElement) { return }
+  if (!triggerElement) { return null }
 
+  return triggerElement
+}
+
+/**
+ * @param {Element} triggerElement
+ */
+function findPopoverElementFromTriggerElement (triggerElement) {
   const rootNode = /** @type {Element} */ (triggerElement.getRootNode())
 
   const popoverTarget = triggerElement.getAttribute("popovertarget")
 
-  if (!popoverTarget) { return }
+  if (!popoverTarget) { return null }
 
   const popover = rootNode.querySelector(`#${popoverTarget}`)
 
-  if (!popover) { return }
+  if (!popover) { return null }
+
+  return popover
+}
+
+/**
+ * This is a polyfill until popovers supports "triggerElements"
+ * @param {Event} e
+ */
+function patchPopoverTriggerClick (e) {
+  const triggerElement = findTriggerElementFromEvent(e)
+
+  if (!triggerElement) return
+
+  const popoverElement = findPopoverElementFromTriggerElement(triggerElement)
+
+  if (!popoverElement) return
 
   const roleToggleEvent = new RolePopoverTriggerEvent("role-popover-trigger", {
     triggerElement
   })
 
-  popover.dispatchEvent(roleToggleEvent)
+  // Dispatch the toggle event to the popover, rather than the trigger.
+  popoverElement.dispatchEvent(roleToggleEvent)
 }
 
 /**
@@ -245,17 +268,6 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     document.addEventListener("pointermove", this.eventHandler.get(this.hide), { passive: true, signal })
   }
 
-  /**
-   * @param {Event} e
-   */
-  findPopoverTriggerFromEvent (e) {
-    const composedPath = e.composedPath()
-
-    const popoverTrigger = /** @type {Element} */ (composedPath.find((el) => "getAttribute" in el && /** @type {Element} */ (el).getAttribute("popovertarget") === this.id))
-
-    return (popoverTrigger || null)
-  }
-
   disconnectedCallback () {
     super.disconnectedCallback()
     this.__eventAbortController?.abort()
@@ -327,7 +339,7 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
       * focus* -> focus
       */
       triggerSource = eventOrElement.type.startsWith("pointer") ? "hover" : "focus"
-      element = this.findPopoverTriggerFromEvent(eventOrElement)
+      element = this.findTriggerElementFromEvent(eventOrElement)
     } else {
       element = eventOrElement
     }

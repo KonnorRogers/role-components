@@ -212,6 +212,7 @@ export function AnchoredRegionMixin (superclass) {
 }
 
 export const AnchoredRegionProperties = () => /** @const */ ({
+  active: { type: Boolean, reflect: true },
   placement: { reflect: true },
   currentPlacement: { attribute: "current-placement", reflect: true },
   strategy: { reflect: true },

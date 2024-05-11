@@ -7,8 +7,8 @@ Tooltips are intended for re-use and are close to how you would make a native to
 
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
-    <button popovertarget="tooltip">I'm a button.</button>
-    <button popovertarget="tooltip">I'm also a button.</button>
+    <button data-role-tooltip="tooltip">I'm a button.</button>
+    <button data-role-tooltip="tooltip">I'm also a button.</button>
     <role-tooltip id="tooltip"> My tooltip </role-tooltip>
   </template>
 </light-preview>
@@ -27,16 +27,16 @@ Let's see what that looks like in action:
         color: CanvasText;
       }
     </style>
-    <button popovertarget="tooltip-left">Tooltip Left</button>
+    <button data-role-tooltip="tooltip-left">Tooltip Left</button>
     <role-tooltip id="tooltip-left" placement="left">Tooltip Left</role-tooltip>
     <br><br>
-    <button popovertarget="tooltip-right">Tooltip Right</button>
+    <button data-role-tooltip="tooltip-right">Tooltip Right</button>
     <role-tooltip id="tooltip-right" placement="right">Tooltip Right</role-tooltip>
     <br><br>
-    <button popovertarget="tooltip-top">Tooltip Top</button>
+    <button data-role-tooltip="tooltip-top">Tooltip Top</button>
     <role-tooltip id="tooltip-top" placement="top">Tooltip Top</role-tooltip>
     <br><br>
-    <button popovertarget="tooltip-bottom">Tooltip Bottom</button>
+    <button data-role-tooltip="tooltip-bottom">Tooltip Bottom</button>
     <role-tooltip id="tooltip-bottom" placement="bottom">Tooltip Bottom</role-tooltip>
   </template>
 </light-preview>

@@ -86,8 +86,6 @@ function patchRootNode (rootNode) {
   rootNode.addEventListener("click", patchPopoverTriggerClick)
 }
 
-
-
 /**
  * Due to accessibility reasons with aria-describedby, the tooltip must be the same
  *   document / shadowRoot as the item being described by the tooltip.
@@ -96,7 +94,7 @@ function patchRootNode (rootNode) {
  * @example
  *   ```js
  *   <role-tooltip id="my-tooltip">I'm a tooltip!</role-tooltip>
- *   <button aria-describedby="my-tooltip">Button</button>
+ *   <button data-role-tooltip="my-tooltip">Button</button>
  *   ```
  *
  * @slot - default slot
@@ -443,6 +441,7 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
    */
   willUpdate (changedProperties) {
     this.setAttribute("popover", this.popover || "auto")
+
     if (changedProperties.has("active")) {
       if (this.active) {
         const { signal } = this.__eventAbortController

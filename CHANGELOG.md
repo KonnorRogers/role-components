@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## Next
 
+- BREAKING_CHANGE: `<role-tooltip>` now uses `data-role-tooltip=""` for associating with its tooltip.
+- BREAKING_CHANGE: `<role-tooltip>` `hoist` property / attribute has been renamed to `strategy="fixed | absolute"`
+- BREAKING_CHANGE: `<role-tooltip>` is now a `popover` which means it will be `position: fixed;` by default and placed in the top layer.
 - `<role-tooltip>`: Upgraded the version `floating-ui` and added the `composed-offset-parent` polyfill.
 - `<role-option>`: minor internal refactoring and added a number of properties to be closer to a proper `<option>`.
 - `<role-listbox>`: Fixed a bug where if you had a selected option, it would hit a race condition.

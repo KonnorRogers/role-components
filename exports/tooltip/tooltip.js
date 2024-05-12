@@ -176,9 +176,9 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     super()
     /**
     * A popover attribute can have values "auto" (default) or "manual". Popovers that have the auto state can be "light dismissed" by selecting outside the popover area, and generally only allow one popover to be displayed on-screen at a time. By contrast, manual popovers must always be explicitly hidden, but allow for use cases such as nested popovers in menus
-    * @type {"manual"}
+    * @type {"auto" | "manual"}
     */
-    this.popover = "auto"
+    this.popover = "manual"
 
     /**
     * The "role" attribute. Default is "tooltip" and generally shouldn't be overriden.
@@ -226,7 +226,8 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
    * @param {RoleTooltipToggle} e
    */
   handlePopoverTriggerEvent (e) {
-    this.popoverIsOpen ? this.hide("click") : this.show(e.triggerElement, "click")
+    // We don't use `popoverIsOpen` because of issues with auto popover.
+    this.active ? this.hide("click") : this.show(e.triggerElement, "click")
   }
 
   handleReposition () {
@@ -277,7 +278,7 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     rootNode.addEventListener("focusout", this.eventHandler.get(this.handleFocusChange), { passive: true, signal })
     document.addEventListener("focusin", this.eventHandler.get(this.handleFocusChange), { passive: true, signal })
     document.addEventListener("focusout", this.eventHandler.get(this.handleFocusChange), { passive: true, signal })
-    document.addEventListener("keydown", this.eventHandler.get(this.handleFocusChange), { passive: true, signal })
+    document.addEventListener("keydown", this.eventHandler.get(this.handleKeyDown), { passive: true, signal })
   }
 
   disconnectedCallback () {
@@ -285,8 +286,24 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     this.__eventAbortController?.abort()
   }
 
+  /**
+   * @param {KeyboardEvent} e
+   */
+  handleKeyDown (e) {
+    // hide the tooltip on ESC key.
+    if (e.key === "Escape") {
+      this.hide("focus")
+      return
+    }
 
-  // /** This is a hack. Unfortunately, there's no reliable way to get the active elements from just "focusin" / "focusout" */
+    if (e.key === "Tab") {
+      this.handleFocusChange()
+    }
+  }
+
+  /**
+   * This is a hack. Unfortunately, there's no reliable way to get the active elements from just "focusin" / "focusout"
+   */
   handleFocusChange () {
     this.__activeElements = []
 
@@ -304,21 +321,25 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     const rootNode = document.activeElement
 
     if (!rootNode) {
-      this.active = false
-      this.hidePopover()
+      this.hide("focus")
       return
     }
 
     addActiveElements(rootNode)
 
-    const isFocusingTooltip = this.__activeElements.find((el) => {
+    const focusedElement = this.__activeElements.find((el) => {
       return el.getAttribute("data-role-tooltip") === this.id
     })
 
-    if (isFocusingTooltip) {
+    if (focusedElement) {
+      this.anchor = focusedElement
       this.active = true
+      this.__triggerSource = "focus"
       this.showPopover()
+      return
     }
+
+    this.hide("focus")
   }
 
   render() {

@@ -4,11 +4,13 @@ permalink: /components/toolbar/
 ---
 
 <role-toolbar></role-toolbar>
-<role-toolbar></role-toolbar>
 
 <style>
   light-preview::part(iframe) { min-height: 70vh; }
 </style>
+
+"Focusable" elements in the toolbar should have a `tabindex="-1"` and a `data-role="toolbar-item"` attribute to be able to
+properly implement the "roving tabindex"
 
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
@@ -39,15 +41,15 @@ permalink: /components/toolbar/
     </style>
     <div>
       <!-- Tooltip example -->
-      <button aria-describedby="tooltip">I'm a button.</button>
-      <button aria-describedby="tooltip">I'm also a button.</button>
+      <button data-role-tooltip="tooltip">I'm a button.</button>
+      <button data-role-tooltip="tooltip">I'm also a button.</button>
       <role-tooltip id="tooltip"> My tooltip </role-tooltip>
       <br />
       <br />
       <!-- Toolbar example -->
       <div style="display: grid; max-width: 800px; margin: 0 auto">
         <role-toolbar aria-controls="textarea-1" style="">
-          <button data-role="toolbar-item" aria-describedby="bold">
+          <button data-role="toolbar-item" data-role-tooltip="bold">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -64,7 +66,7 @@ permalink: /components/toolbar/
           <button
             data-role="toolbar-item"
             tabindex="-1"
-            aria-describedby="italics"
+            data-role-tooltip="italics"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -82,7 +84,7 @@ permalink: /components/toolbar/
           <button
             data-role="toolbar-item"
             tabindex="-1"
-            aria-describedby="underline"
+            data-role-tooltip="underline"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -101,7 +103,7 @@ permalink: /components/toolbar/
           <button
             data-role="toolbar-item"
             tabindex="-1"
-            aria-describedby="align-left"
+            data-role-tooltip="align-left"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -120,7 +122,7 @@ permalink: /components/toolbar/
           <button
             data-role="toolbar-item"
             tabindex="-1"
-            aria-describedby="align-center"
+            data-role-tooltip="align-center"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -139,7 +141,7 @@ permalink: /components/toolbar/
           <button
             data-role="toolbar-item"
             tabindex="-1"
-            aria-describedby="align-right"
+            data-role-tooltip="align-right"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -169,7 +171,7 @@ permalink: /components/toolbar/
         "
       >
         <role-toolbar orientation="vertical" aria-controls="textarea-2">
-          <button data-role="toolbar-item" aria-describedby="bold">
+          <button data-role="toolbar-item" data-role-tooltip="bold">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -186,7 +188,7 @@ permalink: /components/toolbar/
           <button
             data-role="toolbar-item"
             tabindex="-1"
-            aria-describedby="italics"
+            data-role-tooltip="italics"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -204,7 +206,7 @@ permalink: /components/toolbar/
           <button
             data-role="toolbar-item"
             tabindex="-1"
-            aria-describedby="underline"
+            data-role-tooltip="underline"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -223,7 +225,7 @@ permalink: /components/toolbar/
           <button
             data-role="toolbar-item"
             tabindex="-1"
-            aria-describedby="align-left"
+            data-role-tooltip="align-left"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -242,7 +244,7 @@ permalink: /components/toolbar/
           <button
             data-role="toolbar-item"
             tabindex="-1"
-            aria-describedby="align-center"
+            data-role-tooltip="align-center"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -261,7 +263,7 @@ permalink: /components/toolbar/
           <button
             data-role="toolbar-item"
             tabindex="-1"
-            aria-describedby="align-right"
+            data-role-tooltip="align-right"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

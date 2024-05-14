@@ -456,8 +456,8 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
       if (this.active) {
         // for some reason we need pointermove both on the rootNode and on the document.
         // We wait until the popover is active before adding these.
-        rootNode.addEventListener("pointermove", this.eventHandler.get(this.handleHide), { passive: true, signal })
-        document.addEventListener("pointermove", this.eventHandler.get(this.handleHide), { passive: true, signal })
+        rootNode.addEventListener("pointermove", this.eventHandler.get(this.handleHide), { signal })
+        document.addEventListener("pointermove", this.eventHandler.get(this.handleHide), { signal })
 
         if (!this.popoverIsOpen) {
           this.showPopover()
@@ -477,8 +477,8 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
         }
 
         // Make sure to clean these up.
-        rootNode.removeEventListener("pointermove", this.eventHandler.get(this.handleHide), { passive: true, signal })
-        document.removeEventListener("pointermove", this.eventHandler.get(this.handleHide), { passive: true, signal })
+        rootNode.removeEventListener("pointermove", this.eventHandler.get(this.handleHide))
+        document.removeEventListener("pointermove", this.eventHandler.get(this.handleHide))
         this.anchor?.setAttribute("aria-expanded", "false")
       }
     }

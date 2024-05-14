@@ -54,7 +54,8 @@ function patchPopoverTriggerClick (e) {
   if (!popoverElement) return
 
   const roleToggleEvent = new RoleTooltipToggle("role-tooltip-toggle", {
-    triggerElement
+    triggerElement,
+    triggerEvent: e
   })
 
   // Dispatch the toggle event to the popover, rather than the trigger.
@@ -67,7 +68,7 @@ function patchPopoverTriggerClick (e) {
 class RoleTooltipToggle extends BaseEvent {
   /**
    * @param {string} eventName
-   * @param {EventInit & {triggerElement: Element}} init
+   * @param {EventInit & {triggerElement: Element, triggerEvent: Event}} init
    */
   constructor (eventName, init) {
     super(eventName, init)
@@ -76,6 +77,11 @@ class RoleTooltipToggle extends BaseEvent {
      * @type {Element}
      */
     this.triggerElement = init.triggerElement
+
+    /**
+     * @type {Event}
+     */
+    this.triggerEvent = init.triggerEvent
   }
 }
 
@@ -225,7 +231,7 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
    */
   handlePopoverTriggerEvent (e) {
     // We don't use `popoverIsOpen` because of issues with auto popover.
-    this.active ? this.hide("click") : this.show(e.triggerElement, "click")
+    this.popoverIsOpen ? this.hide("click") : this.show(e.triggerElement, "click")
   }
 
   handleReposition () {
@@ -443,11 +449,10 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     this.setAttribute("popover", this.popover || "auto")
 
     if (changedProperties.has("active")) {
+      const rootNode = /** @type {Document | ShadowRoot} */ (this.getRootNode())
+      const { signal } = this.__eventAbortController
+
       if (this.active) {
-        const { signal } = this.__eventAbortController
-
-        const rootNode = /** @type {Document | ShadowRoot} */ (this.getRootNode())
-
         // for some reason we need pointermove both on the rootNode and on the document.
         // We wait until the popover is active before adding these.
         rootNode.addEventListener("pointermove", this.eventHandler.get(this.handleHide), { passive: true, signal })
@@ -469,6 +474,10 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
         if (this.popoverIsOpen) {
           this.hidePopover()
         }
+
+        // Make sure to clean these up.
+        rootNode.removeEventListener("pointermove", this.eventHandler.get(this.handleHide), { passive: true, signal })
+        document.removeEventListener("pointermove", this.eventHandler.get(this.handleHide), { passive: true, signal })
         this.anchor?.setAttribute("aria-expanded", "false")
       }
     }

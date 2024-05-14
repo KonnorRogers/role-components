@@ -1,7 +1,7 @@
 import { arrow, autoUpdate, computePosition, flip, offset, platform, shift, size } from '@floating-ui/dom';
 import { classMap } from 'lit/directives/class-map.js';
 import { html, css } from 'lit';
-import { offsetParent } from 'composed-offset-position';
+// import { offsetParent } from 'composed-offset-position';
 import { BaseElement } from "../base-element.js";
 import { hostStyles } from "../styles/host-styles.js";
 import { stringMap } from '../../internal/string-map.js';
@@ -636,11 +636,11 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
     //
     // More info: https://github.com/shoelace-style/shoelace/issues/1135
     //
-    const getOffsetParent =
-      this.strategy === 'absolute'
+    // const getOffsetParent =
+    //   this.strategy === 'absolute'
 
-        ? (/** @type {Element} */ element) => platform.getOffsetParent(element, offsetParent)
-        : platform.getOffsetParent;
+    //     ? (/** @type {Element} */ element) => platform.getOffsetParent(element, offsetParent)
+    //     : platform.getOffsetParent;
 
     computePosition(this.__anchorEl, popoverElement, {
       placement: this.placement,
@@ -648,7 +648,7 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
       strategy: this.strategy,
       platform: {
         ...platform,
-        getOffsetParent
+        // getOffsetParent
       }
     }).then(({ x, y, middlewareData, placement }) => {
       //

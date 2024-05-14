@@ -240,6 +240,7 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     if (!anchoredRegion) { return }
 
     const popoverElement = anchoredRegion.popoverElement
+    console.log("reposition")
 
     if (!popoverElement) { return }
 
@@ -264,7 +265,7 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
 
 
   get anchoredRegion () {
-    return /** @type {RoleAnchoredRegion | null} */ (this.shadowRoot?.querySelector("[part~='base']") || null)
+    return /** @type {RoleAnchoredRegion | null} */ (this.shadowRoot?.querySelector("[part~='anchored-region']") || null)
   }
 
   connectedCallback() {

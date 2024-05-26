@@ -54,10 +54,7 @@ import { BridgetownNinjaKeys } from "@konnorr/bridgetown-quick-search/ninja-keys
         result.icon = `<sl-icon name="link-45deg"></sl-icon>`
       })
 
-      return [
-        ...this.staticData,
-        ...this.results,
-      ]
+      return this.staticData.concat(this.results)
     }
 
     open () {

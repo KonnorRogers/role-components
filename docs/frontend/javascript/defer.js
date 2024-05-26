@@ -48,7 +48,7 @@ import { BridgetownNinjaKeys } from "@konnorr/bridgetown-quick-search/ninja-keys
     }
 
     createData() {
-      this.results = this.showResultsForQuery(this._search || "*").reverse()
+      this.results = this.showResultsForQuery(this._search || "*")
 
       this.results.forEach((result) => {
         result.icon = `<sl-icon name="link-45deg"></sl-icon>`

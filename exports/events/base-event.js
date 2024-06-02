@@ -8,6 +8,7 @@ export class BaseEvent extends Event {
     if (options == null) options = {};
     if (options.bubbles == null) options.bubbles = true;
     if (options.composed == null) options.composed = true;
+    if (options.cancelable == null) options.cancelable = false;
     super(name, options);
   }
 }

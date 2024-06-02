@@ -20,10 +20,15 @@ class Builders::ComponentGenerator < SiteBuilder
     #   root = File.expand_path("../../../", __dir__)
     #   `cd #{root} && npm run build`
     # end
-
     generator do
-      custom_elements_manifest_path = File.read(File.expand_path("../../../custom-elements.json", __dir__))
-      manifest = JSON.parse(custom_elements_manifest_path)
+      custom_elements_manifest_path = File.expand_path("../../../custom-elements.json", __dir__)
+
+      if !File.exist?(custom_elements_manifest_path)
+        root = File.expand_path("../../../", __dir__)
+        `cd #{root} && pnpm run build`
+      end
+
+      manifest = JSON.parse(File.read(custom_elements_manifest_path))
 
       parser = CustomElementsManifestParser.parse(manifest)
       elements = parser.find_all_tag_names
@@ -33,7 +38,8 @@ class Builders::ComponentGenerator < SiteBuilder
       resources.each do |resource|
         component_name = File.basename(resource.relative_path.basename, ".md").to_s
 
-        metadata = elements[component_name]
+        metadata = elements["role-" + component_name]
+
         next if metadata.nil?
 
         resource.data.merge!({
@@ -77,11 +83,11 @@ class Builders::ComponentGenerator < SiteBuilder
   end
 
   def unchecked_property
-    "<sl-icon name='x-lg' style='text-align: center; display: flex; margin: 0 auto; color: var(--sl-color-danger-600);'></sl-icon>"
+    "<sl-icon name='x-lg' style='text-align: center; display: flex; margin: 0 auto; color: var(--sl-color-danger-600);' label='No'></sl-icon>"
   end
 
   def checked_property
-    "<sl-icon name='check-lg' style='font-size: 1.25em; text-align: center; display: flex; margin: 0 auto; color: var(--sl-color-success-700);'></sl-icon>"
+    "<sl-icon name='check-lg' style='font-size: 1.25em; text-align: center; display: flex; margin: 0 auto; color: var(--sl-color-success-700);' label='Yes'></sl-icon>"
   end
 
   def import_tabs(path, import_name, tag_name)

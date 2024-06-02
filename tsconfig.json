@@ -1,7 +1,7 @@
 {
   "include": [
-    "exports/**/*.js",
-    "internal/**/*.js",
+    "exports/**/*.*",
+    "internal/**/*.*",
     "types/**/*.d.ts"
   ],
   "compilerOptions": {
@@ -9,6 +9,7 @@
     "target": "ESNext",
     "allowSyntheticDefaultImports": true,
     "useDefineForClassFields": false,
+    "noImplicitAny": true,
     "moduleResolution": "NodeNext",
     "module": "NodeNext",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],

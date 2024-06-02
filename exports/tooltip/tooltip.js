@@ -4,16 +4,93 @@ import { hostStyles } from "../styles/host-styles.js";
 
 import { css, html } from "lit";
 
-import { offsetParent } from 'composed-offset-position';
-import {
-  arrow,
-  computePosition,
-  flip,
-  shift,
-  offset,
-  autoUpdate,
-  platform,
-} from "@floating-ui/dom";
+
+import RoleAnchoredRegion, {
+  AnchoredRegionProperties,
+  AnchoredRegionMixin,
+} from "../anchored-region/anchored-region.js"
+
+import { BaseEvent } from "../events/base-event.js";
+
+/**
+ * @param {Event} e
+ */
+function findTriggerElementFromEvent (e) {
+  const triggerElement = /** @type {HTMLElement} */ (e.target).closest("[data-role-tooltip]")
+
+  if (!triggerElement) { return null }
+
+  return triggerElement
+}
+
+/**
+ * @param {Element} triggerElement
+ */
+function findPopoverElementFromTriggerElement (triggerElement) {
+  const rootNode = /** @type {Element} */ (triggerElement.getRootNode())
+
+  const popoverTarget = triggerElement.getAttribute("data-role-tooltip")
+
+  if (!popoverTarget) { return null }
+
+  const popover = rootNode.querySelector(`#${popoverTarget}`)
+
+  if (!popover) { return null }
+
+  return popover
+}
+
+/**
+ * This is a polyfill until popovers supports "triggerElements"
+ * @param {Event} e
+ */
+function patchPopoverTriggerClick (e) {
+  const triggerElement = findTriggerElementFromEvent(e)
+
+  if (!triggerElement) return
+
+  const popoverElement = findPopoverElementFromTriggerElement(triggerElement)
+
+  if (!popoverElement) return
+
+  const roleToggleEvent = new RoleTooltipToggle("role-tooltip-toggle", {
+    triggerElement,
+    triggerEvent: e
+  })
+
+  // Dispatch the toggle event to the popover, rather than the trigger.
+  popoverElement.dispatchEvent(roleToggleEvent)
+}
+
+/**
+ * A "ponyfill" event for grabbing a popover trigger
+ */
+class RoleTooltipToggle extends BaseEvent {
+  /**
+   * @param {string} eventName
+   * @param {EventInit & {triggerElement: Element, triggerEvent: Event}} init
+   */
+  constructor (eventName, init) {
+    super(eventName, init)
+
+    /**
+     * @type {Element}
+     */
+    this.triggerElement = init.triggerElement
+
+    /**
+     * @type {Event}
+     */
+    this.triggerEvent = init.triggerEvent
+  }
+}
+
+/**
+ * @param {Document | ShadowRoot} rootNode
+ */
+function patchRootNode (rootNode) {
+  rootNode.addEventListener("click", patchPopoverTriggerClick)
+}
 
 /**
  * Due to accessibility reasons with aria-describedby, the tooltip must be the same
@@ -23,22 +100,35 @@ import {
  * @example
  *   ```js
  *   <role-tooltip id="my-tooltip">I'm a tooltip!</role-tooltip>
- *   <button aria-describedby="my-tooltip">Button</button>
+ *   <button data-role-tooltip="my-tooltip">Button</button>
  *   ```
  *
  * @slot - default slot
+ *
  * @cssprop [--background-color=#222]
  * @cssprop [--arrow-size=8px]
+ *
+ * @csspart popover
+ * @csspart popover--active
+ * @csspart popover--fixed
+ * @csspart popover--has-arrow
+ * @csspart arrow
+ * @csspart hover-bridge
+ * @csspart hover-bridge--visible
  */
-export default class RoleTooltip extends BaseElement {
+export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
+  static dependencies = {
+    'role-anchored-region': RoleAnchoredRegion
+  }
+
   static get properties() {
     return {
-      id: { reflect: true },
-      tooltipAnchors: { state: true },
-      rootElement: { state: true },
+      ...(AnchoredRegionProperties()),
       role: { reflect: true },
-      inert: { reflect: true, type: Boolean },
-      placement: { reflect: true },
+      active: { reflect: true, type: Boolean },
+      popover: { reflect: true },
+      anchor: { attribute: false, state: true },
+      __triggerSource: { attribute: "trigger-source", reflect: true },
     };
   }
 
@@ -51,330 +141,399 @@ export default class RoleTooltip extends BaseElement {
     return [
       hostStyles,
       css`
+        @media screen and (prefers-color-scheme: dark) {
+          :host {
+            --border-color: CanvasText;
+          }
+        }
+
+        @media screen and not (prefers-color-scheme: dark) {
+          :host {
+            --border-color: transparent;
+          }
+        }
+
         :host {
-          --background-color: #222;
+          --background: #222;
+          --border-width: 2px;
           --arrow-size: 8px;
-        }
-
-        .base {
-          display: none;
-          position: absolute;
-          left: 0px;
-          top: 0px;
-          max-width: calc(100vw - 10px);
-          padding: 0.4em 0.6em;
-          background: var(--background-color);
           color: white;
+          margin: 0;
+          border: none;
+          background: transparent;
+          display: contents;
+        }
+
+        :host([active]) [part~="anchored-region"]::part(popover) {
+          opacity: 1;
+          transform: scale(1.0);
+        }
+
+        :host([active][trigger-source="hover"]) [part~="anchored-region"]::part(popover) {
+          transition:
+            opacity var(--transition-speed, 200ms) var(--transition-timing, ease-in-out) var(--transition-delay, 100ms),
+            transform var(--transition-speed, 200ms) var(--transition-timing, ease-in-out) var(--transition-delay, 100ms);
+        }
+
+        [part~="anchored-region"]::part(popover) {
+          opacity: 0;
+          transform: scale(0.8);
+          padding: 0.2em 0.4em;
           border-radius: 4px;
-          font-size: 0.9em;
-          pointer-events: none;
-          z-index: 1;
-        }
-
-        :host([hoist]) .base {
-          position: fixed;
-        }
-
-        .arrow {
-          position: absolute;
-          background: var(--background-color);
-          width: var(--arrow-size);
-          height: var(--arrow-size);
-          transform: rotate(45deg);
         }
       `,
     ];
   }
 
-  constructor() {
-    super();
+  constructor () {
+    super()
+    /**
+    * A popover attribute can have values "auto" (default) or "manual". Popovers that have the auto state can be "light dismissed" by selecting outside the popover area, and generally only allow one popover to be displayed on-screen at a time. By contrast, manual popovers must always be explicitly hidden, but allow for use cases such as nested popovers in menus
+    * @type {"auto" | "manual"}
+    */
+    this.popover = "manual"
 
-    // Needed by floating-ui
-    // @ts-expect-error
-    if (window.process == null) window.process = {};
-    // @ts-expect-error
-    if (window.process.env == null) window.process.env = "development";
+    /**
+    * The "role" attribute. Default is "tooltip" and generally shouldn't be overriden.
+    * @type {string}
+    */
+    this.role = "tooltip";
+
+    /**
+    * Whether or not to show the tooltip
+    * @type {boolean}
+    */
+    this.active = false
+
+    /**
+    * @type {Element | null}
+    */
+    this.anchor = null
+
+    // Purposely not commented to use the base class annotations.
+    this.arrow = true
+    this.distance = 10
+
+    /**
+    * @private
+    * If the tooltip was trigger by focus
+    * @type {null | "focus" | "hover" | "click"}
+    */
+    this.__triggerSource = null
+
+    /**
+     * @private
+     */
+    this.__eventAbortController = new AbortController()
+
+    this.addEventListener("role-tooltip-toggle", this.eventHandler.get(this.handlePopoverTriggerEvent))
+    this.addEventListener("role-reposition", this.eventHandler.get(this.handleReposition))
 
     /**
      * @type {Element[]}
      */
-    this.tooltipAnchors = [];
+    this.__activeElements = []
+  }
 
-    /**
-     * @type {ShadowRoot | Document | undefined}
-     */
-    this._rootElement = undefined;
+  /**
+   * @param {RoleTooltipToggle} e
+   */
+  handlePopoverTriggerEvent (e) {
+    // We don't use `popoverIsOpen` because of issues with auto popover.
+    this.popoverIsOpen ? this.hide("click") : this.show(e.triggerElement, "click")
+  }
 
-    this.role = "tooltip";
-    this.inert = true;
+  handleReposition () {
+    const anchoredRegion = this.anchoredRegion
 
-    /**
-     * @type {import("@floating-ui/dom").Placement}
-     */
-    this.placement = "top";
+    if (!anchoredRegion) { return }
 
-    const show = this.eventHandler.get(this.show)
-    const hide = this.eventHandler.get(this.hide)
-    const keyboardHide = this.eventHandler.get(this.keyboardHide)
+    const popoverElement = anchoredRegion.popoverElement
+    console.log("reposition")
 
-    /**
-     * @type {Array<[keyof GlobalEventHandlersEventMap, (evt: Event | KeyboardEvent) => void]>}
-     */
-    this.listeners = [
-      ["pointerenter", show],
-      ["pointerleave", hide],
-      ["pointercancel", hide],
-      ["pointerup", hide],
-      ["focusin", show],
-      ["focusout", hide],
-      ["keydown", keyboardHide],
-    ];
+    if (!popoverElement) { return }
+
+    this.currentPlacement = this.anchoredRegion.currentPlacement
+
+    window.requestAnimationFrame(() => {
+      const { height, width, left, top } = popoverElement.getBoundingClientRect()
+
+      this.style.minHeight = `${height}px`
+      this.style.minWidth = `${width}px`
+      this.style.left = `${left}px`
+      this.style.top = `${top}px`
+    })
+  }
+
+  /**
+   * A helper that actually inspects the popover's state.
+   */
+  get popoverIsOpen () {
+    return this.matches(":popover-open")
+  }
+
+
+  get anchoredRegion () {
+    return /** @type {RoleAnchoredRegion | null} */ (this.shadowRoot?.querySelector("[part~='anchored-region']") || null)
   }
 
   connectedCallback() {
     super.connectedCallback();
 
-    this.updateAnchors();
+    const rootNode = /** @type {Document | ShadowRoot} */ (this.getRootNode())
+    patchRootNode(rootNode)
 
-    this.attachListeners();
+    const { signal } = this.__eventAbortController
+
+    document.addEventListener("focusout", this.eventHandler.get(this.handleHide), { signal })
+    rootNode.addEventListener("pointerover", this.eventHandler.get(this.handleShow), { passive: true, signal })
+
+    rootNode.addEventListener("focusin", this.eventHandler.get(this.handleFocusChange), { passive: true, signal })
+    rootNode.addEventListener("focusout", this.eventHandler.get(this.handleFocusChange), { passive: true, signal })
+    document.addEventListener("focusin", this.eventHandler.get(this.handleFocusChange), { passive: true, signal })
+    document.addEventListener("focusout", this.eventHandler.get(this.handleFocusChange), { passive: true, signal })
+    document.addEventListener("keydown", this.eventHandler.get(this.handleKeyDown), { passive: true, signal })
   }
 
-  updateAnchors() {
-    if (this.rootElement) {
-      this.tooltipAnchors =
-        Array.from(this.rootElement.querySelectorAll(this.query)) || [];
-    }
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-
-    this.removeListeners();
+  disconnectedCallback () {
+    super.disconnectedCallback()
+    this.__eventAbortController?.abort()
   }
 
   /**
-   * @type {string}
+   * @param {KeyboardEvent} e
    */
-  get query() {
-    return `[aria-describedby~='${this.id}']`;
-  }
-
-  /** @returns {ShadowRoot | Document | undefined} */
-  get rootElement() {
-    if (this._rootElement == null) {
-      const oldVal = this._rootElement;
-
-      /**
-       * @type {ShadowRoot | Document | undefined}
-       */
-      // @ts-expect-error
-      this._rootElement = this.getRootNode() || document;
-      this.requestUpdate("rootElement", oldVal);
+  handleKeyDown (e) {
+    // hide the tooltip on ESC key.
+    if (e.key === "Escape") {
+      this.hide("focus")
+      return
     }
 
-    return this._rootElement;
+    if (e.key === "Tab") {
+      this.handleFocusChange()
+    }
   }
 
-  /** @returns {void} */
-  set rootElement(newVal) {
-    const oldVal = this._rootElement;
+  /**
+   * This is a hack. Unfortunately, there's no reliable way to get the active elements from just "focusin" / "focusout"
+   */
+  handleFocusChange () {
+    this.__activeElements = []
 
-    this._rootElement = newVal;
-    this.requestUpdate("rootElement", oldVal);
+    /** @param {Element} activeElement */
+    const addActiveElements = (activeElement) => {
+      this.__activeElements.push(activeElement)
+
+      const nextActiveElement = activeElement?.shadowRoot?.activeElement
+
+      if (nextActiveElement) {
+        addActiveElements(nextActiveElement)
+      }
+    }
+
+    const rootNode = document.activeElement
+
+    if (!rootNode) {
+      this.hide("focus")
+      return
+    }
+
+    addActiveElements(rootNode)
+
+    const focusedElement = this.__activeElements.find((el) => {
+      return el.getAttribute("data-role-tooltip") === this.id
+    })
+
+    if (focusedElement) {
+      this.anchor = focusedElement
+      this.active = true
+      this.__triggerSource = "focus"
+      this.showPopover()
+      return
+    }
+
+    this.hide("focus")
   }
 
   render() {
     return html`
-      <div part="base" class="base">
+      <role-anchored-region
+        part="anchored-region"
+        exportparts="
+          popover,
+          popover--active,
+          popover--fixed,
+          popover--has-arrow,
+          arrow,
+          hover-bridge,
+          hover-bridge--visible
+        "
+        .anchor=${this.anchor}
+        .active=${this.active}
+        .placement=${this.placement}
+        .strategy=${this.strategy}
+        .distance=${this.distance}
+        .skidding=${this.skidding}
+        .arrow=${this.arrow}
+        .arrowPlacement=${this.arrowPlacement}
+        .arrowPadding=${this.arrowPadding}
+        .flip=${this.flip}
+        .flipFallbackPlacements=${this.flipFallbackPlacements}
+        .flipFallbackStrategy=${this.flipFallbackStrategy}
+        .flipBoundary=${this.flipBoundary}
+        .flipPadding=${this.flipPadding}
+        .shift=${this.shift}
+        .shiftBoundary=${this.shiftBoundary}
+        .shiftPadding=${this.shiftPadding}
+        .autoSize=${this.autoSize}
+        .sync=${this.sync}
+        .autoSizeBoundary=${this.autoSizeBoundary}
+        .autoSizePadding=${this.autoSizePadding}
+        .hoverBridge=${this.hoverBridge}
+        class="${this.active ? '' : 'visually-hidden'}"
+      >
         <slot></slot>
-        <div class="arrow" part="arrow"></div>
-      </div>
+      </role-anchored-region>
     `;
   }
 
   /**
-   * @param {Parameters<import("lit").LitElement["update"]>} args
-   * @return {ReturnType<import("lit").LitElement["update"]>}
+   * Used to show from event listeners.
+   * @param {Event} event
    */
-  update(...args) {
-    const [changedProperties] = args;
+  handleShow (event) {
+    /**
+     * pointer* -> hover
+     * focus* -> focus
+     */
+    const triggerSource = event.type.startsWith("pointer") ? "hover" : "focus"
+    const triggerElement = this.findTriggerForTooltip(event)
 
-    const shouldUpdateProperties = ["id", "tooltipAnchors", "rootElement"];
-    const shouldReattachListeners = shouldUpdateProperties.some((str) =>
-      changedProperties.has(str),
-    );
+    if (!triggerElement) return
 
-    if (shouldReattachListeners) {
-      this.attachListeners();
+    this.show(triggerElement, triggerSource)
+  }
+
+  /**
+   * @param {Element} triggerElement
+   * @param {RoleTooltip["__triggerSource"]} triggerSource
+   * @returns {void}
+   */
+  show (triggerElement, triggerSource = null) {
+    if (!triggerSource) { triggerSource = null }
+
+    // We only want to overwrite `__triggerSource` if its not "focus", "focus" takes priority over everything.
+    if (this.__triggerSource !== "focus") {
+      this.__triggerSource = triggerSource
     }
 
-    super.update(...args);
+    this.anchor = triggerElement
+    this.active = true
+  };
+
+  /**
+   * @param {Event} e
+   */
+  findTriggerForTooltip (e) {
+    const target = /** @type {Element | null} */ (e.target)
+
+    if (!target) { return null }
+
+    const popoverTriggerElement = target.closest("[data-role-tooltip]")
+
+    if (!popoverTriggerElement) { return null }
+
+    const popoverTriggerAttribute = popoverTriggerElement.getAttribute("data-role-tooltip")
+
+    if (!popoverTriggerAttribute) { return null }
+    if (popoverTriggerAttribute !== this.id) { return null}
+
+    return popoverTriggerElement
   }
 
   /**
-   * Used for re-initialized event listeners
-   * @returns {void}
+   * @param {import("lit").PropertyValues<this>} changedProperties
    */
-  attachListeners() {
-    this.listeners.forEach(([event, listener]) => {
-      // Remove listeners. Do it in the same loop for perf stuff.
+  willUpdate (changedProperties) {
+    this.setAttribute("popover", this.popover || "auto")
 
-      // In case there's old anchors
-      this.tooltipAnchors.forEach((el) =>
-        el.removeEventListener(event, listener),
-      );
+    if (changedProperties.has("active")) {
+      const rootNode = /** @type {Document | ShadowRoot} */ (this.getRootNode())
+      const { signal } = this.__eventAbortController
 
-      // Attach to new anchors
-      this.tooltipAnchors.forEach((el) => el.addEventListener(event, listener));
-    });
+      if (this.active) {
+        // for some reason we need pointermove both on the rootNode and on the document.
+        // We wait until the popover is active before adding these.
+        rootNode.addEventListener("pointermove", this.eventHandler.get(this.handleHide), { signal })
+        document.addEventListener("pointermove", this.eventHandler.get(this.handleHide), { signal })
+
+        if (!this.popoverIsOpen) {
+          this.showPopover()
+        }
+
+        // TLDR: we set aria-expanded in case the trigger isn't a button.
+        // We use aria-describedby because aria-details isn't well supported.
+        // https://hidde.blog/popover-accessibility/
+        this.anchor?.setAttribute("aria-expanded", "true")
+        const ids = this.anchor?.getAttribute("aria-describedby") || ""
+        if (!ids.split(/\s+/).includes(this.id)) {
+          this.anchor?.setAttribute("aria-describedby", ids + " " + this.id)
+        }
+      } else {
+        if (this.popoverIsOpen) {
+          this.hidePopover()
+        }
+
+        // Make sure to clean these up.
+        rootNode.removeEventListener("pointermove", this.eventHandler.get(this.handleHide))
+        document.removeEventListener("pointermove", this.eventHandler.get(this.handleHide))
+        this.anchor?.setAttribute("aria-expanded", "false")
+      }
+    }
+
+    super.willUpdate(changedProperties)
   }
 
   /**
-   * Used for cleaning up
+   * @param {Event} event
    * @returns {void}
    */
-  removeListeners() {
-    this.listeners.forEach(([event, listener]) => {
-      // don't recompute anchors.
-      this.tooltipAnchors.forEach((el) =>
-        el.removeEventListener(event, listener),
-      );
-    });
-  }
-
-  /** @returns {HTMLElement | undefined | null} */
-  get arrow() {
-    return this.shadowRoot?.querySelector(".arrow");
-  }
-
-  /**
-   * @param {Event|Element} eventOrElement
-   * @returns {void}
-   */
-  show = (eventOrElement) => {
+  handleHide (event) {
+    const composedPath = event.composedPath()
     if (
-      eventOrElement instanceof Event &&
-      eventOrElement.currentTarget instanceof Element
+      composedPath.includes(this) ||
+      (this.anchor && composedPath.includes(this.anchor))
     ) {
-      eventOrElement = eventOrElement.currentTarget;
+      return
     }
 
     /**
-     * @type {Element}
+     * @type {RoleTooltip["triggerSource"]}
      */
-    // @ts-expect-error
-    const target = eventOrElement;
+    let triggerSource = event.type.startsWith("pointer") ? "hover" : "focus"
 
-    this.willShow = true;
-
-    this.computeTooltipPosition(target);
-  };
-
-  /**
-   * @param {Event} [_event]
-   * @returns {void}
-   */
-  hide = (_event) => {
-    this.willShow = false;
-    this.cleanup?.();
-
-    window.requestAnimationFrame(() => {
-      if (this.willShow === true) return;
-
-      const base = this.base;
-
-      if (!base) return;
-
-      base.style.display = "none";
-    });
-  };
-
-  /**
-   * @param {Event | KeyboardEvent} event
-   */
-  keyboardHide = (event) => {
-    if (!("key" in event)) {
-      return;
-    }
-    if (event.key != null && event.key.toLowerCase() === "escape") {
-      event.preventDefault();
-      this.hide();
-    }
-  };
-
-  /**
-   * @param {Element} target
-   * @returns {void}
-   */
-  computeTooltipPosition(target) {
-    const arrowEl = this.arrow;
-    const base = this.base;
-
-    if (base == null) return;
-    if (arrowEl == null) return;
-
-    base.style.display = "unset";
-
-    const placement = this.placement || "top";
-
-    const strategy = this.hasAttribute("hoist") ? "fixed" : "absolute"
-    //
-    // Use custom positioning logic if the strategy is absolute. Otherwise, fall back to the default logic.
-    //
-    // More info: https://github.com/shoelace-style/shoelace/issues/1135
-    //
-    const getOffsetParent =
-      strategy === 'absolute'
-        ? (/** @type {Element} */ element) => platform.getOffsetParent(element, offsetParent)
-        : platform.getOffsetParent;
-
-
-    this.cleanup = autoUpdate(target, base, () => {
-      computePosition(target, base, {
-        placement,
-        middleware: [
-          offset(6),
-          flip({
-          }),
-          shift({ padding: 5 }),
-          arrow({ element: arrowEl }),
-        ],
-        strategy,
-        platform: {
-          ...platform,
-          getOffsetParent
-        }
-      }).then(({ x, y, middlewareData, placement }) => {
-        Object.assign(base.style, {
-          left: `${x}px`,
-          top: `${y}px`,
-        });
-
-        const arrowX = middlewareData.arrow?.x;
-        const arrowY = middlewareData.arrow?.y;
-
-        // Always the opposite of the placement the user provides.
-        const staticSide =
-          {
-            top: "bottom",
-            right: "left",
-            bottom: "top",
-            left: "right",
-          }[placement.split("-")[0]] || "top";
-
-        Object.assign(arrowEl.style, {
-          left: arrowX != null ? `${arrowX}px` : "",
-          top: arrowY != null ? `${arrowY}px` : "",
-          [staticSide]: "-4px",
-        });
-      });
-    });
+    this.hide(triggerSource)
   }
 
   /**
-   * @return {HTMLElement | null | undefined}
+   * @param {null | RoleTooltip["__triggerSource"]} [triggerSource]
+   * @returns {void}
    */
-  get base() {
-    return this.shadowRoot?.querySelector(".base");
-  }
+  hide (triggerSource) {
+    if (!triggerSource) { triggerSource = null }
+
+    // We don't want to hide the tooltip if it was triggered by focus. But we will hide it if you focus -> click.
+    if (this.active && this.__triggerSource === "focus" && triggerSource === "hover") {
+      return
+    }
+
+    /**
+     * Reset the trigger source before we start to hide everything.
+     */
+    this.__triggerSource = null
+
+    this.active = false
+    this.hidePopover()
+  };
 }

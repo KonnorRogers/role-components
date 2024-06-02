@@ -322,10 +322,12 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
         width: calc(var(--arrow-size-diagonal) * 2);
         height: calc(var(--arrow-size-diagonal) * 2);
         background: var(--__background);
+        /* background: tomato; */
         border: var(--__border-width) solid var(--__border-color);
-        rotate: 45deg;
         z-index: -1;
         margin: 0;
+        /** 0.25px accounts for any possible rounding issues. */
+	      clip-path: polygon(0.25px 0%, calc(100% + 0.25px) 100%, 0% 100%);
       }
 
       /* Hover bridge */
@@ -350,27 +352,23 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
       }
 
       :host([current-placement="top"]) [part~="arrow"] {
-        border-top: 0px;
-        border-left: 0px;
-        margin-bottom: calc(var(--border-width) * -1);
+        /* margin-bottom: calc(var(--border-width) * -1); */
+        transform: rotate(-45deg);
       }
 
       :host([current-placement="bottom"]) [part~="arrow"] {
-        border-bottom: 0px;
-        border-right: 0px;
-        margin-top: calc(var(--__border-width) * -1);
+        /* margin-top: calc(var(--__border-width) * -1); */
+        transform: rotate(135deg);
       }
 
       :host([current-placement="left"]) [part~="arrow"] {
-        border-bottom: 0px;
-        border-left: 0px;
-        margin-right: calc(var(--__border-width) * -1);
+        /* margin-right: calc(var(--__border-width) * -1); */
+        transform: rotate(225deg);
       }
 
       :host([current-placement="right"]) [part~="arrow"] {
-        border-top: 0px;
-        border-right: 0px;
-        margin-left: calc(var(--__border-width) * -1);
+        /* margin-left: calc(var(--__border-width) * -1); */
+        transform: rotate(45deg);
       }
     `
   ];

@@ -83,11 +83,11 @@ class Builders::ComponentGenerator < SiteBuilder
   end
 
   def unchecked_property
-    "<sl-icon name='x-lg' style='text-align: center; display: flex; margin: 0 auto; color: var(--sl-color-danger-600);'></sl-icon>"
+    "<sl-icon name='x-lg' style='text-align: center; display: flex; margin: 0 auto; color: var(--sl-color-danger-600);' label='No'></sl-icon>"
   end
 
   def checked_property
-    "<sl-icon name='check-lg' style='font-size: 1.25em; text-align: center; display: flex; margin: 0 auto; color: var(--sl-color-success-700);'></sl-icon>"
+    "<sl-icon name='check-lg' style='font-size: 1.25em; text-align: center; display: flex; margin: 0 auto; color: var(--sl-color-success-700);' label='Yes'></sl-icon>"
   end
 
   def import_tabs(path, import_name, tag_name)

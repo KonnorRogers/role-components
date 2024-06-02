@@ -104,8 +104,17 @@ function patchRootNode (rootNode) {
  *   ```
  *
  * @slot - default slot
+ *
  * @cssprop [--background-color=#222]
  * @cssprop [--arrow-size=8px]
+ *
+ * @csspart popover
+ * @csspart popover--active
+ * @csspart popover--fixed
+ * @csspart popover--has-arrow
+ * @csspart arrow
+ * @csspart hover-bridge
+ * @csspart hover-bridge--visible
  */
 export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
   static dependencies = {
@@ -353,12 +362,12 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
         part="anchored-region"
         exportparts="
           popover,
-          hover-bridge,
-          hover-bridge--visible,
           popover--active,
           popover--fixed,
           popover--has-arrow,
-          arrow
+          arrow,
+          hover-bridge,
+          hover-bridge--visible
         "
         .anchor=${this.anchor}
         .active=${this.active}

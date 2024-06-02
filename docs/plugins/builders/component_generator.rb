@@ -38,7 +38,8 @@ class Builders::ComponentGenerator < SiteBuilder
       resources.each do |resource|
         component_name = File.basename(resource.relative_path.basename, ".md").to_s
 
-        metadata = elements[component_name]
+        metadata = elements["role-" + component_name]
+
         next if metadata.nil?
 
         resource.data.merge!({

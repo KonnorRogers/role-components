@@ -249,7 +249,6 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     if (!anchoredRegion) { return }
 
     const popoverElement = anchoredRegion.popoverElement
-    console.log("reposition")
 
     if (!popoverElement) { return }
 
@@ -370,7 +369,7 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
           hover-bridge--visible
         "
         .anchor=${this.anchor}
-        .active=${this.active}
+        ?active=${this.active}
         .placement=${this.placement}
         .strategy=${this.strategy}
         .distance=${this.distance}

@@ -39,6 +39,7 @@ import { clamp } from "../../internal/clamp.js";
 import { isMacOs } from "../../internal/is-mac-os.js";
 import { SelectedEvent } from "../events/selected-event.js";
 import { when } from "lit/directives/when.js";
+import RoleAnchoredRegion, { AnchoredRegionMixin, AnchoredRegionProperties } from "../anchored-region/anchored-region.js";
 
 /**
  * @typedef {Object} OptionObject
@@ -87,15 +88,12 @@ const formProperties = LitFormAssociatedMixin.formProperties
  * @customElement
  * @tagname role-combobox
  */
-export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
+export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedMixin(BaseElement)) {
   static baseName = "role-combobox";
   static shadowRootOptions = {...LitElement.shadowRootOptions, delegatesFocus: true }
 
-  /**
-   * @type {HTMLElement["focus"]}
-   */
-  focus (...args) {
-    this.triggerElement?.focus(...args)
+  static dependencies = {
+    'role-anchored-region': RoleAnchoredRegion
   }
 
   static styles = [
@@ -120,7 +118,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       }
 
       /** because position: absolute; + isolation: isolate; don't always pierce. */
-      [part~='popup']::part(popup) {
+      [part~='popup']::part(popover) {
         z-index: 1;
       }
 
@@ -134,6 +132,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
 
   static properties = {
     ...formProperties,
+    ...(AnchoredRegionProperties()),
     expanded: { type: Boolean },
     autocomplete: {},
     multiple: { type: Boolean },
@@ -183,6 +182,8 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
      * @type {'' | "off" | "inline" | "list" | "both"}
      */
     this.autocomplete = ''
+
+    this.placement = "bottom"
 
     /**
      * If set to "freeflow", it will be one single text input with delimited values.
@@ -347,6 +348,14 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
       }
     }))
   }
+
+  /**
+   * @type {HTMLElement["focus"]}
+   */
+  focus (...args) {
+    this.triggerElement?.focus(...args)
+  }
+
 
   /**
    * @param {InputEvent} event
@@ -858,15 +867,40 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
         ${when(this.multiple && this.selectedOptions.length,
           () => this.renderSelectedOptions()
         )}
-        <sl-popup
-          id="popup"
-          placement="bottom"
+        <role-anchored-region
+          part="popup anchored-region"
+          exportparts="
+            popover,
+            popover--active,
+            popover--fixed,
+            popover--has-arrow,
+            arrow,
+            hover-bridge,
+            hover-bridge--visible
+          "
           sync="width"
-          ?active=${this.expanded}
-          hover-bridge
-          distance="6"
-          part="popup"
           auto-size="both"
+          ?active=${this.expanded}
+          .anchor=${this.anchor}
+          .placement=${"bottom"}
+          .strategy=${this.strategy}
+          .distance=${this.distance || 6}
+          .skidding=${this.skidding}
+          .arrow=${this.arrow}
+          .arrowPlacement=${this.arrowPlacement}
+          .arrowPadding=${this.arrowPadding}
+          .flip=${this.flip}
+          .flipFallbackPlacements=${this.flipFallbackPlacements}
+          .flipFallbackStrategy=${this.flipFallbackStrategy}
+          .flipBoundary=${this.flipBoundary}
+          .flipPadding=${this.flipPadding}
+          .shift=${this.shift}
+          .shiftBoundary=${this.shiftBoundary}
+          .shiftPadding=${this.shiftPadding}
+          .autoSizeBoundary=${this.autoSizeBoundary}
+          .autoSizePadding=${this.autoSizePadding}
+          .hoverBridge=${this.hoverBridge}
+          class="${this.active ? '' : 'visually-hidden'}"
         >
           <div
             slot="anchor"
@@ -894,7 +928,7 @@ export default class RoleCombobox extends LitFormAssociatedMixin(BaseElement) {
             <slot ?hidden=${!this.options.length} name="listbox" @slotchange=${this.updateListboxElement}></slot>
             <slot ?hidden=${!this.shouldShowEmptyResults} name="no-results"><div style="padding: 1rem;">No results found</div></slot>
           </div>
-        </sl-popup>
+        </role-anchored-region>
       </div>
     `
 

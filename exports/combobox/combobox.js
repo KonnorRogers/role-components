@@ -99,8 +99,6 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
   static styles = [
     hostStyles,
     css`
-      :host {
-      }
       [name="trigger"]::slotted(input) {
         font-size: 1.1em;
         padding-inline-start: 0.4em;
@@ -120,6 +118,7 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
       /** because position: absolute; + isolation: isolate; don't always pierce. */
       [part~='popup']::part(popover) {
         z-index: 1;
+        border: none;
       }
 
       [part~="base"] {
@@ -138,7 +137,6 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
     multiple: { type: Boolean },
     defaultValue: { attribute: "value", reflect: true },
     selectedOptions: { type: Array, state: true, attribute: false },
-    // currentOption: { state: true, attribute: false },
     wrapSelection: {
       attribute: "wrap-selection",
       type: Boolean,
@@ -156,6 +154,7 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
     delimiter: {},
     spacer: {},
     showEmptyResults: { type: Boolean, attribute: "show-empty-results" },
+    allowCustomValues: { type: Boolean, attribute: "allow-custom-values" },
     multipleSelectionType: {attribute: "multiple-selection-type"},
 
     // Properties
@@ -175,7 +174,12 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
      * @type {HTMLButtonElement | HTMLInputElement | null}
      */
     this.triggerElement = null
-    this.listboxId = "role-listbox-" + uuidv4()
+
+    this.__listboxId = "role-listbox-" + uuidv4()
+
+    this.__customOption = Object.assign(document.createElement("role-option"), {
+      id: "role-option-" + uuidv4(),
+    })
 
     /**
      * Any autocompletes of type `"off"`, `"inline"`, `"list"`, or `"both"` will automatically make the triggerElement editable.
@@ -183,14 +187,24 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
      */
     this.autocomplete = ''
 
+    /**
+     * @override
+     * @type {InstanceType<ReturnType<typeof AnchoredRegionMixin<typeof BaseElement>>>["placement"]}
+     */
     this.placement = "bottom"
 
     /**
-     * If set to "freeflow", it will be one single text input with delimited values.
-     *   If set to "confirm", you will only enter 1 option at a time, and then need to confirm selection, and then the input will clear, and then you will add another selection.
-     * @type {"freeflow" | "confirm"}
+     * @override
+     * @type {InstanceType<ReturnType<typeof AnchoredRegionMixin<typeof BaseElement>>>["distance"]}
      */
-    this.multipleSelectionType = "freeflow"
+    this.distance = 6
+
+    /**
+     * If set to "automatic" (default), it will be one single text input with delimited values.
+     *   If set to "manual", you will only enter 1 option at a time, and then need to confirm selection, and then the input will clear, and then you will add another selection.
+     * @type {"automatic" | "manual"}
+     */
+    this.multipleSelectionType = "automatic"
 
     /**
      * If true, the `<input>` element provided is not treated as readonly, and rather as an editable input. This can be omitted
@@ -199,7 +213,6 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
      * @type {boolean}
      */
     this.editable = false
-
 
     /**
      * Used for multiple select comboboxes that use `value-type="string"`. The default is a comma.
@@ -271,6 +284,12 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
      * @type {string}
      */
     this.label = "";
+
+    /**
+     * When `multiple-selection-type="manual"`, this allows users to see a custom `<role-option>` with the current value inside the combobox.
+     * @type {boolean}
+     */
+    this.allowCustomValues = false
 
     /**
      * If true, or `show-empty-results` attribute is present, it will show the "no-results-found" slot.
@@ -394,12 +413,12 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
   handleMultipleEditableInput (event, triggerElement) {
     if (!triggerElement) return
 
-    if (this.multipleSelectionType === "freeflow") {
-      this.__handleFreeflowInput(event, triggerElement)
+    if (this.multipleSelectionType === "automatic") {
+      this.__handleAutomaticInput(event, triggerElement)
       return
     }
 
-    if (this.multipleSelectionType === "confirm") {
+    if (this.multipleSelectionType === "manual") {
       this.__handleConfirmInput(event, triggerElement)
     }
   }
@@ -410,10 +429,10 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
    * @private
    */
   __shouldSelectSuggestedOption (finalString, event) {
-    return Boolean(!(
-      event.inputType === "deleteContentBackward"
-      || !["list", "both", "inline"].includes(this.autocomplete)
-    ) && finalString)
+    const shouldSelect = event.inputType !== "deleteContentBackward"
+      && ["list", "both", "inline"].includes(this.autocomplete)
+
+   return shouldSelect && Boolean(finalString)
   }
 
 
@@ -449,23 +468,38 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
   __handleConfirmInput (event, triggerElement) {
     const val = triggerElement.value
 
-    const finalString = val
+    const splitValue = this.splitValue(val)
 
-    const shouldSelectSuggestedOption = this.__shouldSelectSuggestedOption(finalString, event)
-    const suggestedOption = this.__findSuggestedOption(finalString, event, this.selectedOptions)
+    const newSelectedOptions = splitValue.filter(Boolean).map((str) => {
+      const option = this.options.find((option) => option.content === str)
 
-    if (suggestedOption) {
-      this.selectedOptions.pop()
-      this.selectedOptions.push(suggestedOption)
+      const optionId = option?.id || null
+
+      /** @type {OptionObject} */
+      return {
+        id: optionId,
+        content: option?.content || str,
+        value: option?.value || str,
+        current: false,
+        selected: true,
+        focusable: true,
+      }
+    })
+
+    const finalString = splitValue[splitValue.length - 1]
+
+    const suggestedOption = this.__findSuggestedOption(finalString, event, newSelectedOptions)
+
+    if (!finalString) {
+      this.updateOptions()
+      return
     }
-
-    if (!finalString) { return }
 
     if ((this.autocomplete === "both" || this.autocomplete === "inline")) {
       if ("setSelectionRange" in triggerElement) {
         if (suggestedOption) {
           const remainingString = suggestedOption.content.slice(finalString.length, suggestedOption.content.length)
-          const previousCharacters = finalString
+          const previousCharacters = splitValue.join(this.delimiter + this.spacer)
           const combinedString = previousCharacters + remainingString
           this.updateTriggerElementTextContentAndValue(combinedString)
           triggerElement.setSelectionRange(previousCharacters.length, combinedString.length)
@@ -477,11 +511,7 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
       this.setCurrent(suggestedOption)
     }
 
-    if (!suggestedOption && this.selectedOptions.length) {
-      this.setCurrent(this.selectedOptions[this.selectedOptions.length - 1])
-    }
-
-    this.requestUpdate("selectedOptions")
+    this.updateOptions()
   }
 
 
@@ -491,7 +521,7 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
    * @param {HTMLButtonElement | HTMLInputElement} triggerElement
    * @private
    */
-  __handleFreeflowInput (event, triggerElement) {
+  __handleAutomaticInput (event, triggerElement) {
     const val = triggerElement.value
 
     const prevSelectedOptions = this.selectedOptions
@@ -690,13 +720,13 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
    * @param {HTMLElement} el
    */
   assignRandomId(el, id = uuidv4()) {
-    if (!el.id || !el.hasAttribute("id")) {
+    if (!el.id && !el.hasAttribute("id")) {
       el.setAttribute("id", "role-listbox-option-" + id);
     }
   }
 
   get listbox () {
-    return this.querySelector(":scope > [slot='listbox']")
+    return this.querySelector(":scope > [slot='options']")
   }
 
   get isEditable () {
@@ -707,15 +737,15 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
    * Adds proper attributes to the slotted listbox element
    */
   updateListboxElement () {
-    const listboxElement = this.querySelector(":scope > [slot='listbox']")
+    const listboxElement = this.querySelector(":scope > [slot='options']")
 
     if (!listboxElement) return
 
     listboxElement.setAttribute("role", "listbox")
     listboxElement.setAttribute("tabindex", "-1")
-    if (!listboxElement.id) {
-      listboxElement.setAttribute("id", this.listboxId)
-    }
+
+    this.assignRandomId(/** @type {HTMLElement} */ (listboxElement), this.__listboxId)
+
     this.triggerElement?.setAttribute("aria-controls", listboxElement.id)
   }
 
@@ -858,7 +888,7 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
   }
 
   get shouldShowEmptyResults () {
-    return this.showEmptyResults && Boolean(this.options.length)
+    return !this.focusableOptions.length && this.showEmptyResults
   }
 
   render () {
@@ -882,9 +912,9 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
           auto-size="both"
           ?active=${this.expanded}
           .anchor=${this.anchor}
-          .placement=${"bottom"}
+          .placement=${this.placement}
           .strategy=${this.strategy}
-          .distance=${this.distance || 6}
+          .distance=${this.distance}
           .skidding=${this.skidding}
           .arrow=${this.arrow}
           .arrowPlacement=${this.arrowPlacement}
@@ -917,7 +947,7 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
 
           <div
             part="listbox"
-            ?hidden=${this.showEmptyResults === false && !this.options.length}
+            ?hidden=${!this.focusableOptions.length && !this.showEmptyResults && (!this.allowCustomValues && this.multipleSelectionType !== "manual")}
             style="
               background-color: Canvas;
               border: 2px solid ButtonFace;
@@ -925,7 +955,11 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
               overflow: auto;
             "
           >
-            <slot ?hidden=${!this.options.length} name="listbox" @slotchange=${this.updateListboxElement}></slot>
+            <slot
+              ?hidden=${!(this.multipleSelectionType === "manual" && this.allowCustomValues && !this.hasMatch)}
+              name="custom-option"
+              @slotchange=${this.updateCustomOption}></slot>
+            <slot name="options" @slotchange=${this.updateListboxElement}></slot>
             <slot ?hidden=${!this.shouldShowEmptyResults} name="no-results"><div style="padding: 1rem;">No results found</div></slot>
           </div>
         </role-anchored-region>
@@ -1192,13 +1226,21 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
 
       if (this.currentOption) {
         // If a completion is selected, we just let it fall through.
-        if (!this.completionSelected) {
+        if (this.multipleSelectionType === "manual" || !this.completionSelected) {
           this.toggleSelected(this.currentOption)
+        }
+
+        if (this.multipleSelectionType === "manual") {
+          this.updateTriggerElementTextContentAndValue("")
         }
 
         if (this.multiple) {
           this.updateMultipleValue(true)
         }
+
+        // if () {
+        //   this.toggleSelected(this.currentOption)
+        // }
 
         if (this.triggerElement && "setSelectionRange" in this.triggerElement) {
           this.triggerElement.setSelectionRange?.(this.triggerElement.value.length, this.triggerElement.value.length)
@@ -1506,7 +1548,7 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
     }
 
     // If a user has a completion selected, and then chooses an option, we're in this fun scenario where we need to delete the previous "selectedOption" that they're typing in, but maintain the new selection.
-    if (this.isEditableMultipleCombobox && this.completionSelected) {
+    if (this.isEditableMultipleCombobox && this.completionSelected && this.multipleSelectionType !== "manual") {
       this.selectedOptions.splice(this.selectedOptions.length - 2, 1)
       this.requestUpdate("selectedOptions")
     }
@@ -1736,6 +1778,9 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
     return this.querySelectorAll(":is(option, [role='option']):not(:disabled, [disabled])")
   }
 
+  /**
+   * "completionSelected" is determined by if the user has an autosuggestion in the `<input>`.
+   */
   get completionSelected () {
     return (
       this.triggerElement
@@ -1780,19 +1825,11 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
     let searchRegex = this.stringToRegex(value)
     let lastOptionSelected = false
 
-    if (this.isEditableMultipleCombobox) {
-      const splitValue = this.splitValue(value)
-      const finalString = splitValue[splitValue.length - 1]
-      searchRegex = this.stringToRegex(finalString)
-
-      const finalSelectedOption = this.selectedOptions[this.selectedOptions.length - 1]
-      lastOptionSelected = Boolean(finalSelectedOption && finalSelectedOption.id)
-    }
-
     for (const option of optionsSet) {
       let hasMatch = filterResults === false || !(value) || lastOptionSelected
 
       if (!hasMatch) {
+        // If we ever allow custom matchers, this would be the place.
         hasMatch = Boolean(
           option.content?.match(searchRegex) ||
           option.value?.match(searchRegex)
@@ -1810,6 +1847,7 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
       }
 
       option.focusable = true
+
       if (optionEl && optionEl.style.display === "none") {
         optionEl.style.display = "";
       }
@@ -1826,6 +1864,7 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
         }
 
         const value = option.value
+
         if (!this.multiple && this.value == null) {
           this.value = value
           this.updateTriggerElementTextContentAndValue(option.content)
@@ -1923,7 +1962,7 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
       this.value = delimiterSeparatedValue
     }
 
-    if (this.multipleSelectionType === "confirm") {
+    if (this.multipleSelectionType === "manual") {
       return
     }
 
@@ -1953,6 +1992,10 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
     if (triggerElement.textContent !== str) {
       triggerElement.textContent = str
     }
+
+    // if (this.confirmOption.textContent !== str) {
+    //   this.confirmOption.textContent = str
+    // }
 
     if ("setSelectionRange" in triggerElement) {
       // The page will scroll to the input if we dont check that the input is currently focused.

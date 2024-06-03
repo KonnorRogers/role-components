@@ -283,7 +283,7 @@ export default class RoleOption extends LitFormAssociatedMixin(LinkMixin(BaseEle
       return html`${roleDescription}<a
         part="base"
         href=${this.href}
-        @click=${(e) => {
+        @click=${(/** @type {Event} */ e) => {
           e.preventDefault()
         }}
       >${content}</a>`

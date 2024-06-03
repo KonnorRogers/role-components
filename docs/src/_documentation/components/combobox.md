@@ -26,6 +26,7 @@ you can change how long it takes to "reset" searching for options.
 <role-option hidden></role-option>
 
 <% debug_info = capture do %>
+    <!-- The following is for debugging. Feel free to ignore -->
     <style>
       light-code {
         isolation: isolate;
@@ -80,56 +81,22 @@ you can change how long it takes to "reset" searching for options.
         showFormData()
       })
 
-      // document.addEventListener("role-deselected", (e) => {
-      //   showFormData()
-      // })
-
-
       document.addEventListener("submit", (e) => {
         e.preventDefault()
+        window.alert("Form submitted successfully!")
         showFormData()
       })
     </script>
 <% end.chomp.html_safe %>
 
-<light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
-  <template slot="code">
-    <form>
-      <role-combobox multiple editable multiple-selection-type="confirm" autocomplete="both" name="combobox">
-        <input slot="trigger">
-        <div slot="listbox">
-          <role-option>Capybara</role-option>
-          <role-option>Rhino</role-option>
-          <role-option>Badger mole</role-option>
-          <role-option>Flamingo</role-option>
-          <role-option>Tortoise</role-option>
-          <role-option selected>Killer Whale</role-option>
-          <role-option>Opossum</role-option>
-          <role-option>Turtle</role-option>
-          <role-option>Elephant</role-option>
-          <role-option>Dove</role-option>
-          <role-option>Sparrow</role-option>
-          <role-option>Platypus</role-option>
-          <role-option>Zebra</role-option>
-          <role-option>Dog</role-option>
-          <role-option>Cat</role-option>
-          <role-option>Swan</role-option>
-          <role-option>Goose</role-option>
-        </div>
-      </role-combobox>
-      <br>
-      <button type="reset">Reset</button>
-    </form>
-    <%= debug_info %>
-  </template>
-</light-preview>
+## Single Select Examples
 
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
     <form>
       <role-combobox name="combobox">
         <button slot="trigger" style="padding: 0.4em 0.6em;"></button>
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Capybara</role-option>
           <role-option>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -158,12 +125,15 @@ you can change how long it takes to "reset" searching for options.
 
 ## Setting a default selected value and using a button as the trigger
 
+Setting a default selected `<role-option>` is done by adding the `selected` attribute.
+This will also set `defaultSelected` so when the `<role-combobox>` resets, the option will reset as well.
+
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
     <form>
       <role-combobox name="combobox">
         <button slot="trigger" style="padding: 0.4em 0.6em;"></button>
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Capybara</role-option>
           <role-option>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -192,12 +162,14 @@ you can change how long it takes to "reset" searching for options.
 
 ## Rendering Links in your combobox
 
+`<role-option>` Accepts an `href` attribute which will tell it to render an `<a>` tag under the hood.
+
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
     <form>
       <role-combobox name="combobox">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option href="#">Capybara</role-option>
           <role-option href="#">Rhino</role-option>
           <role-option href="#">Badger mole</role-option>
@@ -224,6 +196,130 @@ you can change how long it takes to "reset" searching for options.
   </template>
 </light-preview>
 
+### Form Validations (required)
+
+Form validations currently only support the `required` attribute. Translations are handled for you by creating a hidden `<select>` with a `required` attribute.
+
+<light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
+  <template slot="code">
+    <form>
+      <role-combobox
+        required
+        name="combobox"
+      >
+        <input slot="trigger">
+        <div slot="options">
+          <role-option>Capybara</role-option>
+          <role-option>Rhino</role-option>
+          <role-option>Badger mole</role-option>
+          <role-option>Flamingo</role-option>
+          <role-option>Tortoise</role-option>
+          <role-option>Killer Whale</role-option>
+          <role-option>Opossum</role-option>
+          <role-option>Turtle</role-option>
+          <role-option>Elephant</role-option>
+          <role-option>Dove</role-option>
+          <role-option>Sparrow</role-option>
+          <role-option>Platypus</role-option>
+          <role-option>Zebra</role-option>
+          <role-option>Dog</role-option>
+          <role-option>Cat</role-option>
+          <role-option>Swan</role-option>
+          <role-option>Goose</role-option>
+        </div>
+      </role-combobox>
+      <br>
+      <button type="reset">Reset</button>
+    </form>
+    <%= debug_info %>
+  </template>
+</light-preview>
+
+
+## Multi Select Examples
+
+## Single Select Editable Combobox Examples
+
+### Using a "manual" selection type + `allow-custom-values` for multi-select.
+
+<light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
+  <template slot="code">
+    <form>
+      <role-combobox
+        multiple
+        editable
+        multiple-selection-type="manual"
+        allow-custom-values
+        filter-results=""
+        autocomplete="both"
+        name="combobox"
+      >
+        <input slot="trigger">
+        <div slot="options">
+          <role-option>Capybara</role-option>
+          <role-option>Rhino</role-option>
+          <role-option>Badger mole</role-option>
+          <role-option>Flamingo</role-option>
+          <role-option>Tortoise</role-option>
+          <role-option selected>Killer Whale</role-option>
+          <role-option>Opossum</role-option>
+          <role-option>Turtle</role-option>
+          <role-option>Elephant</role-option>
+          <role-option>Dove</role-option>
+          <role-option>Sparrow</role-option>
+          <role-option>Platypus</role-option>
+          <role-option>Zebra</role-option>
+          <role-option>Dog</role-option>
+          <role-option>Cat</role-option>
+          <role-option>Swan</role-option>
+          <role-option>Goose</role-option>
+        </div>
+      </role-combobox>
+      <br>
+      <button type="reset">Reset</button>
+    </form>
+    <%= debug_info %>
+  </template>
+</light-preview>
+
+
+### Using a "manual" selection type for multiple selection with filtering
+
+There are 2 types of `multiple-selection-type`s. `automatic`, which is the default, and `manual`, which requires manually
+selecting the option and will not automatically add it to the list of selected options.
+
+<light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
+  <template slot="code">
+    <form>
+      <role-combobox multiple editable multiple-selection-type="manual" filter-results="" autocomplete="both" name="combobox">
+        <input slot="trigger">
+        <div slot="options">
+          <role-option>Capybara</role-option>
+          <role-option>Rhino</role-option>
+          <role-option>Badger mole</role-option>
+          <role-option>Flamingo</role-option>
+          <role-option>Tortoise</role-option>
+          <role-option selected>Killer Whale</role-option>
+          <role-option>Opossum</role-option>
+          <role-option>Turtle</role-option>
+          <role-option>Elephant</role-option>
+          <role-option>Dove</role-option>
+          <role-option>Sparrow</role-option>
+          <role-option>Platypus</role-option>
+          <role-option>Zebra</role-option>
+          <role-option>Dog</role-option>
+          <role-option>Cat</role-option>
+          <role-option>Swan</role-option>
+          <role-option>Goose</role-option>
+        </div>
+      </role-combobox>
+      <br>
+      <button type="submit">Submit</button>
+      <button type="reset">Reset</button>
+    </form>
+    <%= debug_info %>
+  </template>
+</light-preview>
 
 
 ## Editable Combobox without autocomplete
@@ -236,7 +332,7 @@ of options and will not prefill the input.
     <form>
       <role-combobox name="combobox" autocomplete="off">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Capybara</role-option>
           <role-option>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -273,7 +369,7 @@ on the string provided in the input.
     <form>
       <role-combobox name="combobox" autocomplete="list">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Capybara</role-option>
           <role-option>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -309,7 +405,7 @@ Inline autocomplete will prefill the closest match for the user.
     <form>
       <role-combobox name="combobox" autocomplete="inline">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Capybara</role-option>
           <role-option>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -345,7 +441,7 @@ A list + inline ("both") combobox will both highlight the value in the input and
     <form>
       <role-combobox name="combobox" autocomplete="both">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Capybara</role-option>
           <role-option>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -381,7 +477,7 @@ When using autocomplete, you may want to filter results that don't match and onl
     <form>
       <role-combobox name="combobox" autocomplete="both" filter-results>
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Capybara</role-option>
           <role-option>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -417,7 +513,7 @@ Options can be disabled by passing the `disabled` attribute to the `<role-option
     <form>
       <role-combobox name="combobox">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option disabled>Capybara</role-option>
           <role-option>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -458,7 +554,7 @@ add the `multiple` attribute.
     <form>
       <role-combobox multiple name="combobox">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Honeybadger</role-option>
           <role-option selected>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -484,7 +580,7 @@ By default, the combobox has a `, ` delimited value. If you want to change this,
     <form>
       <role-combobox multiple delimiter="; " name="combobox">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Honeybadger</role-option>
           <role-option selected>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -516,7 +612,7 @@ Make sure to add a `name` attribute to the combobox to get the FormData to work 
       <span>Multiple select-only combobox with no autocomplete and an value type of "formdata"</span>
       <role-combobox multiple value-type="formdata" name="combobox">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Honeybadger</role-option>
           <role-option selected>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -541,7 +637,7 @@ Make sure to add a `name` attribute to the combobox to get the FormData to work 
         <br>
         <role-combobox multiple editable value-type="formdata" name="combobox">
           <input slot="trigger">
-          <div slot="listbox">
+          <div slot="options">
             <role-option>Honeybadger</role-option>
             <role-option selected>Rhino</role-option>
             <role-option>Badger mole</role-option>
@@ -567,7 +663,7 @@ Make sure to add a `name` attribute to the combobox to get the FormData to work 
         <br>
         <role-combobox multiple autocomplete="both" name="combobox">
           <input slot="trigger">
-          <div slot="listbox">
+          <div slot="options">
             <role-option>Honeybadger</role-option>
             <role-option selected>Rhino</role-option>
             <role-option>Badger mole</role-option>
@@ -592,7 +688,7 @@ Make sure to add a `name` attribute to the combobox to get the FormData to work 
     <form>
       <role-combobox name="combobox">
         <input slot="trigger" autocomplete="both">
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Capybara</role-option>
           <role-option>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -626,7 +722,7 @@ Make sure to add a `name` attribute to the combobox to get the FormData to work 
     <form>
       <role-combobox multiple name="combobox" autocomplete="both">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Capybara</role-option>
           <role-option>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -661,7 +757,7 @@ Make sure to add a `name` attribute to the combobox to get the FormData to work 
     <form>
       <role-combobox multiple name="combobox" autocomplete="off">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Capybara</role-option>
           <role-option>Rhino</role-option>
           <role-option selected>Badger mole</role-option>
@@ -695,7 +791,7 @@ Make sure to add a `name` attribute to the combobox to get the FormData to work 
     <form>
       <role-combobox multiple name="combobox" autocomplete="both">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Capybara</role-option>
           <role-option>Rhino</role-option>
           <role-option>Badger mole</role-option>

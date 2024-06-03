@@ -14,8 +14,7 @@ test("Should properly check items in the combobox", async () => {
     <form>
       <role-combobox name="combobox">
         <input slot="trigger">
-
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Option 1</role-option>
           <role-option>Option 2</role-option>
           <role-option>Option 3</role-option>
@@ -112,7 +111,7 @@ test("Should properly selected the first selected item in the combobox", async (
       <role-combobox name="combobox">
         <input slot="trigger">
 
-        <div slot="listbox">
+        <div slot="options">
           <role-option value="1">Option 1</role-option>
           <role-option value="2">Option 2</role-option>
           <role-option value="3">Option 3</role-option>
@@ -159,7 +158,7 @@ test("Should not included disabled options", async () => {
     <form>
       <role-combobox multiple name="combobox">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option value="1" disabled>Option 1</role-option>
           <role-option value="2">Option 2</role-option>
         </div>
@@ -179,7 +178,7 @@ test("Should properly selected the all selected items in the combobox", async ()
       <role-combobox multiple value-type="formdata" name="combobox">
         <input slot="trigger">
 
-        <div slot="listbox">
+        <div slot="options">
           <role-option value="1">Option 1</role-option>
           <role-option value="2">Option 2</role-option>
           <role-option value="3">Option 3</role-option>
@@ -209,7 +208,7 @@ test("Should properly record a value for autocomplete='off'", async () => {
     <form>
       <role-combobox name="combobox" autocomplete="off">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option value="1">Option 1</role-option>
           <role-option value="2">Option 2</role-option>
           <role-option value="3">Option 3</role-option>
@@ -261,7 +260,7 @@ test("Should properly record a value for autocomplete='list'", async () => {
     <form>
       <role-combobox name="combobox" autocomplete="list">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option value="1">Option 1</role-option>
           <role-option value="2">Option 2</role-option>
           <role-option value="3">Option 3</role-option>
@@ -310,7 +309,7 @@ test("Should properly record a value for autocomplete='inline'", async () => {
     <form>
       <role-combobox name="combobox" autocomplete="inline">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option value="1">Option 1</role-option>
           <role-option value="2">Option 2</role-option>
           <role-option value="3">Option 3</role-option>
@@ -359,7 +358,7 @@ test("Should properly record a value for autocomplete='both'", async () => {
     <form>
       <role-combobox name="combobox" autocomplete="both">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option value="1">Option 1</role-option>
           <role-option value="2">Option 2</role-option>
           <role-option value="3">Option 3</role-option>
@@ -409,7 +408,7 @@ test("Should properly selected the all selected items in the combobox", async ()
       <role-combobox multiple name="combobox">
         <input slot="trigger">
 
-        <div slot="listbox">
+        <div slot="options">
           <role-option value="1">Option 1</role-option>
           <role-option value="2">Option 2</role-option>
           <role-option value="3">Option 3</role-option>
@@ -439,7 +438,7 @@ test("Should change the delimiter when the delimiter attribute is changed", asyn
   const combobox = await fixture(html`
     <role-combobox multiple delimiter=";" name="combobox">
       <input slot="trigger">
-      <div slot="listbox">
+      <div slot="options">
         <role-option>Honeybadger</role-option>
         <role-option selected>Rhino</role-option>
         <role-option>Badger mole</role-option>
@@ -461,7 +460,7 @@ test("Should properly manipulate and add / remove buttons and strings for an edi
   const combobox = await fixture(html`
     <role-combobox multiple editable name="combobox">
       <input slot="trigger">
-      <div slot="listbox">
+      <div slot="options">
         <role-option>Honeybadger</role-option>
         <role-option selected>Rhino</role-option>
         <role-option>Badger mole</role-option>
@@ -513,7 +512,7 @@ test("Should properly manipulate and add / remove buttons and strings for an edi
   const combobox = await fixture(html`
     <role-combobox multiple editable name="combobox">
       <input slot="trigger">
-      <div slot="listbox">
+      <div slot="options">
         <role-option>Honeybadger</role-option>
         <role-option selected>Rhino</role-option>
         <role-option selected>Badger mole</role-option>
@@ -550,7 +549,7 @@ suite("Should properly remove all values when the triggerElement has everything 
       const combobox = await fixture(html`
         <role-combobox multiple editable name="combobox" autocomplete=${autocomplete}>
           <input slot="trigger">
-          <div slot="listbox">
+          <div slot="options">
             <role-option>Honeybadger</role-option>
             <role-option selected>Rhino</role-option>
             <role-option selected>Badger mole</role-option>
@@ -594,7 +593,7 @@ suite("Multiple select combobox", () => {
     const combobox = await fixture(html`
       <role-combobox multiple name="combobox">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Honeybadger</role-option>
           <role-option>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -624,7 +623,7 @@ suite("Multiple editable combobox", async () => {
     const combobox = await fixture(html`
       <role-combobox multiple editable name="combobox">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Honeybadger</role-option>
           <role-option>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -650,7 +649,7 @@ suite("Multiple editable combobox", async () => {
     const combobox = await fixture(html`
       <role-combobox multiple editable name="combobox">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Honeybadger</role-option>
           <role-option>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -676,7 +675,7 @@ suite("Multiple editable combobox", async () => {
     const combobox = await fixture(html`
       <role-combobox multiple name="combobox" autocomplete="inline">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Honeybadger</role-option>
           <role-option>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -704,7 +703,7 @@ suite("Multiple editable combobox", async () => {
     const combobox = await fixture(html`
       <role-combobox multiple name="combobox" autocomplete="both">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Honeybadger</role-option>
           <role-option>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -732,7 +731,7 @@ suite("Multiple editable combobox", async () => {
     const combobox = await fixture(html`
       <role-combobox multiple name="combobox" autocomplete="inline">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Honeybadger</role-option>
           <role-option>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -769,7 +768,7 @@ suite("Multiple editable combobox", async () => {
     const combobox = await fixture(html`
       <role-combobox multiple name="combobox" autocomplete="both">
         <input slot="trigger">
-        <div slot="listbox">
+        <div slot="options">
           <role-option>Honeybadger</role-option>
           <role-option>Rhino</role-option>
           <role-option>Badger mole</role-option>
@@ -800,6 +799,49 @@ suite("Multiple editable combobox", async () => {
     assert.isFalse(combobox.querySelectorAll("role-option")[0].selected)
     assert.lengthOf(combobox.selectedOptions, 1)
     assert.equal(combobox.selectedOptions[0].content, "Honeybadg")
+  })
+
+  test("`multiple-selection-type='manual' should append newly selected options`", async () => {
+    const combobox = await fixture(html`
+      <role-combobox multiple="" editable="" multiple-selection-type="manual" autocomplete="both" name="combobox">
+        <input slot="trigger">
+        <div slot="options">
+          <role-option>Honeybadger</role-option>
+          <role-option selected="">Killer Whale</role-option>
+          <role-option>Opossum</role-option>
+        </div>
+      </role-combobox>
+    `)
+
+    // Initial state should have a cleared combobox.
+    assert.equal(combobox.querySelector("[slot='trigger']").value, "")
+
+    const options = () => combobox.querySelectorAll("role-option")
+
+    // Default selected is Killer Whale
+    assert.isFalse(options()[0].selected)
+    assert.isTrue(options()[1].selected)
+    assert.isFalse(options()[2].selected)
+    assert.lengthOf(combobox.selectedOptions, 1)
+    assert.equal(combobox.selectedOptions[0].content, "Killer Whale")
+
+    combobox.triggerElement.focus()
+
+    const str = "Honeybadge"
+    await sendKeys({ type: str })
+
+    await sendKeys({ press: "Enter" })
+
+    assert.lengthOf(combobox.selectedOptions, 2)
+
+    // Maintain old selected option, and append.
+    assert.isTrue(options()[1].selected)
+    assert.equal(combobox.selectedOptions[0].content, "Killer Whale")
+
+    assert.isTrue(options()[0].selected)
+    assert.equal(combobox.selectedOptions[1].content, options()[0].innerText)
+
+    assert.isFalse(options()[2].selected)
   })
 })
 

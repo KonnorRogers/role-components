@@ -15,6 +15,10 @@ collections:
   documentation:
     output: true
 
+
+additional_watch_paths:
+  - "../custom-elements.json"
+
 defaults:
   - scope:
       path: "images"

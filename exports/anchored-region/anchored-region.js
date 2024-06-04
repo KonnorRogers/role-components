@@ -334,13 +334,13 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
         height: calc(var(--arrow-size-diagonal) * 2);
         background: var(--__background);
         /* background: tomato; */
-        border: var(--__border-width) solid var(--__border-color);
         z-index: -1;
         margin: 0;
-        /** 0.25px accounts for any possible rounding issues. */
-	      clip-path: polygon(0.25px 0%, calc(100% + 0.25px) 100%, 0% 100%);
+        transform-style: preserve-3d;
+        border: var(--__border-width) solid var(--__border-color);
+        border-top-color: transparent;
+        border-right-color: transparent;
       }
-
       /* Hover bridge */
       [part~="hover-bridge"]:not([part~="hover-bridge--visible"]) {
         display: none;
@@ -363,22 +363,18 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
       }
 
       :host([current-placement="top"]) [part~="arrow"] {
-        /* margin-bottom: calc(var(--border-width) * -1); */
-        transform: rotate(-45deg);
+        transform: rotate(315deg);
       }
 
       :host([current-placement="bottom"]) [part~="arrow"] {
-        /* margin-top: calc(var(--__border-width) * -1); */
         transform: rotate(135deg);
       }
 
       :host([current-placement="left"]) [part~="arrow"] {
-        /* margin-right: calc(var(--__border-width) * -1); */
         transform: rotate(225deg);
       }
 
       :host([current-placement="right"]) [part~="arrow"] {
-        /* margin-left: calc(var(--__border-width) * -1); */
         transform: rotate(45deg);
       }
     `

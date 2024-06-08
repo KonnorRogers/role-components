@@ -85,8 +85,8 @@ const formProperties = LitFormAssociatedMixin.formProperties
  * @customElement
  * @tagname role-combobox
  */
-export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedMixin(BaseElement)) {
-  static baseName = "role-combobox";
+export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMixin(BaseElement)) {
+  static baseName = "role-select";
   static shadowRootOptions = {...LitElement.shadowRootOptions, delegatesFocus: true }
 
   static dependencies = {
@@ -1799,7 +1799,7 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
 
   /** @return {NodeListOf<HTMLOptionElement | RoleOption>} */
   get selectableOptions () {
-    return this.querySelectorAll(":is(option, [role='option']):not(:disabled, [disabled])")
+    return this.querySelectorAll(":is(option, a, [role='link'], [role='option']):not(:disabled, [disabled])")
   }
 
   /**
@@ -2029,5 +2029,4 @@ export default class RoleCombobox extends AnchoredRegionMixin(LitFormAssociatedM
     }
   }
 }
-
 

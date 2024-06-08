@@ -27,7 +27,7 @@ function isVirtualElement(e) {
 
 
 /**
- * @template {Omit<typeof BaseElement, "new"> & {new (...args: any[]): any }} T
+ * @template {import('form-associated-helpers/exports/mixins/types.js').Constructable} T
  * @param {T} superclass
  */
 export function AnchoredRegionMixin (superclass) {

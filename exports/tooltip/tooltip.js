@@ -125,10 +125,8 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     return {
       ...(AnchoredRegionProperties()),
       role: { reflect: true },
-      active: { reflect: true, type: Boolean },
       popover: { reflect: true },
-      anchor: { attribute: false, state: true },
-      __triggerSource: { attribute: "trigger-source", reflect: true },
+      __triggerSource: { attribute: false, state: true },
     };
   }
 

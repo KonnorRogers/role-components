@@ -4,11 +4,14 @@
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
     <form>
-      <role-listbox style="height: 200px;">
-        <role-option selected value="1">Option 1</role-option>
+      <role-listbox name="listbox" style="height: 200px;">
+        <role-option value="1">
+          <blockquote style="display: inline-block; border-inline-start: 4px solid gray; background-color: rgba(0,0,0,0.05); padding-inline-start: 4px; margin: 0;">I'm a blockquote. Gotta love rich content.</blockquote>
+          Option 1
+        </role-option>
         <role-option value="2">Option 2</role-option>
         <role-option value="3">Option 3</role-option>
-        <role-option value="4">Option 4</role-option>
+        <role-option selected value="4">Option 4</role-option>
         <role-option value="5">Option 5</role-option>
         <role-option value="6">Option 6</role-option>
         <role-option value="7">Option 7</role-option>
@@ -78,10 +81,10 @@ When a multi-select listbox receives focus:
 <light-preview preview-mode="shadow-dom">
   <template slot="code">
     <role-listbox style="height: 200px;">
-      <role-option selected value="1">Option 1</role-option>
+      <role-option value="1">Option 1</role-option>
       <role-option value="2">Option 2</role-option>
       <role-option value="3">Option 3</role-option>
-      <role-option value="4">Option 4</role-option>
+      <role-option selected value="4">Option 4</role-option>
       <role-option value="5">Option 5</role-option>
       <role-option value="6">Option 6</role-option>
       <role-option value="7">Option 7</role-option>

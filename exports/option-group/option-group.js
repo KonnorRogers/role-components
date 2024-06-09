@@ -27,6 +27,8 @@ export default class OptionGroup extends BaseElement {
   constructor() {
     super();
     this.role = "group";
+    this.setAttribute("role", "group")
+    this.setAttribute("tabindex", "-1")
   }
 
   /**

@@ -143,5 +143,6 @@ class Builders::Helpers < SiteBuilder
   def current_page_in_category_index(resource, category = resource.data[:category])
     indexed_docs_by_category(category).index(resource)
   end
+
 end
 

@@ -1,6 +1,6 @@
-// import from general testing library
-// import "element-internals-polyfill"
-import { html, fixture, assert, aTimeout } from '@open-wc/testing';
+// // import from general testing library
+// // import "element-internals-polyfill"
+import { html, fixture, assert, aTimeout, waitUntil } from '@open-wc/testing';
 import { sendKeys } from "@web/test-runner-commands"
 
 import "../exports/listbox/listbox-register.js"
@@ -9,7 +9,7 @@ import "../exports/option/option-register.js"
 // Single select
 test("Should properly check items in the listbox", async () => {
   const listbox = await fixture(html`
-    <role-listbox style="height: 200px;">
+    <role-listbox name="listbox" style="height: 200px;">
       <role-option value="1">Option 1</role-option>
       <role-option value="2">Option 2</role-option>
       <role-option value="3">Option 3</role-option>
@@ -46,9 +46,12 @@ test("Should properly check items in the listbox", async () => {
     assert.equal(options[index].current, false)
     assert.equal(options[index].getAttribute("aria-selected"), "false")
     assert.equal(options[index].getAttribute("aria-current"), "false")
+    // assert.equal(options[index].hasAttribute("aria-selected"), false)
+    // assert.equal(options[index].hasAttribute("aria-current"), false)
   }
 
   isSelected(0)
+
   isNotSelected(1)
 
   await aTimeout(10)
@@ -105,6 +108,7 @@ test("Should properly set aria-selected and aria-checked for options in a multis
     const options = getOptions()
     assert.equal(options[index].selected, false)
     assert.equal(options[index].getAttribute("aria-selected"), "false")
+    // assert.equal(options[index].hasAttribute("aria-selected"), false)
   }
 
   const isCurrent = (index) => {
@@ -118,6 +122,7 @@ test("Should properly set aria-selected and aria-checked for options in a multis
     const options = getOptions()
     assert.equal(options[index].current, false)
     assert.equal(options[index].getAttribute("aria-current"), "false")
+    // assert.equal(options[index].hasAttribute("aria-current"), false)
   }
 
   await aTimeout(10)
@@ -211,7 +216,8 @@ test("Should properly reset to default selected items", async () => {
   assert.equal(entries.getAll("select")[2], "3")
   listbox.deselectAll()
 
-  await aTimeout(1)
+  // Despite deselectAll being synchronous, it seems to be subject to needing ~11ms to update.
+  await aTimeout(100)
 
   entries = new FormData(form)
   assert.lengthOf(listbox.value.getAll("select"), 0)
@@ -259,7 +265,7 @@ test("Should properly select and deselect all items", async () => {
 
   listbox.deselectAll()
 
-  await aTimeout(1)
+  await waitUntil(() => listbox.selectedOptions.length === 0)
 
   entries = new FormData(form)
   assert.lengthOf(listbox.value.getAll("select"), 0)
@@ -283,4 +289,60 @@ test("Should submit the text content of option 1", async () => {
   assert.lengthOf(entries.getAll("select"), 1)
   assert.lengthOf(listbox.value.getAll("select"), 1)
   assert.equal(entries.get("select"), listbox.querySelector("role-option").textContent)
+})
+
+test("Should submit the text content of option 1", async () => {
+  const form = await fixture(html`
+    <form>
+      <role-listbox name="select" style="height: 200px;">
+        <role-option selected>Option 1</role-option>
+      </role-listbox>
+    </form>
+  `)
+
+  const listbox = form.querySelector("role-listbox")
+
+  let entries = new FormData(form)
+
+  assert.lengthOf(entries.getAll("select"), 1)
+  assert.equal(listbox.value, listbox.querySelector("role-option").textContent)
+  assert.equal(entries.get("select"), listbox.querySelector("role-option").textContent)
+})
+
+test("Should start at option 4 and move up / down from there", async () => {
+  const form = await fixture(html`
+    <form>
+      <role-listbox name="select" style="height: 200px;">
+        <role-option>Option 1</role-option>
+        <role-option>Option 2</role-option>
+        <role-option>Option 3</role-option>
+        <role-option selected>Option 4</role-option>
+        <role-option>Option 5</role-option>
+      </role-listbox>
+    </form>
+  `)
+
+  const listbox = form.querySelector("role-listbox")
+
+  let entries = new FormData(form)
+
+  assert.lengthOf(entries.getAll("select"), 1)
+  assert.equal(listbox.value, listbox.querySelectorAll("role-option")[3].textContent)
+  assert.equal(entries.get("select"), listbox.querySelectorAll("role-option")[3].textContent)
+
+  assert.equal(listbox.currentOption, listbox.querySelectorAll("role-option")[3])
+
+  // listbox.focus()
+  // await aTimeout(10)
+  // await sendKeys({ press: "ArrowDown" })
+  // await aTimeout(10)
+
+  // assert.equal(listbox.currentOption, listbox.querySelectorAll("role-option")[4])
+  //
+  // await aTimeout(10)
+  // await sendKeys({ press: "ArrowUp" })
+  // await sendKeys({ press: "ArrowUp" })
+  // await aTimeout(10)
+  //
+  // assert.equal(listbox.currentOption, listbox.querySelectorAll("role-option")[2])
 })

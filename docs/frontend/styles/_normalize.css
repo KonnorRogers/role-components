@@ -6,6 +6,10 @@ html {
   scrollbar-gutter: stable;
 }
 
+light-code {
+  isolation: isolate;
+}
+
 *, *:before, *:after {
   box-sizing: border-box;
 }

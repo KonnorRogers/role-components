@@ -125,10 +125,8 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     return {
       ...(AnchoredRegionProperties()),
       role: { reflect: true },
-      active: { reflect: true, type: Boolean },
       popover: { reflect: true },
-      anchor: { attribute: false, state: true },
-      __triggerSource: { attribute: "trigger-source", reflect: true },
+      __triggerSource: { attribute: false, state: true },
     };
   }
 
@@ -249,7 +247,6 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     if (!anchoredRegion) { return }
 
     const popoverElement = anchoredRegion.popoverElement
-    console.log("reposition")
 
     if (!popoverElement) { return }
 
@@ -370,7 +367,7 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
           hover-bridge--visible
         "
         .anchor=${this.anchor}
-        .active=${this.active}
+        ?active=${this.active}
         .placement=${this.placement}
         .strategy=${this.strategy}
         .distance=${this.distance}
@@ -472,13 +469,12 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
           this.showPopover()
         }
 
-        // TLDR: we set aria-expanded in case the trigger isn't a button.
-        // We use aria-describedby because aria-details isn't well supported.
-        // https://hidde.blog/popover-accessibility/
-        this.anchor?.setAttribute("aria-expanded", "true")
-        const ids = this.anchor?.getAttribute("aria-describedby") || ""
-        if (!ids.split(/\s+/).includes(this.id)) {
-          this.anchor?.setAttribute("aria-describedby", ids + " " + this.id)
+        // We use aria-labelledby because aria-describedby isn't well supported.
+        if (this.anchor instanceof Element) {
+          const ids = this.anchor?.getAttribute("aria-describedby") || ""
+          if (!ids.split(/\s+/).includes(this.id)) {
+            this.anchor?.setAttribute("aria-describedby", ids + " " + this.id)
+          }
         }
       } else {
         if (this.popoverIsOpen) {
@@ -488,7 +484,6 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
         // Make sure to clean these up.
         rootNode.removeEventListener("pointermove", this.eventHandler.get(this.handleHide))
         document.removeEventListener("pointermove", this.eventHandler.get(this.handleHide))
-        this.anchor?.setAttribute("aria-expanded", "false")
       }
     }
 
@@ -503,13 +498,13 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     const composedPath = event.composedPath()
     if (
       composedPath.includes(this) ||
-      (this.anchor && composedPath.includes(this.anchor))
+      (this.anchor instanceof HTMLElement && composedPath.includes(this.anchor))
     ) {
       return
     }
 
     /**
-     * @type {RoleTooltip["triggerSource"]}
+     * @type {RoleTooltip["__triggerSource"]}
      */
     let triggerSource = event.type.startsWith("pointer") ? "hover" : "focus"
 

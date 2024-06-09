@@ -20,57 +20,66 @@ class Builders::ComponentGenerator < SiteBuilder
     #   root = File.expand_path("../../../", __dir__)
     #   `cd #{root} && npm run build`
     # end
+
     generator do
-      custom_elements_manifest_path = File.expand_path("../../../custom-elements.json", __dir__)
+      # hook(:site, :after_init) { generate_component_data }
+      hook(:site, :after_reset) { generate_component_data }
+      hook(:site, :after_soft_reset) { generate_component_data }
 
-      if !File.exist?(custom_elements_manifest_path)
-        root = File.expand_path("../../../", __dir__)
-        `cd #{root} && pnpm run build`
-      end
+      generate_component_data
+    end
+  end
 
-      manifest = JSON.parse(File.read(custom_elements_manifest_path))
+  def generate_component_data
+    custom_elements_manifest_path = File.expand_path("../../../custom-elements.json", __dir__)
 
-      parser = CustomElementsManifestParser.parse(manifest)
-      elements = parser.find_all_tag_names
+    if !File.exist?(custom_elements_manifest_path)
+      root = File.expand_path("../../../", __dir__)
+      `cd #{root} && pnpm run build`
+    end
 
-      resources = site.collections.documentation.resources
+    manifest = JSON.parse(File.read(custom_elements_manifest_path))
 
-      resources.each do |resource|
-        component_name = File.basename(resource.relative_path.basename, ".md").to_s
+    parser = CustomElementsManifestParser.parse(manifest)
+    elements = parser.find_all_tag_names
 
-        metadata = elements["role-" + component_name]
+    resources = site.collections.documentation.resources
 
-        next if metadata.nil?
+    resources.each do |resource|
+      component_name = File.basename(resource.relative_path.basename, ".md").to_s
 
-        resource.data.merge!({
-          "summary" => metadata.summary,
-          "description" => metadata.description
-        })
+      metadata = elements["role-" + component_name]
 
-        path = metadata.parent_module.path
-        import_name = metadata.parent_module.exports.find { |hash| hash.name == "default" }.declaration.name
+      next if metadata.nil?
 
-        tag_name = metadata.tagName
+      resource.data.merge!({
+        "summary" => metadata.summary,
+        "description" => metadata.description
+      })
 
-        slots = metadata.slots
-        attributes = metadata.members.select { |member| member.attributes[:attribute] }
-        events = metadata.events
+      path = metadata.parent_module.path
+      import_name = metadata.parent_module.exports.find { |hash| hash.name == "default" }.declaration.name
 
-        # Use functions instead of methods so we don't clobber built-in #methods method.
-        functions = metadata.members.select { |member| member.kind == "method" }
+      tag_name = metadata.tagName
 
-        parts = metadata.cssParts
+      slots = metadata.slots
+      attributes = metadata.members.select { |member| member.attributes[:attribute] }
+      events = metadata.events
 
-        resource.content += [
-          "## API Reference\n\n".html_safe,
-          import_tabs(path, import_name, tag_name).html_safe,
-          slots_table(slots).html_safe,
-          attributes_table(attributes).html_safe,
-          events_table(events).html_safe,
-          functions_table(functions).html_safe,
-          parts_table(parts).html_safe
-        ].join("\n\n")
-      end
+      # Use functions instead of methods so we don't clobber built-in #methods method.
+      functions = metadata.members.select { |member| member.kind == "method" }
+
+      parts = metadata.cssParts
+
+      resource.content += [
+        "## API Reference\n\n".html_safe,
+        import_tabs(path, import_name, tag_name).html_safe,
+        slots_table(slots).html_safe,
+        attributes_table(attributes).html_safe,
+        events_table(events).html_safe,
+        functions_table(functions).html_safe,
+        parts_table(parts).html_safe
+      ].join("\n\n")
     end
   end
 

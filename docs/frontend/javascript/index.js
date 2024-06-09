@@ -1,6 +1,23 @@
 import "../styles/index.css"
 import { Application } from "@hotwired/stimulus"
 
+if (window.location.href.includes("localhost")) {
+  function storeScroll () {
+    const scrollTop = document.documentElement.scrollTop.toString()
+    sessionStorage.setItem("scroll-height", scrollTop)
+  }
+
+  function restoreScroll () {
+      const scrollHeight = Number(sessionStorage.getItem("scroll-height")) || 0
+      document.documentElement.scrollTop = scrollHeight
+  }
+
+  window.addEventListener("beforeunload", storeScroll)
+  window.addEventListener("unload", storeScroll)
+  window.addEventListener("pageshow", restoreScroll)
+  document.addEventListener("DOMContentLoaded", restoreScroll)
+}
+
 // Shoelace
 import { setBasePath } from "@shoelace-style/shoelace/dist/utilities/base-path.js";
 
@@ -10,6 +27,7 @@ import * as Turbo from "@hotwired/turbo"
 window.Turbo = Turbo
 import "./src/layout.js"
 import "role-components"
+import "@shoelace-style/shoelace/dist/components/popup/popup.js"
 //
 LazyLoader()
 //

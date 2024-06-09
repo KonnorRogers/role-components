@@ -20,26 +20,10 @@ import { LitFormAssociatedMixin } from "form-associated-helpers/exports/mixins/l
 const formProperties = LitFormAssociatedMixin.formProperties
 
 /**
- * A listbox following the APG Listbox pattern.
- *
- * <https://www.w3.org/WAI/ARIA/apg/patterns/listbox/>
- *
- *
- * `Single-select` listbox uses the "select follows focus" model.
- *
- *
- * `Multi-select` listbox implements the keyboard recommendations here: <https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboard_interaction>
- *
- *   - <kbd>Shift + Down Arrow</kbd>: Moves focus to and toggles the selected state of the next option.
- *   - <kbd>Shift + Up Arrow</kbd>: Moves focus to and toggles the selected state of the previous option.
- *   - <kbd>Shift + Space</kbd>: Selects contiguous items from the most recently selected item to the focused item.
- *   - <kbd>Control + Shift + Home</kbd>: Selects the focused option and all options up to the first option. Optionally, moves focus to the first option.
- *   - <kbd>Control + Shift + End</kbd>: Selects the focused option and all options down to the last option.
- *   - <kbd>Control + a</kbd>: Selects all
- *
+ * A "combobox" is a `role="combobox"` that does allow editing its input. Currently, the only allowed combobox is one which has a "listbox" popup. Almost all elements except for the "anchored region" are in the light DOM for accessibility reasons.
  *   The currently hovered / focus `<role-option>` has `[aria-current="true"]`
- *
  *   The currently selected `<role-option>` has `[aria-selected="true"]`
+ *
  * @customElement
  * @tagname role-listbox
  */

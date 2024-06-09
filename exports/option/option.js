@@ -149,8 +149,8 @@ export default class RoleOption extends LitFormAssociatedMixin(LinkMixin(BaseEle
      */
     this.linkAttributes = linkAttributes
 
-    this.addEventListener("focus", this.eventHandler.get(this.handleFocus))
-    this.addEventListener("blur", this.eventHandler.get(this.handleBlur))
+    this.addEventListener("focusin", this.eventHandler.get(this.handleFocus))
+    this.addEventListener("focusout", this.eventHandler.get(this.handleBlur))
 
     // https://twitter.com/diegohaz/status/1775695123948437646
     this.internals.role = "presentation"
@@ -198,7 +198,6 @@ export default class RoleOption extends LitFormAssociatedMixin(LinkMixin(BaseEle
 
   connectedCallback () {
     super.connectedCallback()
-
     this.setAttribute("role", "option")
   }
 
@@ -247,6 +246,12 @@ export default class RoleOption extends LitFormAssociatedMixin(LinkMixin(BaseEle
       this.setAttribute("aria-current", this.current.toString())
     }
 
+    if (changedProperties.has("href")) {
+      // if (this.href) {
+      //   this.setAttribute("role", "link")
+      // }
+    }
+
     super.willUpdate(changedProperties);
   }
 
@@ -278,9 +283,7 @@ export default class RoleOption extends LitFormAssociatedMixin(LinkMixin(BaseEle
    */
   renderBase (content) {
     if (this.href) {
-      // @TODO: Provide a translation mechanism. This is a hacky way to add "link," before announcing the option in screenreaders.
-      const roleDescription = html`<span class="visually-hidden">link,</span>`
-      return html`${roleDescription}<a
+      return html`<a
         part="base"
         href=${this.href}
         @click=${(/** @type {Event} */ e) => {

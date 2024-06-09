@@ -37,6 +37,15 @@ export function AnchoredRegionMixin (superclass) {
      */
     constructor (...args) {
       super(...args)
+
+      /**
+       * The element the popover will be anchored to. If the anchor lives outside of the popover, you can provide the anchor
+       * element `id`, a DOM element reference, or a `VirtualElement`. If the anchor lives inside the popover, use the
+       * `anchor` slot instead.
+       * @type {null | Element | string | VirtualElement}
+       */
+      this.anchor = null
+
       /**
         * The preferred placement of the popover. Note that the actual placement will vary as configured to keep the
         * panel inside of the viewport.
@@ -224,6 +233,7 @@ export function AnchoredRegionMixin (superclass) {
 
 export const AnchoredRegionProperties = () => /** @const */ ({
   active: { type: Boolean, reflect: true },
+  anchor: { attribute: false, state: true },
   placement: { reflect: true },
   currentPlacement: { attribute: "current-placement", reflect: true },
   strategy: { reflect: true },
@@ -382,8 +392,6 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
 
   static properties = {
     ...(AnchoredRegionProperties()),
-    anchor: { attribute: false, state: true },
-    active: { type: Boolean, reflect: true }
   }
 
   constructor () {

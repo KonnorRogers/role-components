@@ -122,35 +122,53 @@ A `<button>` can be passed in as the trigger for the select if you'd prefer. Mak
 Sometimes you want to use links in your select, rather than using click listeners to navigate a user,
 we can pass in `href` attribute to `<role-option>` to render an `<a>` tag under the hood.
 
+When rendering items, we may not always want all of its `textContent` to show up in the final rendering. To avoid this, you can add `data-display-value` to your options to control what text will be shown.
+
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
     <form>
       <role-select name="select">
         <input slot="trigger">
         <div slot="options">
-          <role-option href="#">Capybara</role-option>
-          <role-option href="#">Rhino</role-option>
-          <role-option href="#">Badger mole</role-option>
-          <role-option href="#">Flamingo</role-option>
-          <role-option selected>Tortoise</role-option>
-          <role-option href="#">Killer Whale</role-option>
-          <role-option href="#">Opossum</role-option>
-          <role-option href="#">Turtle</role-option>
-          <role-option href="#">Elephant</role-option>
-          <role-option href="#">Dove</role-option>
-          <role-option href="#">Sparrow</role-option>
-          <role-option href="#">Platypus</role-option>
-          <role-option href="#">Zebra</role-option>
-          <role-option href="#">Dog</role-option>
-          <role-option href="#">Cat</role-option>
-          <role-option href="#">Swan</role-option>
-          <role-option href="#">Goose</role-option>
+          <div role="group" aria-labelledby="pages">
+            <div id="pages">Pages</div>
+            <role-option href="javascript: void 0;" data-display-value="Home">
+              <span>Home</span>
+              <span>Link</span>
+            </role-option>
+            <role-option href="javascript: void 0;" data-display-value="Project">
+              <span>Projects</span>
+              <span>Link</span>
+            </role-option>
+            <role-option selected href="javascript: void 0;" data-display-value="Inbox">
+              <span>Inbox</span>
+              <span>Link</span>
+            </role-option>
+            <role-option href="javascript: void 0;" data-display-value="Settings">
+              <span>Settings</span>
+              <span>Link</span>
+            </role-option>
+          </div>
+          <div role="group" aria-labelledby="help">
+            <div id="help">Help</div>
+            <role-option href="javascript: void 0;" data-display-value="Documentation">
+              <span>Documentation</span>
+              <span>Link</span>
+            </role-option>
+            <role-option href="javascript: void 0;" data-display-value="Help & Support">
+              <span>Help & Support</span>
+              <span>Link</span>
+            </role-option>
+            <role-option href="javascript: void 0;" data-display-value="Feedback">
+              <span>Feedback</span>
+              <span>Link</span>
+            </role-option>
+          </div>
         </div>
       </role-select>
       <br>
       <button type="reset">Reset</button>
     </form>
-    <%= render DebugInfo.new("role-select") %>
   </template>
 </light-preview>
 

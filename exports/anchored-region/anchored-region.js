@@ -227,6 +227,11 @@ export function AnchoredRegionMixin (superclass) {
         * @type {boolean}
         */
       this.hoverBridge = this.hoverBridge ?? true
+
+      /**
+       * Whether or not to show the anchored region and its host
+       */
+      this.active = this.active ?? false
     }
   }
 }

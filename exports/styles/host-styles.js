@@ -32,6 +32,10 @@ export const hostStyles = css`
     visibility: hidden !important;
   }
 
+  [popover]:not(:popover-open):not(dialog[open]) {
+	  display: none;
+  }
+
   .visually-hidden:not(:focus-within):not(:active) {
     ${visuallyHiddenStr}
   }

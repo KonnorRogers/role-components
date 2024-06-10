@@ -125,7 +125,6 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     return {
       ...(AnchoredRegionProperties()),
       role: { reflect: true },
-      popover: { reflect: true },
       __triggerSource: { attribute: false, state: true },
     };
   }
@@ -153,13 +152,14 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
 
         :host {
           --background: #222;
+          --border-color: #222;
           --border-width: 2px;
           --arrow-size: 8px;
           color: white;
           margin: 0;
           border: none;
           background: transparent;
-          display: contents;
+          display: inline-block;
         }
 
         :host([active]) [part~="anchored-region"]::part(popover) {
@@ -185,12 +185,6 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
 
   constructor () {
     super()
-    /**
-    * A popover attribute can have values "auto" (default) or "manual". Popovers that have the auto state can be "light dismissed" by selecting outside the popover area, and generally only allow one popover to be displayed on-screen at a time. By contrast, manual popovers must always be explicitly hidden, but allow for use cases such as nested popovers in menus
-    * @type {"auto" | "manual"}
-    */
-    this.popover = "manual"
-
     /**
     * The "role" attribute. Default is "tooltip" and generally shouldn't be overriden.
     * @type {string}
@@ -237,8 +231,7 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
    * @param {RoleTooltipToggle} e
    */
   handlePopoverTriggerEvent (e) {
-    // We don't use `popoverIsOpen` because of issues with auto popover.
-    this.popoverIsOpen ? this.hide("click") : this.show(e.triggerElement, "click")
+    this.active ? this.hide("click") : this.show(e.triggerElement, "click")
   }
 
   handleReposition () {
@@ -252,23 +245,15 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
 
     this.currentPlacement = this.anchoredRegion.currentPlacement
 
-    window.requestAnimationFrame(() => {
-      const { height, width, left, top } = popoverElement.getBoundingClientRect()
+    // window.requestAnimationFrame(() => {
+    //   const { height, width, left, top } = popoverElement.getBoundingClientRect()
 
-      this.style.minHeight = `${height}px`
-      this.style.minWidth = `${width}px`
-      this.style.left = `${left}px`
-      this.style.top = `${top}px`
-    })
+    //   this.style.minHeight = `${height}px`
+    //   this.style.minWidth = `${width}px`
+    //   this.style.left = `${left}px`
+    //   this.style.top = `${top}px`
+    // })
   }
-
-  /**
-   * A helper that actually inspects the popover's state.
-   */
-  get popoverIsOpen () {
-    return this.matches(":popover-open")
-  }
-
 
   get anchoredRegion () {
     return /** @type {RoleAnchoredRegion | null} */ (this.shadowRoot?.querySelector("[part~='anchored-region']") || null)
@@ -346,7 +331,6 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
       this.anchor = focusedElement
       this.active = true
       this.__triggerSource = "focus"
-      this.showPopover()
       return
     }
 
@@ -453,8 +437,6 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
    * @param {import("lit").PropertyValues<this>} changedProperties
    */
   willUpdate (changedProperties) {
-    this.setAttribute("popover", this.popover || "auto")
-
     if (changedProperties.has("active")) {
       const rootNode = /** @type {Document | ShadowRoot} */ (this.getRootNode())
       const { signal } = this.__eventAbortController
@@ -465,10 +447,6 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
         rootNode.addEventListener("pointermove", this.eventHandler.get(this.handleHide), { signal })
         document.addEventListener("pointermove", this.eventHandler.get(this.handleHide), { signal })
 
-        if (!this.popoverIsOpen) {
-          this.showPopover()
-        }
-
         // We use aria-labelledby because aria-describedby isn't well supported.
         if (this.anchor instanceof Element) {
           const ids = this.anchor?.getAttribute("aria-describedby") || ""
@@ -477,10 +455,6 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
           }
         }
       } else {
-        if (this.popoverIsOpen) {
-          this.hidePopover()
-        }
-
         // Make sure to clean these up.
         rootNode.removeEventListener("pointermove", this.eventHandler.get(this.handleHide))
         document.removeEventListener("pointermove", this.eventHandler.get(this.handleHide))
@@ -529,6 +503,5 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     this.__triggerSource = null
 
     this.active = false
-    this.hidePopover()
   };
 }

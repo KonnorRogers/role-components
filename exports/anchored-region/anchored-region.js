@@ -5,6 +5,7 @@ import { html, css } from 'lit';
 import { BaseElement } from "../base-element.js";
 import { hostStyles } from "../styles/host-styles.js";
 import { stringMap } from '../../internal/string-map.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 /**
  * @typedef {object} VirtualElement
@@ -44,7 +45,7 @@ export function AnchoredRegionMixin (superclass) {
        * `anchor` slot instead.
        * @type {null | Element | string | VirtualElement}
        */
-      this.anchor = null
+      this.anchor = this.anchor ?? null
 
       /**
         * The preferred placement of the popover. Note that the actual placement will vary as configured to keep the
@@ -339,6 +340,16 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
         background: var(--__background);
       }
 
+      [popover] {
+        position: fixed;
+      	border: none;
+	      background: none;
+	      inset: unset;
+	      color: inherit;
+	      margin: 0;
+	      padding: 0;
+	    }
+
       [part~="popover--fixed"] {
         position: fixed;
       }
@@ -356,6 +367,7 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
         border-top-color: transparent;
         border-right-color: transparent;
       }
+
       /* Hover bridge */
       [part~="hover-bridge"]:not([part~="hover-bridge--visible"]) {
         display: none;
@@ -452,9 +464,8 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
   /**
    * @param {import('lit').PropertyValues<this>} changedProps
    */
-  async updated(changedProps) {
-    super.updated(changedProps);
-
+  willUpdate(changedProps) {
+    super.willUpdate(changedProps)
     // Start or stop the positioner when active changes
     if (changedProps.has('active')) {
       if (this.active) {
@@ -468,6 +479,13 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
     if (changedProps.has('anchor')) {
       this.__handleAnchorChange();
     }
+  }
+
+  /**
+   * @param {import('lit').PropertyValues<this>} changedProps
+   */
+  async updated(changedProps) {
+    super.updated(changedProps);
 
     // All other properties will trigger a reposition when active
     if (this.active) {
@@ -529,6 +547,19 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
 
     if (!this.popoverElement) {
       return
+    }
+
+    /**
+     * @type {HTMLElement | null}
+     */
+    const popover = this.shadowRoot?.querySelector("[popover]") || null
+
+    if (popover) {
+      if (this.active) {
+        popover.showPopover()
+      } else {
+        popover.hidePopover()
+      }
     }
 
     this.cleanup = autoUpdate(this.__anchorEl, this.popoverElement, () => {
@@ -653,21 +684,11 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
     // Use custom positioning logic if the strategy is absolute. Otherwise, fall back to the default logic.
     //
     // More info: https://github.com/shoelace-style/shoelace/issues/1135
-    //
-    // const getOffsetParent =
-    //   this.strategy === 'absolute'
-
-    //     ? (/** @type {Element} */ element) => platform.getOffsetParent(element, offsetParent)
-    //     : platform.getOffsetParent;
 
     computePosition(this.__anchorEl, popoverElement, {
       placement: this.placement,
       middleware,
       strategy: this.strategy,
-      platform: {
-        ...platform,
-        // getOffsetParent
-      }
     }).then(({ x, y, middlewareData, placement }) => {
       //
       // Even though we have our own localization utility, it uses different heuristics to determine RTL. Because of
@@ -814,26 +835,31 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
     return html`
       <slot name="anchor" @slotchange=${this.__handleAnchorChange}></slot>
 
-      <span
-        part=${stringMap({
-          'hover-bridge': true,
-          'hover-bridge--visible': this.hoverBridge && this.active
-        })}
-      ></span>
-
       <div
-        part=${stringMap({
-          popover: true,
-          'popover--active': this.active,
-          'popover--fixed': this.strategy === 'fixed',
-          'popover--has-arrow': this.arrow,
-        })}
-        class=${classMap({
-          'visually-hidden': !this.active
-        })}
+        part="popover-base"
+        popover="manual"
       >
-        <slot></slot>
-        ${this.arrow ? html`<div part="arrow" role="presentation"></div>` : ''}
+        <span
+          part=${stringMap({
+            'hover-bridge': true,
+            'hover-bridge--visible': this.hoverBridge && this.active
+          })}
+        ></span>
+
+        <div
+          part=${stringMap({
+            popover: true,
+            'popover--active': this.active,
+            'popover--fixed': this.strategy === 'fixed',
+            'popover--has-arrow': this.arrow,
+          })}
+          class=${classMap({
+            'visually-hidden': !this.active
+          })}
+        >
+          <slot></slot>
+          ${this.arrow ? html`<div part="arrow" role="presentation"></div>` : ''}
+        </div>
       </div>
     `;
   }

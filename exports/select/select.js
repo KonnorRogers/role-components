@@ -120,8 +120,6 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
 
       /** because position: absolute; + isolation: isolate; don't always pierce. */
       [part~='popup']::part(popover) {
-        z-index: 1;
-        border: none;
       }
 
       [part~="base"] {
@@ -208,6 +206,8 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
      * @type {InstanceType<ReturnType<typeof AnchoredRegionMixin<typeof BaseElement>>>["placement"]}
      */
     this.placement = "bottom"
+
+    this.autoSizePadding = 100
 
     /**
      * @override

@@ -1,11 +1,9 @@
-import { arrow, autoUpdate, computePosition, flip, offset, platform, shift, size } from '@floating-ui/dom';
+import { arrow, autoUpdate, computePosition, flip, offset, shift, size } from '@floating-ui/dom';
 import { classMap } from 'lit/directives/class-map.js';
 import { html, css } from 'lit';
-// import { offsetParent } from 'composed-offset-position';
 import { BaseElement } from "../base-element.js";
 import { hostStyles } from "../styles/host-styles.js";
 import { stringMap } from '../../internal/string-map.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
 
 /**
  * @typedef {object} VirtualElement

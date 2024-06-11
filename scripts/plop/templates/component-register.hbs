@@ -1,0 +1,13 @@
+// @ts-check
+import {{ properCase tag }} from './{{ tagWithoutPrefix tag }}.js';
+
+{{ properCase tag }}.define('{{ tag }}');
+
+export * from './{{ tagWithoutPrefix tag }}.component.js';
+export default {{ properCase tag }};
+
+declare global {
+  interface HTMLElementTagNameMap {
+    '{{ tag }}': {{ properCase tag }};
+  }
+}

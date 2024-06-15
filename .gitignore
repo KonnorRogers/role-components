@@ -3,6 +3,11 @@ dist/
 examples/dist
 .parcel-cache
 
-exports/**/!(*-types).d.ts
-internal/**/!(*-types).d.ts
+exports/**/*.d.ts
+internal/**/*.d.ts
+!exports/**/*-types.d.ts
+!exports/**/*-globals.d.ts
+!internal/**/*-types.d.ts
+!internal/**/*-globals.d.ts
+
 custom-elements.json

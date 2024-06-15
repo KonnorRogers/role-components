@@ -23,7 +23,26 @@ export default class RoleTabList extends BaseElement {
     componentStyles,
   ]
 
-  static properties = /** @type {const} */ ({})
+  static properties = /** @type {const} */ ({
+    activeTab: {reflect: true, attribute: "active-tab"},
+    role: { reflect: true },
+  })
+
+  constructor () {
+    super()
+
+    /**
+     * The id of the currently active tab.
+     * @type {string | null}
+     */
+    this.activeTab = null
+
+    /**
+     * The role of the host. Generally "tablist"
+     * @type {string}
+     */
+    this.role = "tablist"
+  }
 
   render () {
     return html`

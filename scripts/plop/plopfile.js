@@ -48,13 +48,13 @@ export default function (plop) {
       },
       {
         type: 'add',
-        path: '../../tests/{{ tagWithoutPrefix tag }}/{{ tagWithoutPrefix tag }}.test.js',
-        templateFile: 'templates/component/component-tests.hbs'
+        path: '../../tests/{{ tagWithoutPrefix tag }}.test.js',
+        templateFile: 'templates/component-tests.hbs'
       },
       {
         type: 'add',
         path: '../../docs/src/_documentation/components/{{ tagWithoutPrefix tag }}.md',
-        templateFile: 'templates/component/component-docs.hbs'
+        templateFile: 'templates/component-docs.hbs'
       },
     ]
   });

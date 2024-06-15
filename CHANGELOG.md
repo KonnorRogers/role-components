@@ -4,18 +4,29 @@ All notable changes to this project will be documented in this file.
 
 ## Next
 
+### Breaking Changes
+
+- BREAKING_CHANGE: Components have moved to `exports/components` directory.
 - BREAKING_CHANGE: `<role-tooltip>` now uses `data-role-tooltip=""` for associating with its tooltip.
 - BREAKING_CHANGE: `<role-tooltip>` `hoist` property / attribute has been renamed to `strategy="fixed | absolute"`
 - BREAKING_CHANGE: `<role-tooltip>` is now a `popover` which means it will be `position: fixed;` by default and placed in the top layer.
-- `<role-option>`: minor internal refactoring and added a number of properties to be closer to a proper `<option>`.
-- `<role-listbox>`: Fixed a bug where if you had a selected option, it would hit a race condition.
-- `<role-listbox>`: is now form associated and has been properly tested in NVDA / VoiceOver.
-- `<role-listbox>`: Styles have been moved to the host of the element and are keyed off of `[aria-selected]` and `[aria-current]` respectively.
+- BREAKING_CHANGE: `exports/base-element.js` is no longer exported
+
+### Features
+
+- Feature: `<role-listbox>`: is now form associated and has been properly tested in NVDA / VoiceOver.
+- Feature: `<role-listbox>`: Styles have been moved to the host of the element and are keyed off of `[aria-selected]` and `[aria-current]` respectively.
+- Feature: `exports/components/*-register.js` now export any additional exports in the component in addition to the default.
+
+### Bug Fixes
+
+- Fix: `<role-option>`: minor internal refactoring and added a number of properties to be closer to a proper `<option>`.
+- Fix: `<role-listbox>`: Fixed a bug where if you had a selected option, it would hit a race condition.
 
 ### Dependencies
 
-- Upgrade `lit` from `2.8.x` -> `3.1.x`
-- `<role-tooltip>`: Upgraded the version of `floating-ui` and added the `composed-offset-parent` polyfill.
+- Dependencies: Upgrade `lit` from `2.8.x` -> `3.1.x`
+- Dependencies: Upgraded the version of `floating-ui` and removed the `composed-offset-parent` polyfill.
 
 ## v2.0.2
 

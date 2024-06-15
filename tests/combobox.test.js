@@ -43,7 +43,7 @@ test("Should properly check items in the combobox", async () => {
   await sendKeys({ press: "ArrowDown" })
   await aTimeout(100)
 
-  assert.equal(combobox.expanded, true)
+  assert.equal(combobox.active, true)
   assert.equal(combobox.triggerElement.getAttribute("aria-expanded"), "true")
 
   assert.equal(options()[0].selected, false)
@@ -57,7 +57,7 @@ test("Should properly check items in the combobox", async () => {
   await sendKeys({ press: "Enter" })
   await aTimeout(10)
 
-  assert.equal(combobox.expanded, false)
+  assert.equal(combobox.active, false)
   assert.equal(combobox.triggerElement.value, options()[0].value)
   assert.equal(combobox.value, options()[0].value)
   assert.lengthOf(formData().getAll("combobox"), 1)
@@ -70,7 +70,7 @@ test("Should properly check items in the combobox", async () => {
   assert.equal(options()[1].current, false)
 
   await sendKeys({ press: "ArrowDown" }) // Expand the combobox
-  assert.equal(combobox.expanded, true)
+  assert.equal(combobox.active, true)
 
   await sendKeys({ press: "ArrowDown" }) // Focus the next option
 
@@ -139,7 +139,7 @@ test("Should properly selected the first selected item in the combobox", async (
   await sendKeys({ press: "ArrowDown" })
   await aTimeout(10)
 
-  assert.equal(combobox.expanded, true)
+  assert.equal(combobox.active, true)
   assert.equal(combobox.triggerElement.getAttribute("aria-expanded"), "true")
 
   assert.equal(options()[3].selected, true)
@@ -614,6 +614,48 @@ suite("Multiple select combobox", () => {
     assert.equal(combobox.triggerElement.value, options()[0].textContent)
     assert.lengthOf(combobox.selectedOptions, 1)
     assert.equal(options()[0].selected, true)
+  })
+
+  test("filtering results + autocomplete='both'", async () => {
+    const combobox = await fixture(html`
+      <role-combobox name="combobox" autocomplete="both" filter-results>
+        <input slot="trigger">
+        <div slot="options">
+          <role-option>Capybara</role-option>
+          <role-option>Rhino</role-option>
+          <role-option>Badger mole</role-option>
+          <role-option>Flamingo</role-option>
+          <role-option>Tortoise</role-option>
+          <role-option>Killer Whale</role-option>
+          <role-option>Opossum</role-option>
+          <role-option>Turtle</role-option>
+          <role-option>Elephant</role-option>
+          <role-option>Dove</role-option>
+          <role-option>Sparrow</role-option>
+          <role-option>Platypus</role-option>
+          <role-option>Zebra</role-option>
+          <role-option>Dog</role-option>
+          <role-option>Cat</role-option>
+          <role-option>Swan</role-option>
+          <role-option>Goose</role-option>
+        </div>
+      </role-combobox>
+    `)
+
+    combobox.triggerElement.focus()
+
+    const str = "Ca"
+    await sendKeys({ type: str })
+
+    assert.equal(combobox.selectedOptions[0].content, "Capybara")
+
+    // We should have "Capybara" preselected, and "Cat" under it.
+    await sendKeys({ press: "ArrowDown" }) // Scroll down to "Cat" option
+
+    // Select it with Keyboard.
+    await sendKeys({ press: "Enter" }) // Scroll down to "Cat" option
+
+    // assert.equal(combobox.selectedOptions[0].content, "Cat")
   })
 })
 

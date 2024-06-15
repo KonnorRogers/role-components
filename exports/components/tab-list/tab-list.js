@@ -1,12 +1,11 @@
-import { html } from "lit"
-
 import { BaseElement } from "../../../internal/base-element.js";
 import { hostStyles } from "../../styles/host-styles.js";
-import { componentStyles } from "./{{ tagWithoutPrefix tag }}.styles.js";
+import { componentStyles } from "./tab-list.styles.js";
+import { html } from "lit"
 
 /**
  * @summary Short summary of the component's intended use.
- * @documentation https://role-components.vercel.app/components/{{ tagWithoutPrefix tag }}
+ * @documentation https://role-components.vercel.app/components/tab-list
  * @status experimental
  * @since 2.0
  *
@@ -18,15 +17,13 @@ import { componentStyles } from "./{{ tagWithoutPrefix tag }}.styles.js";
  *
  * @cssproperty --example - An example CSS custom property.
  */
-export default class {{ properCase tag }} extends BaseElement {
+export default class RoleTabList extends BaseElement {
   static styles = [
     hostStyles,
     componentStyles,
   ]
 
-  static properties = /** @type {const} */ ({
-
-  })
+  static properties = /** @type {const} */ ({})
 
   render () {
     return html`

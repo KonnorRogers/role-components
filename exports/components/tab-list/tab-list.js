@@ -4,6 +4,8 @@ import { componentStyles } from "./tab-list.styles.js";
 import { html } from "lit"
 
 /**
+ * @customElement
+ * @tagName role-tab-list
  * @summary Short summary of the component's intended use.
  * @documentation https://role-components.vercel.app/components/tab-list
  * @status experimental
@@ -18,6 +20,8 @@ import { html } from "lit"
  * @cssproperty --example - An example CSS custom property.
  */
 export default class RoleTabList extends BaseElement {
+  static baseName = "role-tab-list"
+
   static styles = [
     hostStyles,
     componentStyles,
@@ -46,7 +50,13 @@ export default class RoleTabList extends BaseElement {
 
   render () {
     return html`
-      <slot></slot>
+      <div part="tab-container">
+        <slot name="tab"></slot>
+      </div>
+
+      <div part="tab-panel-container">
+        <slot name="tab-panel"></slot>
+      </div>
     `
   }
 }

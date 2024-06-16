@@ -1,12 +1,28 @@
+import { readdirSync } from 'fs'
+import * as process from "process"
+import * as path from "path"
+
+const getDirectories = (source) =>
+  readdirSync(source, { withFileTypes: true })
+    .filter(dirent => dirent.isDirectory())
+    .map(dirent => dirent.name)
+
+
 export default function (plop) {
   const componentPrefix = "role-"
-  plop.setHelper('tagWithoutPrefix', tag => tag.replace(new RegExp(`^${componentPrefix}`), ''));
 
-  plop.setHelper('tagToTitle', tag => {
+  function tagWithoutPrefix (tag) {
+    return tag.replace(new RegExp(`^${componentPrefix}`), '')
+  }
+
+  function tagToTitle (tag) {
     const withoutPrefix = plop.getHelper('tagWithoutPrefix');
     const titleCase = plop.getHelper('titleCase');
     return titleCase(withoutPrefix(tag).replace(/-/g, ' '));
-  });
+  }
+
+  plop.setHelper('tagWithoutPrefix', tagWithoutPrefix);
+  plop.setHelper('tagToTitle', tagToTitle);
 
   plop.setGenerator('component', {
     description: 'Generate a new component',
@@ -31,31 +47,44 @@ export default function (plop) {
       }
     ],
     actions: [
+      // {
+      //   type: 'add',
+      //   path: '../../exports/components/{{ tagWithoutPrefix tag }}/{{ tagWithoutPrefix tag }}-register.js',
+      //   templateFile: 'templates/component-register.hbs'
+      // },
+      // {
+      //   type: 'add',
+      //   path: '../../exports/components/{{ tagWithoutPrefix tag }}/{{ tagWithoutPrefix tag }}.js',
+      //   templateFile: 'templates/component.hbs'
+      // },
+      // {
+      //   type: 'add',
+      //   path: '../../exports/components/{{ tagWithoutPrefix tag }}/{{ tagWithoutPrefix tag }}.styles.js',
+      //   templateFile: 'templates/component-styles.hbs'
+      // },
+      // {
+      //   type: 'add',
+      //   path: '../../tests/{{ tagWithoutPrefix tag }}.test.js',
+      //   templateFile: 'templates/component-tests.hbs'
+      // },
+      // {
+      //   type: 'add',
+      //   path: '../../docs/src/_documentation/components/{{ tagWithoutPrefix tag }}.md',
+      //   templateFile: 'templates/component-docs.hbs'
+      // },
       {
-        type: 'add',
-        path: '../../exports/{{ tagWithoutPrefix tag }}/{{ tagWithoutPrefix tag }}-register.js',
-        templateFile: 'templates/component-register.hbs'
-      },
-      {
-        type: 'add',
-        path: '../../exports/{{ tagWithoutPrefix tag }}/{{ tagWithoutPrefix tag }}.js',
-        templateFile: 'templates/component.hbs'
-      },
-      {
-        type: 'add',
-        path: '../../exports/{{ tagWithoutPrefix tag }}/{{ tagWithoutPrefix tag }}.styles.js',
-        templateFile: 'templates/component-styles.hbs'
-      },
-      {
-        type: 'add',
-        path: '../../tests/{{ tagWithoutPrefix tag }}.test.js',
-        templateFile: 'templates/component-tests.hbs'
-      },
-      {
-        type: 'add',
-        path: '../../docs/src/_documentation/components/{{ tagWithoutPrefix tag }}.md',
-        templateFile: 'templates/component-docs.hbs'
-      },
+        type: "modify",
+        path: "../../exports/index.js",
+        transform(fileContents, data) {
+          const properCase = plop.getHelper("properCase")
+          const directories = getDirectories(path.resolve(process.cwd(), "exports", "components"))
+          const contents = directories.sort().map((directoryName) => {
+            const componentPath = tagWithoutPrefix(directoryName)
+            return `export { default as ${properCase(directoryName)} } from "./components/${componentPath}/${componentPath}.js"`
+          })
+          return contents.join("\n")
+        },
+      }
     ]
   });
 }

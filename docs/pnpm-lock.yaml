@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@github/clipboard-copy-element':
-        specifier: ^1.2.1
-        version: 1.2.1
+        specifier: ^1.3.0
+        version: 1.3.0
       '@hotwired/stimulus':
-        specifier: ^3.2.1
-        version: 3.2.1
+        specifier: ^3.2.2
+        version: 3.2.2
       '@hotwired/turbo':
         specifier: ^7.3.0
         version: 7.3.0
@@ -21,17 +21,17 @@ importers:
         specifier: ^3.10.4
         version: 3.10.4
       '@shoelace-style/shoelace':
-        specifier: ^2.7.0
-        version: 2.7.0
+        specifier: ^2.15.1
+        version: 2.15.1(@types/react@18.3.3)
       bridgetown-quick-search:
         specifier: 2.0.0
         version: 2.0.0
       light-pen:
-        specifier: ^3.0.6
-        version: 3.0.6
+        specifier: ^3.1.1
+        version: 3.1.1
       lit:
-        specifier: ^3.1.3
-        version: 3.1.3
+        specifier: ^3.1.4
+        version: 3.1.4
       role-components:
         specifier: link:../
         version: link:..
@@ -170,9 +170,9 @@ packages:
       postcss: ^8.2
       postcss-selector-parser: ^6.0.10
 
-  '@ctrl/tinycolor@3.6.0':
-    resolution: {integrity: sha512-/Z3l6pXthq0JvMYdUFyX9j0MaCltlIn6mfh9jLyQwg5aPKxkyNa0PTHtU1AlFXLNk55ZuAeJRcpvq+tmLfKmaQ==}
-    engines: {node: '>=10'}
+  '@ctrl/tinycolor@4.1.0':
+    resolution: {integrity: sha512-WyOx8cJQ+FQus4Mm4uPIZA64gbk3Wxh0so5Lcii0aJifqwoVOlfFtorjLE0Hen4OYyHZMXDWqMmaQemBhgxFRQ==}
+    engines: {node: '>=14'}
 
   '@esbuild/android-arm64@0.19.3':
     resolution: {integrity: sha512-w+Akc0vv5leog550kjJV9Ru+MXMR2VuMrui3C61mnysim0gkFCPOUTAfzTP0qX+HpN9Syu3YA3p1hf3EPqObRw==}
@@ -306,17 +306,20 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@floating-ui/core@1.3.1':
-    resolution: {integrity: sha512-Bu+AMaXNjrpjh41znzHqaz3r2Nr8hHuHZT6V2LBKMhyMl0FgKA62PNYbqnfgmzOhoWZj70Zecisbo4H1rotP5g==}
+  '@floating-ui/core@1.6.2':
+    resolution: {integrity: sha512-+2XpQV9LLZeanU4ZevzRnGFg2neDeKHgFLjP6YLW+tly0IvrhqT4u8enLGjLH3qeh85g19xY5rsAusfwTdn5lg==}
 
-  '@floating-ui/dom@1.4.4':
-    resolution: {integrity: sha512-21hhDEPOiWkGp0Ys4Wi6Neriah7HweToKra626CIK712B5m9qkdz54OP9gVldUg+URnBTpv/j/bi/skmGdstXQ==}
+  '@floating-ui/dom@1.6.5':
+    resolution: {integrity: sha512-Nsdud2X65Dz+1RHjAIP0t8z5e2ff/IRbei6BqFrl1urT8sDVzM1HMQ+R0XcU5ceRfyO3I6ayeqIfh+6Wb8LGTw==}
 
-  '@github/clipboard-copy-element@1.2.1':
-    resolution: {integrity: sha512-PLccyUCnzmOQ6zrRsH66rr67iumJyP5r7ij17ezprFQAK/oA8CXhlC8LTG+xpW3cYAvnp2zCgRNTfXS8wk09Lg==}
+  '@floating-ui/utils@0.2.2':
+    resolution: {integrity: sha512-J4yDIIthosAsRZ5CPYP/jQvUAQtlZTTD/4suA08/FEnlxqW3sKS9iAhgsa9VYLZ6vDHn/ixJgIqRQPotoBjxIw==}
 
-  '@hotwired/stimulus@3.2.1':
-    resolution: {integrity: sha512-HGlzDcf9vv/EQrMJ5ZG6VWNs8Z/xMN+1o2OhV1gKiSG6CqZt5MCBB1gRg5ILiN3U0jEAxuDTNPRfBcnZBDmupQ==}
+  '@github/clipboard-copy-element@1.3.0':
+    resolution: {integrity: sha512-wyntkQkwoLbLo+Hqg2LIVMXDIzcvUb9bSDz+clX6nVJItwzh103rHxdXFRZD+DmxVbuEW5xSznYQXkz1jZT+xg==}
+
+  '@hotwired/stimulus@3.2.2':
+    resolution: {integrity: sha512-eGeIqNOQpXoPAIP7tC1+1Yc1yl1xnwYqg+3mzqxyrbE5pg5YFBZcA6YoTiByJB6DKAEsiWtl6tjTJS4IYtbB7A==}
 
   '@hotwired/turbo@7.3.0':
     resolution: {integrity: sha512-Dcu+NaSvHLT7EjrDrkEmH4qET2ZJZ5IcCWmNXxNQTBwlnE5tBZfN6WxZ842n5cHV52DH/AKNirbPBtcEXDLW4g==}
@@ -325,11 +328,13 @@ packages:
   '@konnorr/bridgetown-quick-search@3.10.4':
     resolution: {integrity: sha512-BJih2/72YCR5M5osQr0BwmHAF1bKD+6OORvW9H3KbGzyuzmwEctVRxHtUMjY6gwmjYriejNWkZPkeeixAHoHog==}
 
-  '@lit-labs/react@1.2.1':
-    resolution: {integrity: sha512-DiZdJYFU0tBbdQkfwwRSwYyI/mcWkg3sWesKRsHUd4G+NekTmmeq9fzsurvcKTNVa0comNljwtg4Hvi1ds3V+A==}
-
   '@lit-labs/ssr-dom-shim@1.2.0':
     resolution: {integrity: sha512-yWJKmpGE6lUURKAaIltoPIE/wrbY3TEkqQt+X0m+7fQNnAv0keydnYvbiJFP1PnMhizmIWRWOG5KLhYyc/xl+g==}
+
+  '@lit/react@1.0.5':
+    resolution: {integrity: sha512-RSHhrcuSMa4vzhqiTenzXvtQ6QDq3hSPsnHHO3jaPmmvVFeoNNm4DHoQ0zLdKAUvY3wP3tTENSUf7xpyVfrDEA==}
+    peerDependencies:
+      '@types/react': 17 || 18
 
   '@lit/reactive-element@1.6.3':
     resolution: {integrity: sha512-QuTgnG52Poic7uM1AN5yJ09QMe0O28e10XzSvWDz02TJiiKee4stsiownEIadWm8nYzyDAyT+gKzUoZmiWQtsQ==}
@@ -362,12 +367,18 @@ packages:
   '@shoelace-style/animations@1.1.0':
     resolution: {integrity: sha512-Be+cahtZyI2dPKRm8EZSx3YJQ+jLvEcn3xzRP7tM4tqBnvd/eW/64Xh0iOf0t2w5P8iJKfdBbpVNE9naCaOf2g==}
 
-  '@shoelace-style/localize@3.1.1':
-    resolution: {integrity: sha512-NkM/hj3Js6yXCU9WxhsyxRUdyqUUUl/BSvIluUMptQteUWGOJaoyP1iMbOMqO544DYMzBfnoCw66ZHkGuTdKgA==}
+  '@shoelace-style/localize@3.1.2':
+    resolution: {integrity: sha512-Hf45HeO+vdQblabpyZOTxJ4ZeZsmIUYXXPmoYrrR4OJ5OKxL+bhMz5mK8JXgl7HsoEowfz7+e248UGi861de9Q==}
 
-  '@shoelace-style/shoelace@2.7.0':
-    resolution: {integrity: sha512-w7FnHqBoYR6Ne42WZPW+bIJGIAGsUZgxF3WA9LLfqn3+Q4NOQ4r5jl/DEfsQmRUTmY0nUrs4WGO1CeTrhv6taA==}
+  '@shoelace-style/shoelace@2.15.1':
+    resolution: {integrity: sha512-3ecUw8gRwOtcZQ8kWWkjk4FTfObYQ/XIl3aRhxprESoOYV1cYhloYPsmQY38UoL3+pwJiZb5+LzX0l3u3Zl0GA==}
     engines: {node: '>=14.17.0'}
+
+  '@types/prop-types@15.7.12':
+    resolution: {integrity: sha512-5zvhXYtRNRluoE/jAp4GVsSduVUzNWKkOZrCDBWYtE7biZywwdC2AcEzg+cSMLFRfVgeAFqpfNabiPjxFddV1Q==}
+
+  '@types/react@18.3.3':
+    resolution: {integrity: sha512-hti/R0pS0q1/xx+TsI73XIqk26eBsISZ2R0wUijXIngRK9R/e7Xw/cXVxQK7R5JjW+SV4zGcn5hXjudkN/pLIw==}
 
   '@types/trusted-types@2.0.7':
     resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
@@ -468,6 +479,9 @@ packages:
     engines: {node: '>=4'}
     hasBin: true
 
+  csstype@3.1.3:
+    resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
+
   dir-glob@3.0.1:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}
     engines: {node: '>=8'}
@@ -500,8 +514,8 @@ packages:
     resolution: {integrity: sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==}
     engines: {node: '>=8'}
 
-  form-associated-helpers@0.0.4:
-    resolution: {integrity: sha512-Fy3dCmzxbaB08nRIr8GVBo5duQSN/NouCU4JjQ/Pd3bipsKMsV2RhPb3uGujEYYk/OIMDf9EPwRI5pQq6PsZpw==}
+  form-associated-helpers@0.0.9:
+    resolution: {integrity: sha512-jysvaOE1YEoFEDqcHdV43rk57Q37z4MDl/nYJGAt1iwIpIafH9viJLHfEvVNxoUuGiQ14AZYvPLP7pfi6BEKWQ==}
 
   fraction.js@4.2.0:
     resolution: {integrity: sha512-MhLuK+2gUcnZe8ZHlaaINnQLl0xRIGRfcGk2yl8xoQAfHrSsL3rYu6FCmBdkdbhc9EPlwyGHewaRsvwRMJtAlA==}
@@ -587,8 +601,8 @@ packages:
   konnors-ninja-keys@1.13.4:
     resolution: {integrity: sha512-cz/PFrwLhioB6gDtsSjUC7VPUcBYCtKLMWe/aY3Az8qgPI+O1BYBSxSCHq71cyJBNc/anh4NA96bOFS49YFa4Q==}
 
-  light-pen@3.0.6:
-    resolution: {integrity: sha512-wHmfEOM67qtyMJ4alH8UxxW15s7nbfZuN/E9QnQQj6T8TnJlf4Dcuj4WZ8sr9zH5GLx5rE/UGgxc1XkfLqFbrQ==}
+  light-pen@3.1.1:
+    resolution: {integrity: sha512-YVTVz9dcHEys4LtSiUAgVz6C+/4OrNUA2fL9aPbLUZdgHUA0YYueKkEGVV63H3FIbJg7Cgz1BjguqODPqHYrGg==}
 
   lilconfig@2.0.6:
     resolution: {integrity: sha512-9JROoBW7pobfsx+Sq2JsASvCo6Pfo6WWoUW79HuB1BCoBXD4PLWJPqDF6fNj67pqBYTbAHkE57M1kS/+L1neOg==}
@@ -600,20 +614,20 @@ packages:
   lit-element@3.3.3:
     resolution: {integrity: sha512-XbeRxmTHubXENkV4h8RIPyr8lXc+Ff28rkcQzw3G6up2xg5E8Zu1IgOWIwBLEQsu3cOVFqdYwiVi0hv0SlpqUA==}
 
-  lit-element@4.0.5:
-    resolution: {integrity: sha512-iTWskWZEtn9SyEf4aBG6rKT8GABZMrTWop1+jopsEOgEcugcXJGKuX5bEbkq9qfzY+XB4MAgCaSPwnNpdsNQ3Q==}
+  lit-element@4.0.6:
+    resolution: {integrity: sha512-U4sdJ3CSQip7sLGZ/uJskO5hGiqtlpxndsLr6mt3IQIjheg93UKYeGQjWMRql1s/cXNOaRrCzC2FQwjIwSUqkg==}
 
   lit-html@2.8.0:
     resolution: {integrity: sha512-o9t+MQM3P4y7M7yNzqAyjp7z+mQGa4NS4CxiyLqFPyFWyc4O+nodLrkrxSaCTrla6M5YOLaT3RpbbqjszB5g3Q==}
 
-  lit-html@3.1.3:
-    resolution: {integrity: sha512-FwIbqDD8O/8lM4vUZ4KvQZjPPNx7V1VhT7vmRB8RBAO0AU6wuTVdoXiu2CivVjEGdugvcbPNBLtPE1y0ifplHA==}
+  lit-html@3.1.4:
+    resolution: {integrity: sha512-yKKO2uVv7zYFHlWMfZmqc+4hkmSbFp8jgjdZY9vvR9jr4J8fH6FUMXhr+ljfELgmjpvlF7Z1SJ5n5/Jeqtc9YA==}
 
   lit@2.8.0:
     resolution: {integrity: sha512-4Sc3OFX9QHOJaHbmTMk28SYgVxLN3ePDjg7hofEft2zWlehFL3LiAuapWc4U/kYwMYJSh2hTCPZ6/LIC7ii0MA==}
 
-  lit@3.1.3:
-    resolution: {integrity: sha512-l4slfspEsnCcHVRTvaP7YnkTZEZggNFywLEIhQaGhYDczG+tu/vlgm/KaWIEjIp+ZyV20r2JnZctMb8LeLCG7Q==}
+  lit@3.1.4:
+    resolution: {integrity: sha512-q6qKnKXHy2g1kjBaNfcoLlgbI3+aSOZ9Q4tiGa9bGYXq5RBXxkVTqTIVmP2VWMp29L4GyvCFm8ZQ2o56eUAMyA==}
 
   lunr@2.3.9:
     resolution: {integrity: sha512-zTU3DaZaF3Rt9rhN3uBMGQD3dD2/vFQqnvZCDv4dl5iOzq2IZQqTxu90r4E5J+nP70J3ilqVCrbho2eWaeW8Ow==}
@@ -1034,7 +1048,7 @@ snapshots:
       postcss: 8.4.19
       postcss-selector-parser: 6.0.11
 
-  '@ctrl/tinycolor@3.6.0': {}
+  '@ctrl/tinycolor@4.1.0': {}
 
   '@esbuild/android-arm64@0.19.3':
     optional: true
@@ -1102,27 +1116,34 @@ snapshots:
   '@esbuild/win32-x64@0.19.3':
     optional: true
 
-  '@floating-ui/core@1.3.1': {}
-
-  '@floating-ui/dom@1.4.4':
+  '@floating-ui/core@1.6.2':
     dependencies:
-      '@floating-ui/core': 1.3.1
+      '@floating-ui/utils': 0.2.2
 
-  '@github/clipboard-copy-element@1.2.1': {}
+  '@floating-ui/dom@1.6.5':
+    dependencies:
+      '@floating-ui/core': 1.6.2
+      '@floating-ui/utils': 0.2.2
 
-  '@hotwired/stimulus@3.2.1': {}
+  '@floating-ui/utils@0.2.2': {}
+
+  '@github/clipboard-copy-element@1.3.0': {}
+
+  '@hotwired/stimulus@3.2.2': {}
 
   '@hotwired/turbo@7.3.0': {}
 
   '@konnorr/bridgetown-quick-search@3.10.4':
     dependencies:
       konnors-ninja-keys: 1.13.4
-      lit: 3.1.3
+      lit: 3.1.4
       lunr: 2.3.9
 
-  '@lit-labs/react@1.2.1': {}
-
   '@lit-labs/ssr-dom-shim@1.2.0': {}
+
+  '@lit/react@1.0.5(@types/react@18.3.3)':
+    dependencies:
+      '@types/react': 18.3.3
 
   '@lit/reactive-element@1.6.3':
     dependencies:
@@ -1154,22 +1175,31 @@ snapshots:
   '@open-wc/scoped-elements@3.0.5':
     dependencies:
       '@open-wc/dedupe-mixin': 1.4.0
-      lit: 3.1.3
+      lit: 3.1.4
 
   '@shoelace-style/animations@1.1.0': {}
 
-  '@shoelace-style/localize@3.1.1': {}
+  '@shoelace-style/localize@3.1.2': {}
 
-  '@shoelace-style/shoelace@2.7.0':
+  '@shoelace-style/shoelace@2.15.1(@types/react@18.3.3)':
     dependencies:
-      '@ctrl/tinycolor': 3.6.0
-      '@floating-ui/dom': 1.4.4
-      '@lit-labs/react': 1.2.1
+      '@ctrl/tinycolor': 4.1.0
+      '@floating-ui/dom': 1.6.5
+      '@lit/react': 1.0.5(@types/react@18.3.3)
       '@shoelace-style/animations': 1.1.0
-      '@shoelace-style/localize': 3.1.1
+      '@shoelace-style/localize': 3.1.2
       composed-offset-position: 0.0.4
-      lit: 2.8.0
+      lit: 3.1.4
       qr-creator: 1.0.0
+    transitivePeerDependencies:
+      - '@types/react'
+
+  '@types/prop-types@15.7.12': {}
+
+  '@types/react@18.3.3':
+    dependencies:
+      '@types/prop-types': 15.7.12
+      csstype: 3.1.3
 
   '@types/trusted-types@2.0.7': {}
 
@@ -1268,6 +1298,8 @@ snapshots:
 
   cssesc@3.0.0: {}
 
+  csstype@3.1.3: {}
+
   dir-glob@3.0.1:
     dependencies:
       path-type: 4.0.0
@@ -1325,7 +1357,7 @@ snapshots:
     dependencies:
       to-regex-range: 5.0.1
 
-  form-associated-helpers@0.0.4: {}
+  form-associated-helpers@0.0.9: {}
 
   fraction.js@4.2.0: {}
 
@@ -1415,10 +1447,10 @@ snapshots:
       lit: 2.8.0
       web-component-define: 2.0.11
 
-  light-pen@3.0.6:
+  light-pen@3.1.1:
     dependencies:
-      form-associated-helpers: 0.0.4
-      lit: 2.8.0
+      form-associated-helpers: 0.0.9
+      lit: 3.1.4
       prism-esm: 1.29.0-fix.4
       web-component-define: 2.0.11
 
@@ -1432,17 +1464,17 @@ snapshots:
       '@lit/reactive-element': 1.6.3
       lit-html: 2.8.0
 
-  lit-element@4.0.5:
+  lit-element@4.0.6:
     dependencies:
       '@lit-labs/ssr-dom-shim': 1.2.0
       '@lit/reactive-element': 2.0.4
-      lit-html: 3.1.3
+      lit-html: 3.1.4
 
   lit-html@2.8.0:
     dependencies:
       '@types/trusted-types': 2.0.7
 
-  lit-html@3.1.3:
+  lit-html@3.1.4:
     dependencies:
       '@types/trusted-types': 2.0.7
 
@@ -1452,11 +1484,11 @@ snapshots:
       lit-element: 3.3.3
       lit-html: 2.8.0
 
-  lit@3.1.3:
+  lit@3.1.4:
     dependencies:
       '@lit/reactive-element': 2.0.4
-      lit-element: 4.0.5
-      lit-html: 3.1.3
+      lit-element: 4.0.6
+      lit-html: 3.1.4
 
   lunr@2.3.9: {}
 

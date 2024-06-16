@@ -283,10 +283,12 @@ export const AnchoredRegionProperties = () => /** @const */ ({
 
 
 /**
+ * @customElement
+ * @tagName role-anchored-region
  * @summary Popup is a utility that lets you declaratively anchor "popover" containers to another element.
- * @documentation https://shoelace.style/components/popover
- * @status stable
- * @since 2.0
+ * @documentation https://role-components.vercel.app/components/anchored-region
+ * @status experimental
+ * @since 3.0
  *
  * @event role-reposition - Emitted when the popover is repositioned. This event can fire a lot, so avoid putting expensive
  *  operations in your listener or consider debouncing it.
@@ -311,6 +313,7 @@ export const AnchoredRegionProperties = () => /** @const */ ({
  *  available when using `auto-size`.
  */
 export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement) {
+  static baseName = "role-anchored-region"
   static styles =  [
     hostStyles,
     css`

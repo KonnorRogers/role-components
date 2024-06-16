@@ -22,6 +22,8 @@ import RoleSelect from "../select/select.js";
 /**
  * @customElement
  * @tagname role-combobox
+ * @status experimental
+ * @since 3.0
  */
 export default class RoleCombobox extends RoleSelect {
   static baseName = "role-combobox";

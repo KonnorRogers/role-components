@@ -29,6 +29,7 @@ export default class RoleTab extends BaseElement {
 
   static properties = /** @type {const} */ ({
     active: { type: Boolean },
+    current: { type: Boolean },
     role: {reflect: true},
     variant: {reflect: true}
   })
@@ -44,6 +45,11 @@ export default class RoleTab extends BaseElement {
      * @type {null | "bordered" | "lifted" | "boxed"}
      */
     this.variant = null
+
+    /**
+     * Whether or not the tab is currently having it's associated tab panel shown.
+     */
+    this.active = false
   }
 
   render () {

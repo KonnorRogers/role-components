@@ -71,6 +71,8 @@ const formProperties = LitFormAssociatedMixin.formProperties
  *
  * @customElement
  * @tagname role-select
+ * @status experimental
+ * @since 3.0
  */
 export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMixin(BaseElement)) {
   static baseName = "role-select";

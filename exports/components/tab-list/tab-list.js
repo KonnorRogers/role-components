@@ -9,7 +9,7 @@ import { html } from "lit"
  * @summary Short summary of the component's intended use.
  * @documentation https://role-components.vercel.app/components/tab-list
  * @status experimental
- * @since 2.0
+ * @since 3.0
  *
  * @event role-event-name - Emitted as an example.
  *

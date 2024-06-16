@@ -72,6 +72,11 @@ export class BaseElement extends DefineableMixin(LitElement) {
     this.__debounceMap__ = null;
   }
 
+  disconnectedCallback () {
+    super.disconnectedCallback()
+    this.__debounceMap__ = null
+  }
+
   /**
    * @param {(...args: any[]) => any} callback
    * @param {{ key: any, wait: number }} options

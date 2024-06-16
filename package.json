@@ -72,9 +72,8 @@
   },
   "dependencies": {
     "@floating-ui/dom": "^1.6.5",
-    "composed-offset-position": "^0.0.4",
-    "form-associated-helpers": "^0.0.9",
-    "lit": "^3.1.3",
+    "form-associated-helpers": "^0.0.10",
+    "lit": "^3",
     "web-component-define": "^2.0.11"
   },
   "customElements": "custom-elements.json"

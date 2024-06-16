@@ -80,7 +80,7 @@ export default function (plop) {
           const directories = getDirectories(path.resolve(process.cwd(), "exports", "components"))
           const contents = directories.sort().map((directoryName) => {
             const componentPath = tagWithoutPrefix(directoryName)
-            return `export { default as ${properCase(directoryName)} } from "./components/${componentPath}/${componentPath}.js"`
+            return `export { default as ${properCase(directoryName)} } from "./components/${componentPath}/${componentPath}-register.js"`
           })
           return contents.join("\n")
         },

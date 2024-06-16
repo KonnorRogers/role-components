@@ -70,6 +70,13 @@ export class BaseElement extends DefineableMixin(LitElement) {
      * @type {null | Map<any, ReturnType<typeof setTimeout>>}
      */
     this.__debounceMap__ = null;
+
+    if (!this.internals) {
+      /**
+       * @type {ReturnType<HTMLElement["attachInternals"]>}
+       */
+      this.internals = this.attachInternals()
+    }
   }
 
   disconnectedCallback () {

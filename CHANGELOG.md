@@ -25,7 +25,7 @@ All notable changes to this project will be documented in this file.
 
 ### Dependencies
 
-- Dependencies: Upgrade `lit` from `2.8.x` -> `3.1.x`
+- Dependencies: Upgrade `lit` from `2.8.x` -> `3.x`
 - Dependencies: Upgraded the version of `floating-ui` and removed the `composed-offset-parent` polyfill.
 
 ## v2.0.2

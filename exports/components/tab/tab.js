@@ -22,6 +22,7 @@ import { componentStyles } from "./tab.styles.js";
  */
 export default class RoleTab extends BaseElement {
   static baseName = "role-tab"
+
   static styles = [
     hostStyles,
     componentStyles,
@@ -29,7 +30,6 @@ export default class RoleTab extends BaseElement {
 
   static properties = /** @type {const} */ ({
     active: { type: Boolean },
-    current: { type: Boolean },
     role: {reflect: true},
     variant: {reflect: true}
   })
@@ -50,6 +50,15 @@ export default class RoleTab extends BaseElement {
      * Whether or not the tab is currently having it's associated tab panel shown.
      */
     this.active = false
+  }
+
+  /**
+   * @param {import("lit").PropertyValues<this>} changedProperties
+   */
+  updated (changedProperties) {
+    if (changedProperties.has("active")) {
+      this.internals.ariaSelected = this.active.toString()
+    }
   }
 
   render () {

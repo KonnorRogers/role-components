@@ -2,6 +2,7 @@
 
 import { LitElement } from "lit";
 import { DefineableMixin } from "web-component-define";
+import { uuidv4 } from "./uuid.js";
 
 /**
  * @template {HTMLElement} T
@@ -79,9 +80,42 @@ export class BaseElement extends DefineableMixin(LitElement) {
     }
   }
 
+  /**
+   * Assign a random UUID with a prefix if no id is found. Will return the "id" of the element if its already assigned.
+   * @param {string} [prefix=""] - Prefix to add to the uuid
+   * @param {boolean} [force=false] - If true, will not check if `this.id` already exists.
+   * @returns {string}
+   */
+  getOrAssignId (prefix = "", force = false) {
+    let str = this.id
+
+    if (!str) {
+      str = prefix + "-" + uuidv4()
+      this.id = str
+    }
+    return str
+  }
+
+
+  get cachedComputedStyle () {
+    if (!this.__computedStyle__) {
+      this.__computedStyle__ = getComputedStyle(this)
+    }
+
+    return this.__computedStyle__
+  }
+
+  /**
+   * @type {"ltr" | "rtl"}
+   */
+  get currentTextDirection () {
+    return this.cachedComputedStyle.direction === "rtl" ? "rtl" : "ltr"
+  }
+
   disconnectedCallback () {
     super.disconnectedCallback()
     this.__debounceMap__ = null
+    this.__computedStyle__ = null
   }
 
   /**

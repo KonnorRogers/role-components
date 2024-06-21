@@ -29,8 +29,7 @@ export default class RoleTab extends BaseElement {
   ]
 
   static properties = /** @type {const} */ ({
-    active: { type: Boolean },
-    role: {reflect: true},
+    active: { type: Boolean, reflect: true },
     variant: {reflect: true}
   })
 
@@ -38,7 +37,9 @@ export default class RoleTab extends BaseElement {
     super()
 
     this.tabIndex = -1
-    this.role = "tab"
+
+    this.internals.role = "tab"
+    this.setAttribute("role", "tab")
 
     /**
      * The "default" variant looks like a button.
@@ -50,6 +51,26 @@ export default class RoleTab extends BaseElement {
      * Whether or not the tab is currently having it's associated tab panel shown.
      */
     this.active = false
+
+    /** Tabs are basically buttons. So space / enter should behave like a button. */
+    this.addEventListener("keydown", this.eventHandler.get(this.handleKeyDown))
+  }
+
+  /**
+   * @param {KeyboardEvent} e
+   */
+  handleKeyDown (e) {
+    const handledKeys = ["Enter", " "]
+
+    if (!handledKeys.includes(e.key)) { return }
+
+    e.preventDefault()
+    this.click()
+  }
+
+  connectedCallback () {
+    super.connectedCallback()
+    this.getOrAssignId("role-tab")
   }
 
   /**
@@ -58,6 +79,8 @@ export default class RoleTab extends BaseElement {
   updated (changedProperties) {
     if (changedProperties.has("active")) {
       this.internals.ariaSelected = this.active.toString()
+      this.setAttribute("aria-selected", this.active.toString())
+      this.tabIndex = this.active ? 0 : -1
     }
   }
 

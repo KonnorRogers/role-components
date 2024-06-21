@@ -5,8 +5,8 @@ const isiOS = /Mac|iOS|iPhone|iPad|iPod/i.test(
   window.navigator.platform,
 );
 
-import "../exports/combobox/combobox-register.js"
-import "../exports/option/option-register.js"
+import "../exports/components/combobox/combobox-register.js"
+import "../exports/components/option/option-register.js"
 
 // Single select
 test("Should properly check items in the combobox", async () => {
@@ -884,6 +884,47 @@ suite("Multiple editable combobox", async () => {
     assert.equal(combobox.selectedOptions[1].content, options()[0].innerText)
 
     assert.isFalse(options()[2].selected)
+  })
+
+  test("`multiple-selection-type='manual' should append newly selected options`", async () => {
+    const combobox = await fixture(html`
+      <role-combobox name="combobox" autocomplete="both" filter-results="">
+        <input slot="trigger">
+        <div slot="options">
+          <role-option>Capybara</role-option>
+          <role-option>Cat</role-option>
+        </div>
+      </role-combobox>
+    `)
+
+    // Initial state should have a cleared combobox.
+    const input = combobox.querySelector("[slot='trigger']")
+    assert.equal(input.value, "")
+
+    const options = () => combobox.querySelectorAll("role-option")
+
+    input.focus()
+    await sendKeys({ type: "Ca" })
+
+    assert.equal(input.value, "Capybara")
+    assert.equal(options()[0].getAttribute("aria-selected"), "true")
+    assert.equal(options()[0].getAttribute("aria-current"), "true")
+
+    await sendKeys({ press: "ArrowDown" })
+    assert.equal(options()[0].getAttribute("aria-selected"), "true")
+    assert.equal(options()[0].getAttribute("aria-current"), "false")
+
+    assert.equal(options()[1].getAttribute("aria-selected"), "false")
+    assert.equal(options()[1].getAttribute("aria-current"), "true")
+
+    // Should select "Cat" and not "Capybara"
+    await sendKeys({ press: "Enter" })
+
+    assert.equal(options()[0].getAttribute("aria-selected"), "false")
+    assert.equal(options()[0].getAttribute("aria-current"), "false")
+
+    assert.equal(options()[1].getAttribute("aria-selected"), "true")
+    assert.equal(options()[1].getAttribute("aria-current"), "true")
   })
 })
 

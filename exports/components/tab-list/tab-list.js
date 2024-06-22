@@ -39,14 +39,20 @@ export default class RoleTabList extends BaseElement {
   constructor () {
     super()
 
-    this.setAttribute("role", "tab")
-    this.internals.role = "tab"
-
-
     /**
      * @type {"top" | "bottom" | "start" | "end"}
      */
     this.placement = "top"
+
+    this.resizeObserver = new ResizeObserver(() => {
+      const activeTab = this.tabElements[this.activeTabIndex]
+
+      if (activeTab) {
+        this.calculateIndicator(activeTab)
+      }
+    })
+
+    this.resizeObserver.observe(this)
   }
 
   get tabElements () {
@@ -113,21 +119,25 @@ export default class RoleTabList extends BaseElement {
       const tabElement = tabElements[i]
       const tabPanelElement = tabPanelElements[i]
 
+      tabElement.setAttribute("aria-controls", tabPanelElement.id)
+      // tabPanelElement.setAttribute("aria-owns", tabElement.id)
+
       if (i === index) {
         tabElement.active = true
         tabPanelElement.active = true
 
         if (this.tabsHaveFocus) {
           tabElement.focus({ preventScroll: true })
-          tabElement.scrollIntoView({ behavior: "smooth" })
+          tabElement.scrollIntoView({ behavior: "smooth", block: "nearest" })
         }
 
         this.calculateIndicator(tabElement)
 
         // This is a cheeky way to "force" animations after this initial connection.
         setTimeout(() => {
-          this.activeTabIndicator.classList.add("animate")
+          this.setAttribute("data-run-animations", "")
         })
+
         this.dispatchEvent(new TabSelectionChangeEvent({
           activeTab: tabElement,
           activeTabPanel: tabPanelElement
@@ -170,33 +180,40 @@ export default class RoleTabList extends BaseElement {
 
     if (!indicator) { return }
 
-    const parentOffsetLeft = this.offsetLeft
-    const parentOffsetTop = this.offsetTop
+    const tabContainer = /** @type {HTMLElement | undefined | null} */ (this.shadowRoot?.querySelector("[role='tablist']"))
 
-    const { offsetLeft, offsetWidth, offsetTop, offsetHeight } = tabElement
+    if (!tabContainer) { return }
+
+    const parentOffsetLeft = tabContainer.offsetLeft
+    const parentOffsetTop = tabContainer.offsetTop
+
+    const { offsetLeft, offsetTop } = tabElement
+
+    let { height, width } = tabElement.getBoundingClientRect()
 
     /**
      * @param {number} num
      */
     function round (num) {
-      return (Math.round(num * 4) / 4).toFixed(2);
+      return Number((Math.round(num * 4) / 4).toFixed(2));
     }
 
+
+    height = round(height)
+    width = round(width)
+    this.style.setProperty("--active-tab-height", `${height}px`)
+    this.style.setProperty("--active-tab-width", `${width}px`)
+
     if (verticalOrientations.includes(this.placement)) {
-      indicator.style.maxHeight = `${offsetHeight}px`
-      indicator.style.setProperty("--translate-y", `${round(offsetTop - parentOffsetTop)}px`)
-      indicator.style.maxWidth = `unset`
-      // indicator.style.setProperty("--translate-x", `${offsetLeft}px`)
+      indicator.style.setProperty("--translate-y", `${offsetTop - parentOffsetTop}px`)
 
       if (this.placement === "start") {
-        indicator.style.setProperty("--translate-x", `${(offsetLeft - parentOffsetLeft) + offsetWidth}px`)
+        indicator.style.setProperty("--translate-x", `${(offsetLeft - parentOffsetLeft) + width}px`)
       } else {
         indicator.style.setProperty("--translate-x", `0px`)
       }
     } else {
-      indicator.style.maxHeight = `unset`
-      indicator.style.setProperty("--translate-y", `${offsetHeight}px`)
-      indicator.style.maxWidth = `${offsetWidth}px`
+      indicator.style.setProperty("--translate-y", `${(offsetTop - parentOffsetTop) + height}px`)
       indicator.style.setProperty("--translate-x", `${offsetLeft - parentOffsetLeft}px`)
     }
   }
@@ -270,7 +287,7 @@ export default class RoleTabList extends BaseElement {
 
   renderTabContainer () {
     return html`
-      <div part="tab-container" @keydown=${this.handleTabContainerKeyDown} @click=${this.handleTabClick}>
+      <div role="tablist" part="tab-container" @keydown=${this.handleTabContainerKeyDown} @click=${this.handleTabClick}>
         <slot name="tab" @slotchange=${this.updateTabsAndPanels}></slot>
         <div part="active-tab-indicator"></div>
       </div>

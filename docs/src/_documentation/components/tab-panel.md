@@ -2,17 +2,5 @@
 ---
 
 
-<role-tab-panel hidden></role-tab-panel>
+See [Tab List](/components/tab-list/) for examples
 
-## Examples
-
-<light-preview
-  preview-mode="shadow-dom"
-  script-scope="shadow-dom"
->
-  <script type="text/plain">
-    <role-tab-panel></role-tab-panel>
-  </script>
-</light-preview>
-
-### First Example

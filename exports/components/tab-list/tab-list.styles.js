@@ -3,24 +3,18 @@ import { css } from "lit"
 export const componentStyles = css`
   :host {
     display: block;
+    --indicator-size: 3px;
+    --indicator-color: dodgerblue;
     --border-width: 1px;
-    --border-color: gray;
   }
 
   [part~="tab-container"] {
-    display: flex;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
     overflow: auto;
     position: relative;
-  }
-
-  [part~="tab-container"] ::slotted(*) {
-    flex: 0 0 auto !important;
-  }
-
-
-  [part~="tab-panel-container"],
-  [part~="tab-panel-container"] ::slotted(*) {
-    min-height: 100%;
+    z-index: 0;
   }
 
   :host([placement="start"]) {
@@ -37,40 +31,42 @@ export const componentStyles = css`
 
   /** (default) placement="top" */
   [part~="tab-container"] {
-    border-bottom: 1px solid gray;
+    border-bottom: var(--border-width) solid gray;
   }
 
   :host([placement="bottom"]) [part~="tab-container"] {
     border: none;
-    border-top: 1px solid gray;
+    border-top: var(--border-width) solid gray;
   }
 
   :host([placement="start"]) [part~="tab-container"] {
     border: none;
-    border-inline-end: 1px solid gray;
+    border-inline-end: var(--border-width) solid gray;
   }
 
   :host([placement="end"]) [part~="tab-container"] {
     border: none;
-    border-inline-start: 1px solid gray;
+    border-inline-start: var(--border-width) solid gray;
   }
 
   :host(:is([placement="start"], [placement="end"])) [part~="tab-container"] {
-    flex-direction: column;
+    grid-auto-flow: row;
   }
 
   :host(:is([placement="start"], [placement="end"])) [part~="active-tab-indicator"] {
-    max-height: 0px;
+    max-height: var(--active-tab-height);
     height: 100%;
-    width: 3px;
-    max-width: 0px;
+    width: var(--indicator-size);
+    max-width: auto;
   }
 
   :host([placement="start"]) [part~="active-tab-indicator"] {
-    left: -3px;
+    top: 0;
+    left: calc(var(--indicator-size) * -1);
   }
 
   :host([placement="end"]) [part~="active-tab-indicator"] {
+    top: 0;
     left: 0px;
   }
 
@@ -80,18 +76,18 @@ export const componentStyles = css`
 
   [part~="active-tab-indicator"] {
     position: absolute;
-    height: 3px;
+    height: var(--indicator-size);
     width: 100%;
-    max-width: 0px;
-    background: red;
-    top: -3px;
+    max-width: var(--active-tab-width);
+    background: var(--indicator-color);
+    top: calc(var(--indicator-size) * -1);
     left: 0;
     --translate-x: 0px;
     --translate-y: 0px;
     transform: translateX(var(--translate-x)) translateY(var(--translate-y));
   }
 
-  .animate[part~="active-tab-indicator"] {
+  :host([data-run-animations]) [part~="active-tab-indicator"] {
     transition:
       transform 0.2s ease-in-out,
       max-width 0.2s ease-in-out

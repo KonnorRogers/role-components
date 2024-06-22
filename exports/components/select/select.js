@@ -360,6 +360,9 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
       "role",
     ];
 
+    this.sync = "width"
+    this.autoSize = "height"
+
     /**
      * Monitors its DOM for new nodes and assigns them to `this.options`
      * @type {MutationObserver}
@@ -918,8 +921,8 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
             hover-bridge,
             hover-bridge--visible
           "
-          sync="width"
-          auto-size="both"
+          sync=${this.sync}
+          auto-size=${this.autoSize}
           ?active=${this.active}
           .anchor=${this.anchor}
           .placement=${this.placement}
@@ -1145,12 +1148,8 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     this.focusCurrent();
 
     if (!this.multiple) {
-      this.toggleSelected(currentOption)
+      this.handleCurrentOptionSelected()
       this.active = false
-    }
-
-    if (this.triggerElement) {
-      // this.triggerElement.focus()
     }
   }
 
@@ -1236,34 +1235,15 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     if (evt.key === "Enter") {
       evt.preventDefault()
 
-      if (this.currentOption) {
-        // If a completion is selected, we just let it fall through.
-        if (this.multipleSelectionType === "manual" || !this.completionSelected) {
-          this.toggleSelected(this.currentOption)
-        }
-
-        if (this.multipleSelectionType === "manual") {
-          this.updateTriggerElementTextContentAndValue("")
-        }
-
-        if (this.multiple) {
-          this.updateMultipleValue(true)
-        }
-
-        // if () {
-        //   this.toggleSelected(this.currentOption)
-        // }
-
-        if (this.triggerElement && "setSelectionRange" in this.triggerElement) {
-          this.triggerElement.setSelectionRange?.(this.triggerElement.value.length, this.triggerElement.value.length)
-        }
-      }
+      this.handleCurrentOptionSelected()
 
       // Close the combobox for single select.
       if (!this.multiple) {
         this.active = false
         return
       }
+
+      return
     }
 
     if (evt.key === "Shift") {
@@ -1395,6 +1375,33 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
 
       this.focusPrevious();
       return;
+    }
+  }
+
+  handleCurrentOptionSelected () {
+    if (!this.currentOption) { return }
+
+    if (this.multiple) {
+      // If a completion is selected, we just let it fall through.
+      if (this.multipleSelectionType === "manual" || !this.completionSelected) {
+        this.toggleSelected(this.currentOption)
+        this.updateTriggerElementTextContentAndValue("")
+      }
+
+      if (this.multiple) {
+        this.updateMultipleValue(true)
+      }
+    } else {
+      if (!this.currentOption.selected || this.completionSelected) {
+        this.select(this.currentOption)
+      } else {
+        this.deselect(this.currentOption)
+        this.updateTriggerElementTextContentAndValue("")
+      }
+    }
+
+    if (this.triggerElement && "setSelectionRange" in this.triggerElement) {
+      this.triggerElement.setSelectionRange?.(this.triggerElement.value.length, this.triggerElement.value.length)
     }
   }
 

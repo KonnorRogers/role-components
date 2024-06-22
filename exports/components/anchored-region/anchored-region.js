@@ -72,13 +72,28 @@ export function AnchoredRegionMixin (superclass) {
        * The `currentPlacement` property / `current-placement` attribute are where Floating UI actually positions the popup.
       * @attr current-placement
       * @reflect
-      * @type {this["placement"] | null}
+      * @type {
+          'top'
+          | 'top-start'
+          | 'top-end'
+          | 'bottom'
+          | 'bottom-start'
+          | 'bottom-end'
+          | 'right'
+          | 'right-start'
+          | 'right-end'
+          | 'left'
+          | 'left-start'
+          | 'left-end'
+          | null
+        }
       */
       this.currentPlacement = this.placement ?? null
 
       /**
         * Determines how the popover is positioned. Because you native "popover" API uses a fixed strategy, we use it as the default.
         * @attr
+        * @reflect
         * @type {import("@floating-ui/dom").Strategy}
         */
       this.strategy = this.strategy ?? "fixed"
@@ -286,6 +301,7 @@ export const AnchoredRegionProperties = () => /** @const */ ({
   autoSizeBoundary: { type: Object },
   autoSizePadding: { attribute: 'auto-size-padding', type: Number },
   hoverBridge: { attribute: 'hover-bridge', type: Boolean },
+  anchoredPopoverType: { attribute: "anchored-popover-type", reflect: true }
 })
 
 

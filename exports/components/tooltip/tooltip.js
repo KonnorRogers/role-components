@@ -16,7 +16,7 @@ import { RoleTooltipToggleEvent } from "../../events/role-tooltip-toggle-event.j
  * @param {Event} e
  */
 function findTriggerElementFromEvent (e) {
-  const triggerElement = /** @type {HTMLElement} */ (e.target).closest("[data-role-tooltip]")
+  const triggerElement = /** @type {HTMLElement[]} */ (e.composedPath()).find((el) => el.getAttribute("data-role-tooltip"))
 
   if (!triggerElement) { return null }
 
@@ -63,16 +63,9 @@ function patchPopoverTriggerClick (e) {
 }
 
 /**
- * @param {Document | ShadowRoot} rootNode
- */
-function patchRootNode (rootNode) {
-  rootNode.addEventListener("click", patchPopoverTriggerClick)
-}
-
-/**
  * Due to accessibility reasons with aria-describedby, the tooltip must be the same
  *   document / shadowRoot as the item being described by the tooltip.
- * @customElement
+ * @customelement
  * @tagname role-tooltip
  * @example
  *   ```js
@@ -198,6 +191,8 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     this.addEventListener("role-tooltip-toggle", this.eventHandler.get(this.handlePopoverTriggerEvent))
     this.addEventListener("role-reposition", this.eventHandler.get(this.handleReposition))
 
+    document.addEventListener("click", patchPopoverTriggerClick)
+
     /**
      * @type {Element[]}
      */
@@ -239,10 +234,8 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
   connectedCallback() {
     super.connectedCallback();
 
-    const rootNode = /** @type {Document | ShadowRoot} */ (this.getRootNode())
-    patchRootNode(rootNode)
-
     const { signal } = this.__eventAbortController
+    const rootNode = /** @type {Document | ShadowRoot} */ (this.getRootNode())
 
     document.addEventListener("focusout", this.eventHandler.get(this.handleHide), { signal })
     rootNode.addEventListener("pointerover", this.eventHandler.get(this.handleShow), { passive: true, signal })

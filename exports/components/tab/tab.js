@@ -5,8 +5,8 @@ import { hostStyles } from "../../styles/host-styles.js";
 import { componentStyles } from "./tab.styles.js";
 
 /**
- * @customElement
- * @tagName role-tab
+ * @customelement
+ * @tagname role-tab
  * @summary Short summary of the component's intended use.
  * @documentation https://role-components.vercel.app/components/tab
  * @status experimental

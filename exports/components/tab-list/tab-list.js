@@ -11,8 +11,8 @@ const reverseTabOrderPlacements = ["end", "bottom"]
 /**
  * The `<role-tab-list>` component acts as a "synchronization layer" between Tabs and Tab Panels. It will automatically assign ids and provide the proper `aria-*` attributes for tabs and tab-panels following the APG.
  *
- * @customElement
- * @tagName role-tab-list
+ * @customelement
+ * @tagname role-tab-list
  * @documentation https://role-components.vercel.app/components/tab-list
  * @status experimental
  * @since 3.0
@@ -22,6 +22,8 @@ const reverseTabOrderPlacements = ["end", "bottom"]
  *
  * @csspart tab-container - The wrapper around tabs
  * @csspart tab-panel-container - The wrapper around tab panels
+ *
+ * @event {TabSelectionChangeEvent} role-tab-selection-change - Fires when a tab changes
  */
 export default class RoleTabList extends BaseElement {
   static baseName = "role-tab-list"
@@ -138,6 +140,9 @@ export default class RoleTabList extends BaseElement {
           this.setAttribute("data-run-animations", "")
         })
 
+        /**
+         * @ignore
+         */
         this.dispatchEvent(new TabSelectionChangeEvent({
           activeTab: tabElement,
           activeTabPanel: tabPanelElement

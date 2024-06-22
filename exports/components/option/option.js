@@ -69,7 +69,7 @@ function LinkMixin (superclass) {
 }
 
 /**
- * @customElement
+ * @customelement
  * @tagname role-option
  */
 export default class RoleOption extends LitFormAssociatedMixin(LinkMixin(BaseElement)) {

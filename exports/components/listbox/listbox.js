@@ -24,7 +24,7 @@ const formProperties = LitFormAssociatedMixin.formProperties
  *   The currently hovered / focus `<role-option>` has `[aria-current="true"]`
  *   The currently selected `<role-option>` has `[aria-selected="true"]`
  *
- * @customElement
+ * @customelement
  * @tagname role-listbox
  */
 export default class RoleListbox extends LitFormAssociatedMixin(BaseElement) {

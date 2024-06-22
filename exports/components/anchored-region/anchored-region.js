@@ -283,8 +283,8 @@ export const AnchoredRegionProperties = () => /** @const */ ({
 
 
 /**
- * @customElement
- * @tagName role-anchored-region
+ * @customelement
+ * @tagname role-anchored-region
  * @summary Popup is a utility that lets you declaratively anchor "popover" containers to another element.
  * @documentation https://role-components.vercel.app/components/anchored-region
  * @status experimental

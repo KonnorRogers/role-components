@@ -6,8 +6,8 @@ import { componentStyles } from "./tab-panel.styles.js";
 import { uuidv4 } from "../../../internal/uuid.js";
 
 /**
- * @customElement
- * @tagName role-tab-panel
+ * @customelement
+ * @tagname role-tab-panel
  * @summary Short summary of the component's intended use.
  * @documentation https://role-components.vercel.app/components/tab-panel
  * @status experimental

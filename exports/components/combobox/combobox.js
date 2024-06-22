@@ -20,7 +20,7 @@ import RoleSelect from "../select/select.js";
  */
 
 /**
- * @customElement
+ * @customelement
  * @tagname role-combobox
  * @status experimental
  * @since 3.0

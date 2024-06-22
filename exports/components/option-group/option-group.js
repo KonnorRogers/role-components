@@ -4,7 +4,7 @@ import { hostStyles } from "../../styles/host-styles.js";
 
 
 /**
- * @customElement
+ * @customelement
  * @tagname role-option-group
  */
 export default class OptionGroup extends BaseElement {

@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Next
+## 3.0.0-beta.1
 
 ### Breaking Changes
 

@@ -36,6 +36,7 @@
     "deploy:patch": "npm version patch && npm publish && git push --follow-tags",
     "deploy:minor": "npm version minor && npm publish && git push --follow-tags",
     "deploy:major": "npm version major && npm publish && git push --follow-tags",
+    "publish:beta": "npm publish --tag=beta && git push --follow-tags",
     "lint": "prettier --check --ignore-path .gitignore .",
     "fix": "prettier --write --ignore-path .gitignore .",
     "test": "web-test-runner",

@@ -16,7 +16,7 @@ import { RoleTooltipToggleEvent } from "../../events/role-tooltip-toggle-event.j
  * @param {Event} e
  */
 function findTriggerElementFromEvent (e) {
-  const triggerElement = /** @type {HTMLElement[]} */ (e.composedPath()).find((el) => el.getAttribute("data-role-tooltip"))
+  const triggerElement = /** @type {HTMLElement[]} */ (e.composedPath()).find((el) => el.getAttribute?.("data-role-tooltip"))
 
   if (!triggerElement) { return null }
 
@@ -294,7 +294,7 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
     addActiveElements(rootNode)
 
     const focusedElement = this.__activeElements.find((el) => {
-      return el.getAttribute("data-role-tooltip") === this.id
+      return el.getAttribute?.("data-role-tooltip") === this.id
     })
 
     if (focusedElement) {
@@ -395,7 +395,7 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
 
     if (!popoverTriggerElement) { return null }
 
-    const popoverTriggerAttribute = popoverTriggerElement.getAttribute("data-role-tooltip")
+    const popoverTriggerAttribute = popoverTriggerElement.getAttribute?.("data-role-tooltip")
 
     if (!popoverTriggerAttribute) { return null }
     if (popoverTriggerAttribute !== this.id) { return null}

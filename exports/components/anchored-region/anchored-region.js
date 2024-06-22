@@ -5,6 +5,7 @@ import { BaseElement } from "../../../internal/base-element.js";
 import { hostStyles } from "../../styles/host-styles.js";
 import { stringMap } from '../../../internal/string-map.js';
 import { RoleRepositionEvent } from '../../events/role-reposition-event.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 /**
  * @typedef {object} VirtualElement
@@ -232,6 +233,12 @@ export function AnchoredRegionMixin (superclass) {
        * Whether or not to show the anchored region and its host
        */
       this.active = this.active ?? false
+
+      /**
+       * The type of popover to use for anchoring. Default is "auto". If "none", will not use "popover" for top layer.
+       * @type {"auto" | "manual" | "none"}
+       */
+      this.anchoredPopoverType = this.anchoredPopoverType ?? "auto"
     }
   }
 }
@@ -840,7 +847,7 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
 
       <div
         part="popover-base"
-        popover="manual"
+        popover=${ifDefined(this.anchoredPopoverType === "none" ? null : this.anchoredPopoverType)}
       >
         <span
           part=${stringMap({

@@ -360,7 +360,10 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
       "role",
     ];
 
-    this.sync = "width"
+    /**
+     * @type {this["sync"]}
+     */
+    this.sync = /** @const */ ("width")
 
     /**
      * @type {this["autoSize"]}

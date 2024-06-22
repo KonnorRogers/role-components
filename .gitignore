@@ -5,5 +5,10 @@ examples/dist
 
 exports/**/*.d.ts
 internal/**/*.d.ts
+!exports/**/*-types.d.ts
+!exports/**/*-globals.d.ts
+!internal/**/*-types.d.ts
+!internal/**/*-globals.d.ts
+
 custom-elements.json
 .vercel

@@ -3,8 +3,8 @@
 import { html, fixture, assert, aTimeout, waitUntil } from '@open-wc/testing';
 import { sendKeys } from "@web/test-runner-commands"
 
-import "../exports/listbox/listbox-register.js"
-import "../exports/option/option-register.js"
+import "../exports/components/listbox/listbox-register.js"
+import "../exports/components/option/option-register.js"
 
 // Single select
 test("Should properly check items in the listbox", async () => {

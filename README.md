@@ -5,7 +5,7 @@ A collection of small reusable components.
 ## Installation
 
 ```
-npm install role-components
+npm install role-components@beta
 ```
 
 ## Usage

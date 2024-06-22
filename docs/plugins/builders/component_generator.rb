@@ -22,7 +22,7 @@ class Builders::ComponentGenerator < SiteBuilder
     # end
 
     generator do
-      # hook(:site, :after_init) { generate_component_data }
+      hook(:site, :after_init) { generate_component_data }
       hook(:site, :after_reset) { generate_component_data }
       hook(:site, :after_soft_reset) { generate_component_data }
 
@@ -35,7 +35,7 @@ class Builders::ComponentGenerator < SiteBuilder
 
     if !File.exist?(custom_elements_manifest_path)
       root = File.expand_path("../../../", __dir__)
-      `cd #{root} && pnpm run build`
+      `cd #{root} && pnpm run build:cem`
     end
 
     manifest = JSON.parse(File.read(custom_elements_manifest_path))

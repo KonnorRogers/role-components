@@ -361,7 +361,11 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     ];
 
     this.sync = "width"
-    this.autoSize = "height"
+
+    /**
+     * @type {this["autoSize"]}
+     */
+    this.autoSize = /** @const */ ("height")
 
     /**
      * Monitors its DOM for new nodes and assigns them to `this.options`

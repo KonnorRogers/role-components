@@ -1,6 +1,6 @@
 {
   "name": "role-components",
-  "version": "3.0.0-beta.0",
+  "version": "3.0.0-beta.1",
   "description": "A variety of simple components that match an aria-role",
   "main": "./exports/index.js",
   "module": "./exports/index.js",

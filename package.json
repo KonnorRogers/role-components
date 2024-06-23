@@ -15,6 +15,7 @@
   "type": "module",
   "files": [
     "exports",
+    "internal",
     "types",
     "README.md",
     "LICENSE"

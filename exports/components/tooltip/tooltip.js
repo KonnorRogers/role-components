@@ -63,7 +63,7 @@ function patchPopoverTriggerClick (e) {
 }
 
 /**
- * Due to accessibility reasons with aria-describedby, the tooltip must be the same
+ * Due to accessibility reasons with aria-labelledby, the tooltip must be the same
  *   document / shadowRoot as the item being described by the tooltip.
  * @customelement
  * @tagname role-tooltip
@@ -417,9 +417,12 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
         rootNode.addEventListener("pointermove", this.eventHandler.get(this.handleHide), { signal })
         document.addEventListener("pointermove", this.eventHandler.get(this.handleHide), { signal })
 
-        // We use aria-labelledby because aria-describedby isn't well supported.
+        // We use aria-describedby because aria-labelledby causes content to get skipped.
         if (this.anchor instanceof Element) {
           const ids = this.anchor?.getAttribute("aria-describedby") || ""
+          if (!ids) {
+            this.anchor?.setAttribute("aria-describedby", this.id)
+          }
           if (!ids.split(/\s+/).includes(this.id)) {
             this.anchor?.setAttribute("aria-describedby", ids + " " + this.id)
           }

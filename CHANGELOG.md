@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 3.0.0-beta.3
+
+- Fixed a bug in `<role-anchored-region>` that prevented the popover from closing when active changed.
+
 ## 3.0.0-beta.1
 
 ### Breaking Changes

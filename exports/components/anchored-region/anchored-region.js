@@ -574,18 +574,7 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
       return
     }
 
-    /**
-     * @type {HTMLElement | null}
-     */
-    const popover = this.shadowRoot?.querySelector("[popover]") || null
-
-    if (popover) {
-      if (this.active) {
-        popover.showPopover()
-      } else {
-        popover.hidePopover()
-      }
-    }
+    this.__togglePopover__()
 
     this.cleanup = autoUpdate(this.__anchorEl, this.popoverElement, () => {
       this.reposition();
@@ -604,11 +593,32 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
         this.currentPlacement = null
         this.style.removeProperty('--auto-size-available-width');
         this.style.removeProperty('--auto-size-available-height');
-        requestAnimationFrame(() => resolve());
+        requestAnimationFrame(() => {
+          resolve()
+          this.__togglePopover__()
+        });
       } else {
+        this.__togglePopover__()
         resolve();
       }
+
     });
+  }
+
+  __togglePopover__ () {
+    /**
+     * @type {HTMLElement | null}
+     */
+    const popover = this.shadowRoot?.querySelector("[popover]") || null
+
+    if (popover) {
+      if (this.active) {
+        popover.showPopover()
+      } else {
+        popover.hidePopover()
+      }
+    }
+
   }
 
   /** Forces the popover to recalculate and reposition itself. */

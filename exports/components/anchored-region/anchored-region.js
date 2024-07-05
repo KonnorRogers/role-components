@@ -368,12 +368,12 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
       [popover] {
         position: fixed;
       	border: none;
-	      background: none;
-	      inset: unset;
-	      color: inherit;
-	      margin: 0;
-	      padding: 0;
-	    }
+	background: none;
+	inset: unset;
+	color: inherit;
+	margin: 0;
+	padding: 0;
+      }
 
       [part~="popover--fixed"] {
         position: fixed;

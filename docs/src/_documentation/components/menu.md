@@ -48,7 +48,7 @@
   <script slot="code" type="text/plain">
     <role-menu role="menu">
       <role-menu-item>Menu Item 1</role-menu-item>
-      <role-menu-group role="none">
+      <role-menu-group style="display: contents;">
         <role-menu-item>
           Menu Item 2
         </role-menu-item>

@@ -1,6 +1,8 @@
 export { default as AnchoredRegion } from "./components/anchored-region/anchored-region-register.js"
 export { default as Combobox } from "./components/combobox/combobox-register.js"
 export { default as Listbox } from "./components/listbox/listbox-register.js"
+export { default as Menu } from "./components/menu/menu-register.js"
+export { default as MenuItem } from "./components/menu-item/menu-item-register.js"
 export { default as Option } from "./components/option/option-register.js"
 export { default as OptionGroup } from "./components/option-group/option-group-register.js"
 export { default as Select } from "./components/select/select-register.js"

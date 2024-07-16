@@ -1,0 +1,54 @@
+light-preview button[slot="actions"] {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: inherit;
+  padding: 0.4em 0.8em;
+  color: inherit;
+  border: 1px solid lightgray;
+  border-bottom-color: transparent;
+  border-right-color: transparent;
+  height: 100%;
+  border-radius: 0;
+}
+
+light-preview button[slot="actions"]:focus-visible {
+  outline: var(--sl-focus-ring);
+}
+
+
+
+@supports not selector(:focus-visible) {
+  light-preview button[slot="actions"]:focus-within {
+    outline: var(--sl-focus-ring);
+  }
+}
+
+light-preview button[slot="actions"][aria-pressed="true"] {
+  background-color: var(--sl-color-primary-100);
+  border-color: var(--sl-color-primary-300);
+  color: var(--sl-color-primary-700);
+}
+
+[data-controller~="direction-switcher"] {
+  position: relative;
+}
+
+light-preview button[slot="actions"] .checkmark {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translate(-50%, -100%);
+  visibility: hidden;
+  font-size: 0.75em;
+}
+
+light-preview button[slot="actions"][aria-pressed="true"] .checkmark {
+  visibility: visible;
+}
+
+light-preview button[slot="actions"]:hover {
+  cursor: pointer;
+  background-color: var(--sl-color-primary-50);
+  border-color: var(--sl-color-primary-300);
+  color: var(--sl-color-primary-700);
+}

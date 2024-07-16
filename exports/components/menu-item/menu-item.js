@@ -28,7 +28,7 @@ export default class RoleMenuItem extends BaseElement {
   ]
 
   static properties = /** @type {const} */ ({
-
+    role: { reflect: true },
   })
 
   constructor () {
@@ -37,18 +37,14 @@ export default class RoleMenuItem extends BaseElement {
     this.internals.role = "menuitem"
     this.role = "menuitem"
     this.tabIndex = 0
-
-    this.setAttribute("title", "")
-
-    this.focusMenu = false
-
-    this.addEventListener("focus", () => {
-    })
   }
 
   render () {
     return html`
-      <slot></slot>
+      <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, auto); gap: 8px;">
+        <slot></slot>
+        <slot name="submenu-trigger"></slot>
+      </div>
     `
   }
 }

@@ -10,9 +10,10 @@ export default class DirectionSwitcher extends Controller {
     const lightPreview = this.element.closest("light-preview")
     const preview = lightPreview.shadowRoot.querySelector("[part~='start-panel']")
 
-    const willBeRTL = preview.dir !== "rtl"
+    const isRTL = preview.matches(":dir(rtl)")
+    const willBeRTL = !isRTL
 
-    preview.dir === "rtl" ? preview.dir = "ltr" : preview.dir = "rtl"
+    isRTL ? preview.dir = "ltr" : preview.dir = "rtl"
 
     this.element.querySelector(".checkmark").innerText = willBeRTL ? "✓" : "✕"
 

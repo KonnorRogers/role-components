@@ -2,7 +2,7 @@
 ---
 
 
-<{{ tag }} hidden></{{ tag }}>
+<role-menu-item hidden></role-menu-item>
 
 ## Examples
 
@@ -10,8 +10,8 @@
   preview-mode="shadow-dom"
   script-scope="shadow-dom"
 >
-  <script slot="code" type="text/plain">
-    <{{ tag }}></{{ tag }}>
+  <script type="text/plain">
+    <role-menu-item></role-menu-item>
   </script>
 </light-preview>
 

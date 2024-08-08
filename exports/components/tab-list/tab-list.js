@@ -261,13 +261,13 @@ export default class RoleTabList extends BaseElement {
     e.preventDefault()
 
     if (key === "ArrowRight") {
-      const incrementor = this.currentTextDirection === "rtl" ? -1 : 1
+      const incrementor = this.textDirection === "rtl" ? -1 : 1
       this.setActiveTabFromIndex(activeTabIndex + incrementor, true)
       return
     }
 
     if (key === "ArrowLeft") {
-      const incrementor = this.currentTextDirection === "rtl" ? 1 : -1
+      const incrementor = this.textDirection === "rtl" ? 1 : -1
       this.setActiveTabFromIndex(activeTabIndex + incrementor, true)
       return
     }

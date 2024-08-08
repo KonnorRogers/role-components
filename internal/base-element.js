@@ -3,6 +3,7 @@
 import { LitElement } from "lit";
 import { DefineableMixin } from "web-component-define";
 import { uuidv4 } from "./uuid.js";
+import { LanguageObserver } from "./language-observer.js";
 
 /**
  * @template {HTMLElement} T
@@ -67,6 +68,18 @@ export class BaseElement extends DefineableMixin(LitElement) {
     /** @type {EventHandler<this>} */
     this.eventHandler = new EventHandler(this);
 
+    this.languageObserver = new LanguageObserver(this).start()
+
+    this.languageObserver.handleLangChange = () => {
+      // this.setAttribute("data-direction", this.textDirection)
+      this.requestUpdate()
+    }
+
+    this.languageObserver.handleDirChange = () => {
+      // this.setAttribute("data-direction", this.textDirection)
+      this.requestUpdate()
+    }
+
     /**
      * @type {null | Map<any, ReturnType<typeof setTimeout>>}
      */
@@ -78,6 +91,7 @@ export class BaseElement extends DefineableMixin(LitElement) {
        */
       this.internals = this.attachInternals()
     }
+
   }
 
   /**
@@ -96,26 +110,16 @@ export class BaseElement extends DefineableMixin(LitElement) {
     return str
   }
 
-
-  get cachedComputedStyle () {
-    if (!this.__computedStyle__) {
-      this.__computedStyle__ = getComputedStyle(this)
-    }
-
-    return this.__computedStyle__
-  }
-
   /**
    * @type {"ltr" | "rtl"}
    */
-  get currentTextDirection () {
-    return this.cachedComputedStyle.direction === "rtl" ? "rtl" : "ltr"
+  get textDirection () {
+    return this.matches(":dir(rtl)") ? "rtl" : "ltr"
   }
 
   disconnectedCallback () {
     super.disconnectedCallback()
     this.__debounceMap__ = null
-    this.__computedStyle__ = null
   }
 
   /**
@@ -141,5 +145,15 @@ export class BaseElement extends DefineableMixin(LitElement) {
     this.__debounceMap__.set(options.key, timeout);
 
     return timeout;
+  }
+
+  /**
+   * @template {keyof ARIAMixin} T
+   * @param {T} key
+   * @param {ARIAMixin[T]} value
+   */
+  setAria (key, value) {
+    this.internals[key] = value
+    this[key] = value
   }
 }

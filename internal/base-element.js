@@ -65,19 +65,23 @@ export class BaseElement extends DefineableMixin(LitElement) {
       }
     })
 
+    this.textDirection = "ltr"
+
     /** @type {EventHandler<this>} */
     this.eventHandler = new EventHandler(this);
 
     this.languageObserver = new LanguageObserver(this).start()
 
     this.languageObserver.handleLangChange = () => {
-      // this.setAttribute("data-direction", this.textDirection)
-      this.requestUpdate()
+      const oldDirection = this.textDirection
+      this.textDirection = this.getTextDirection()
+      this.requestUpdate("textDirection", oldDirection)
     }
 
     this.languageObserver.handleDirChange = () => {
-      // this.setAttribute("data-direction", this.textDirection)
-      this.requestUpdate()
+      const oldDirection = this.textDirection
+      this.textDirection = this.getTextDirection()
+      this.requestUpdate("textDirection", oldDirection)
     }
 
     /**
@@ -111,9 +115,9 @@ export class BaseElement extends DefineableMixin(LitElement) {
   }
 
   /**
-   * @type {"ltr" | "rtl"}
+   * @returns {"ltr" | "rtl"}
    */
-  get textDirection () {
+  getTextDirection () {
     return this.matches(":dir(rtl)") ? "rtl" : "ltr"
   }
 

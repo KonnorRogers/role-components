@@ -54,7 +54,7 @@ export default function (plop) {
       },
       {
         type: 'add',
-        path: '../../exports/components/{{ tagWithoutPrefix tag }}/{{ tagWithoutPrefix tag }}.js',
+        path: '../../exports/components/{{ tagWithoutPrefix tag }}/{{ tagWithoutPrefix tag }}-globals.ts',
         templateFile: 'templates/component-globals.hbs'
       },
       {

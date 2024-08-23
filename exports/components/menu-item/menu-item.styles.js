@@ -5,6 +5,8 @@ export const componentStyles = css`
     display: block;
     --background: Canvas;
     padding: 0.4em 0.6em;
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   :host(:is(focus-visible, :focus)) {

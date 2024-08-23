@@ -3,6 +3,10 @@ import { html } from "lit"
 import { BaseElement } from "../../../internal/base-element.js";
 import { hostStyles } from "../../styles/host-styles.js";
 import { componentStyles } from "./menu.styles.js";
+import chevronRight from "../../icons/chevron-right.js";
+import chevronDown from "../../icons/chevron-down.js";
+import { AnchoredRegionMixin, AnchoredRegionProperties } from "../anchored-region/anchored-region.js";
+import chevronLeft from "../../icons/chevron-left.js";
 
 /**
  * @customElement
@@ -20,7 +24,7 @@ import { componentStyles } from "./menu.styles.js";
  *
  * @cssproperty --example - An example CSS custom property.
  */
-export default class RoleMenu extends BaseElement {
+export default class RoleMenu extends AnchoredRegionMixin(BaseElement) {
   static baseName = "role-menu"
   static styles = [
     hostStyles,
@@ -28,25 +32,67 @@ export default class RoleMenu extends BaseElement {
   ]
 
   static properties = /** @type {const} */ ({
+    ...AnchoredRegionProperties(),
+    slot: { reflect: true },
+    textDirection: { reflect: true, attribute: "text-direction" },
+    // role: { reflect: true }
   })
 
   constructor () {
     super()
-    this.role = "menu"
-    this.internals.role = "menu"
-    this.addEventListener("keydown", this.handleKeydown)
+
+    // this.role = "menu"
+    // this.internals.role = "menu"
+
+    this.anchoredPopoverType = /** @type {"manual"} */ ("manual")
+    this.textDirection = "ltr"
+
+    /**
+     * @override
+     * @type {InstanceType<ReturnType<typeof AnchoredRegionMixin<typeof BaseElement>>>["placement"]}
+     */
+    this.placement = "bottom-end"
+
+    this.distance = 2
+
+    this.anchor = this
+    this.hoverBridge = true
+
+    this.addEventListener("keydown", this.eventHandler.get(this.handleKeydown))
+  }
+
+  connectedCallback () {
+    super.connectedCallback()
+    document.addEventListener("click", this.eventHandler.get(this.handleOutsideClick))
+  }
+
+  /**
+   * @param {Event} e
+   */
+  handleOutsideClick (e) {
+    const path = e.composedPath()
+
+    if (!path.includes(this)) {
+      this.active = false
+    }
   }
 
   get menuItems () {
-    return /** @type {import("../menu-item/menu-item.js").default[]} */ ([...this.querySelectorAll(":scope role-menu-item")]).filter((el) => {
-      return el.closest("role-menu") === this
-    })
+    return /** @type {import("../menu-item/menu-item.js").default[]} */ ([...this.querySelectorAll("[role='menuitem']")])
+      .filter((el) => {
+        return el.closest(this.localName) === this
+      })
   }
 
   /**
    * @param {KeyboardEvent} e
    */
-  handleKeydown = (e) => {
+  handleKeydown (e) {
+    if (e.key === "Escape" || e.key === "Tab") {
+      this.active = false
+      return
+    }
+
     const keys = [
       "ArrowDown",
       "ArrowUp",
@@ -54,116 +100,211 @@ export default class RoleMenu extends BaseElement {
       "ArrowLeft"
     ]
 
+    if (e.ctrlKey || e.altKey || e.shiftKey) { return }
+
     if (!keys.includes(e.key)) {
       return
     }
 
-    const menuItems = this.menuItems
+    const menu = e.composedPath().find((el) => el.localName === this.localName)
 
-    if (!menuItems.length) { return }
-
-    let currentMenuItemIndex = menuItems.findIndex((el) => el.tabIndex === 0)
-
-    if (currentMenuItemIndex === -1) {
-      currentMenuItemIndex = 0
-      menuItems[0].tabIndex = 0
-
-      menuItems.forEach((el, index) => {
-        if (index === 0) { return }
-        el.tabIndex = -1
-      })
-
-      menuItems[0].focus()
+    if (menu !== this) {
       return
     }
 
+    let currentMenuItemIndex = this.currentMenuItemIndex
+
     if (e.key === "ArrowDown") {
       e.preventDefault()
-      e.stopImmediatePropagation()
-      currentMenuItemIndex++
 
-      if (currentMenuItemIndex >= menuItems.length - 1) {
-        currentMenuItemIndex = menuItems.length - 1
+      if (!this.active) {
+        this.active = true
+      } else {
+        currentMenuItemIndex++
       }
 
-      menuItems[currentMenuItemIndex].tabIndex = 0
-
-      menuItems.forEach((el, index) => {
-        if (index === currentMenuItemIndex) { return }
-        el.tabIndex = -1
+      setTimeout(() => {
+        this.focusAtIndex(currentMenuItemIndex)
       })
-
-      menuItems[currentMenuItemIndex].focus()
       return
     }
 
     if (e.key === "ArrowUp") {
       e.preventDefault()
-      e.stopImmediatePropagation()
       currentMenuItemIndex--;
-      if (currentMenuItemIndex <= 0) {
-        currentMenuItemIndex = 0
-      }
-      console.log(currentMenuItemIndex)
-      menuItems[currentMenuItemIndex].tabIndex = 0
-      menuItems.forEach((el, index) => {
-        if (index === currentMenuItemIndex) { return }
-        el.tabIndex = -1
+      setTimeout(() => {
+        this.focusAtIndex(currentMenuItemIndex)
       })
-      menuItems[currentMenuItemIndex].focus()
       return
     }
 
-    if (e.key === "ArrowRight") {
-      const submenu = /** @type {import("../menu/menu.js").default | undefined} */ (menuItems[currentMenuItemIndex].querySelector("role-menu"))
+
+    const OPEN_MENU_KEY = this.textDirection === "rtl" ? "ArrowLeft" : "ArrowRight"
+
+    if (e.key === OPEN_MENU_KEY) {
+      const submenu = /** @type {import("../menu/menu.js").default | undefined} */ (this.menuItems[currentMenuItemIndex].querySelector("role-menu"))
 
       if (submenu) {
-        const submenuDropdown = /** @type {import("../menu-dropdown/menu-dropdown.js").default | undefined} */ (submenu.closest("role-menu-dropdown"))
         e.preventDefault()
+
+        // Without stopPropagation() VoiceOver tries to focus the window in Safari and gets confused.
+        e.stopPropagation()
         e.stopImmediatePropagation()
 
-        if (submenuDropdown) {
-          submenuDropdown.active = true
-        }
-
-        setTimeout(() => {
+        if (submenu) {
+          submenu.active = true
           submenu.focus()
-        })
+          setTimeout(() => {
+            submenu.focus()
+          })
+        }
       }
     }
 
-    if (e.key === "ArrowLeft") {
-      e.preventDefault()
-      e.stopImmediatePropagation()
-      const parentMenuItem = /** @type {import("../menu-item/menu-item.js").default} */ (this.closest("role-menu-item"))
+    const CLOSE_MENU_KEY = this.textDirection === "rtl" ? "ArrowRight" : "ArrowLeft"
 
-      const dropdown = /** @type {import("../menu-dropdown/menu-dropdown.js").default | undefined} */ (this.closest("role-menu-dropdown"))
-
-      if (dropdown) {
-        dropdown.active = false
-      }
+    if (e.key === CLOSE_MENU_KEY) {
+      const parentMenuItem = /** @type {import("../menu-item/menu-item.js").default} */ (this.closest("[role='menuitem']"))
 
       if (parentMenuItem) {
-        parentMenuItem.focus()
+        e.preventDefault()
+        e.stopImmediatePropagation()
+        parentMenuItem.tabIndex = 0
+        setTimeout(() => {
+          parentMenuItem.focus()
+          setTimeout(() => {
+            this.active = false
+          })
+        })
       }
+    }
+  }
+
+  get currentMenuItemIndex () {
+    const menuItems = this.menuItems
+
+    return menuItems.findIndex((el) => el.tabIndex === 0)
+  }
+
+  /**
+   * @param {number} index
+   */
+  focusAtIndex (index) {
+    const menuItems = this.menuItems
+    if (!menuItems.length) { return }
+
+    if (index < 0) { index = 0 }
+    if (index > menuItems.length - 1) { index = menuItems.length - 1 }
+
+    menuItems[index].tabIndex = 0
+
+    menuItems.forEach((el, idx) => {
+      if (index === idx) { return }
+      el.tabIndex = -1
+    })
+
+    if (!menuItems[index].matches(":focus")) {
+      menuItems[index].focus()
     }
   }
 
   focus () {
+    this.focusAtIndex(this.currentMenuItemIndex)
+  }
+
+  /**
+   * @param {import("../menu-item/menu-item.js").default} menuItem
+   */
+  focusMenuItem (menuItem) {
     const menuItems = this.menuItems
 
-    if (!menuItems.length) { return }
+    const index = menuItems.findIndex((el) => el === menuItem)
+    this.focusAtIndex(index)
+  }
 
-    let currentMenuItemIndex = menuItems.findIndex((el) => el.tabIndex === 0)
+  get isSubmenu () {
+    return this.slot === "submenu"
+  }
 
-    if (currentMenuItemIndex <= 0) {
-      currentMenuItemIndex = 0
-    }
+  /**
+   * @param {import("lit").PropertyValues<this>} changedProperties
+   */
+  willUpdate (changedProperties) {
+    const submenuPlacement = this.textDirection === "rtl" ? "left-start" : "right-start"
+    this.placement = this.isSubmenu ? submenuPlacement : "bottom-end"
+    this.anchor = this.isSubmenu ? (this.shadowRoot?.querySelector("button") || this) : this
 
-    menuItems[currentMenuItemIndex].focus()
+    this.distance = this.isSubmenu ? 8 : 2
+    this.skidding = this.isSubmenu ? 4 : 0
+
+
+    return super.willUpdate(changedProperties)
   }
 
   render () {
-    return html`<slot></slot>`
+    const submenuChevron = () => this.textDirection === "rtl" ? chevronLeft : chevronRight
+    return html`
+
+      <button
+        @click=${(e) => {
+          this.active = !this.active
+        }}
+        aria-expanded=${this.isSubmenu ? null : this.active}
+        aria-haspopup=${this.isSubmenu ? null : "menu"}
+        tabindex=${this.isSubmenu ? -1 : 0}
+        style="
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(0, auto);
+          align-items: center;
+        "
+      >
+        <slot name="trigger"><div></div></slot>
+        <slot name="trigger-icon">
+          ${this.slot === "submenu"
+            ? submenuChevron()
+            : chevronDown
+          }
+        </slot>
+      </button>
+      <role-anchored-region
+        part="anchored-region"
+        exportparts="
+          popover,
+          popover--active,
+          popover--fixed,
+          popover--has-arrow,
+          arrow,
+          hover-bridge,
+          hover-bridge--visible
+        "
+        .anchor=${this.anchor}
+        ?active=${this.active}
+        .anchoredPopoverType=${this.anchoredPopoverType}
+        .placement=${this.placement}
+        .strategy=${this.strategy}
+        .distance=${this.distance}
+        .skidding=${this.skidding}
+        .arrow=${this.arrow}
+        .arrowPlacement=${this.arrowPlacement}
+        .arrowPadding=${this.arrowPadding}
+        .flip=${this.flip}
+        .flipFallbackPlacements=${this.flipFallbackPlacements}
+        .flipFallbackStrategy=${this.flipFallbackStrategy}
+        .flipBoundary=${this.flipBoundary}
+        .flipPadding=${this.flipPadding}
+        .shift=${this.shift}
+        .shiftBoundary=${this.shiftBoundary}
+        .shiftPadding=${this.shiftPadding}
+        .autoSize=${this.autoSize}
+        .sync=${this.sync}
+        .autoSizeBoundary=${this.autoSizeBoundary}
+        .autoSizePadding=${this.autoSizePadding}
+        .hoverBridge=${this.hoverBridge}
+        class="${this.active ? '' : 'visually-hidden'}"
+        role="none"
+      >
+        <div role="menu" tabindex="-1"><slot></slot></div>
+      </role-anchored-region>
+    `
   }
 }

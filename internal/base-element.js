@@ -107,7 +107,7 @@ export class BaseElement extends DefineableMixin(LitElement) {
   getOrAssignId (prefix = "", force = false) {
     let str = this.id
 
-    if (!str) {
+    if (!str || force) {
       str = prefix + "-" + uuidv4()
       this.id = str
     }

@@ -399,7 +399,7 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
       }
 
       [part~="hover-bridge"] {
-        background: tomato;
+        /* background: tomato; */
         position: fixed;
         z-index: calc(var(--z-index-dropdown, 900) - 1);
         top: 0;

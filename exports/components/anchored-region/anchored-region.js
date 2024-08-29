@@ -613,9 +613,13 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
 
     if (popover) {
       if (this.active) {
+        try {
         popover.showPopover()
+        } catch (_) {}
       } else {
+        try {
         popover.hidePopover()
+        } catch (_) {}
       }
     }
 

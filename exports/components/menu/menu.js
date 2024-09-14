@@ -16,13 +16,22 @@ import chevronLeft from "../../icons/chevron-left.js";
  * @status experimental
  * @since 3.0
  *
- * @event role-event-name - Emitted as an example.
- *
  * @slot - The default slot.
+ * @slot trigger - the text to go within the button
+ * @slot trigger-icon - the icon to indicate either the submenu or menu
  *
  * @csspart base - The component's base wrapper.
+ * @csspart trigger - the button that triggers the menu or submenu.
+ * @csspart anchored-region - The anchored region element
+ * @csspart popover - the popover within the anchored region
+ * @csspart popover--active - if the popover is active
+ * @csspart popover--fixed - if the popover is fixed
+ * @csspart popover--has-arrow - if the popover has an arrow
+ * @csspart arrow - the arrow element
+ * @csspart hover-bridge - the hover bridge element
+ * @csspart hover-bridge--visible - if the hover bridge is visible
  *
- * @cssproperty --example - An example CSS custom property.
+ * @event {RoleMenuItemSelectedEvent} - Fires when a menu item is selected and will close the menu. Called `event.preventDefault()` to stop this behavior.
  */
 export default class RoleMenu extends AnchoredRegionMixin(BaseElement) {
   static baseName = "role-menu"
@@ -35,14 +44,10 @@ export default class RoleMenu extends AnchoredRegionMixin(BaseElement) {
     ...AnchoredRegionProperties(),
     slot: { reflect: true },
     textDirection: { reflect: true, attribute: "text-direction" },
-    // role: { reflect: true }
   })
 
   constructor () {
     super()
-
-    // this.role = "menu"
-    // this.internals.role = "menu"
 
     this.anchoredPopoverType = /** @type {"manual"} */ ("manual")
     this.textDirection = "ltr"
@@ -59,11 +64,26 @@ export default class RoleMenu extends AnchoredRegionMixin(BaseElement) {
     this.hoverBridge = true
 
     this.addEventListener("keydown", this.eventHandler.get(this.handleKeydown))
+    this.addEventListener("role-menu-item-selected", this.eventHandler.get(this.handleMenuItemSelected))
   }
 
   connectedCallback () {
     super.connectedCallback()
     document.addEventListener("click", this.eventHandler.get(this.handleOutsideClick))
+  }
+
+  disconnectedCallback () {
+    super.disconnectedCallback()
+    document.removeEventListener("click", this.eventHandler.get(this.handleOutsideClick))
+  }
+
+  /**
+   * @param {import("../../events/role-menu-item-selected-event.js").RoleMenuItemSelectedEvent} e
+   */
+  handleMenuItemSelected (e) {
+    if (!e.defaultPrevented) {
+      this.active = false
+    }
   }
 
   /**
@@ -252,11 +272,7 @@ export default class RoleMenu extends AnchoredRegionMixin(BaseElement) {
         aria-expanded=${this.isSubmenu ? null : this.active}
         aria-haspopup=${this.isSubmenu ? null : "menu"}
         tabindex=${this.isSubmenu ? -1 : 0}
-        style="
-          display: grid;
-          grid-template-columns: minmax(0, 1fr) minmax(0, auto);
-          align-items: center;
-        "
+        part="trigger"
       >
         <slot name="trigger"><div></div></slot>
         <slot name="trigger-icon">

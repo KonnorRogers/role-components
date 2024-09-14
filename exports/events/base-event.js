@@ -2,7 +2,7 @@
 export class BaseEvent extends Event {
   /**
    * @param {string} name
-   * @param {EventInit} options
+   * @param {EventInit} [options]
    */
   constructor(name, options) {
     if (options == null) options = {};

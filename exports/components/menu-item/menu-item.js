@@ -3,6 +3,7 @@ import { html } from "lit"
 import { BaseElement } from "../../../internal/base-element.js";
 import { hostStyles } from "../../styles/host-styles.js";
 import { componentStyles } from "./menu-item.styles.js";
+import { RoleMenuItemSelectedEvent } from "../../events/role-menu-item-selected-event.js";
 
 /**
  * @customElement
@@ -10,15 +11,14 @@ import { componentStyles } from "./menu-item.styles.js";
  * @summary Short summary of the component's intended use.
  * @documentation https://role-components.vercel.app/components/menu-item
  * @status experimental
- * @since 2.0
+ * @since 3.0
  *
- * @event role-event-name - Emitted as an example.
+ * @slot - The default slot is for the text content.
+ * @slot submenu - Slot a `<role-menu>` here and additional menu items.
  *
- * @slot - The default slot.
+ * @part base - The base wrapper around the default slot and submenu slot.
  *
- * @csspart base - The component's base wrapper.
- *
- * @cssproperty --example - An example CSS custom property.
+ * @event {RoleMenuItemSelectedEvent} - Fires when a menu item is selected and will close the menu. Called `event.preventDefault()` to stop this behavior.
  */
 export default class RoleMenuItem extends BaseElement {
   static baseName = "role-menu-item"
@@ -41,6 +41,26 @@ export default class RoleMenuItem extends BaseElement {
     this.submenuActive = false
     this.addEventListener("pointerover", this.eventHandler.get(this.handlePointerOver))
     this.addEventListener("pointerleave", this.eventHandler.get(this.handlePointerLeave))
+    this.addEventListener("click", this.eventHandler.get(this.handleClick))
+    this.addEventListener("keydown", this.eventHandler.get(this.handleKeydown))
+  }
+
+  handleClick () {
+    if (this.hasSubmenu) {
+      return
+    }
+
+    this.dispatchEvent(new RoleMenuItemSelectedEvent(this))
+  }
+
+  /**
+   * @param {KeyboardEvent} e
+   */
+  handleKeydown (e) {
+    if (e.key === " " || e.key === "Enter") {
+      e.preventDefault()
+      this.handleClick()
+    }
   }
 
   /**
@@ -105,9 +125,9 @@ export default class RoleMenuItem extends BaseElement {
 
   render () {
     return html`
-      <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, auto); gap: 8px;">
+      <div part="base">
         <slot><div></div></slot>
-        <slot name="submenu"></slot>
+        <slot name="submenu"><div></div></slot>
       </div>
     `
   }

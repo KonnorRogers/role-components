@@ -306,9 +306,9 @@ export const AnchoredRegionProperties = () => /** @const */ ({
 
 
 /**
+ * `<anchored-region>` is a declarative way of declarign floating elements. It is an alternative until anchored-positioning in CSS gets better support.
  * @customelement
  * @tagname role-anchored-region
- * @summary Popup is a utility that lets you declaratively anchor "popover" containers to another element.
  * @documentation https://role-components.vercel.app/components/anchored-region
  * @status experimental
  * @since 3.0

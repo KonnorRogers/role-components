@@ -13,6 +13,11 @@ export const componentStyles = css`
     align-items: center;
     border-radius: 4px;
     border: 1px solid GrayText;
+    background: Canvas;
+  }
+
+  [part~="trigger"]:hover {
+    background: rgba(0,0,0,0.2);
   }
 
   :host([slot="submenu"]) [part~="trigger"] {

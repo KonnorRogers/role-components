@@ -1,6 +1,9 @@
 ---
 ---
 
+A `<role-menu>` is intended to behave like a system menu. Menus can be used as submenus within a `<role-menu-item>`.
+
+Menus follow the APG recommendation of "focus follows hover", they also implement "safe triangles".
 
 ## Examples
 

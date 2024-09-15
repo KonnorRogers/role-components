@@ -108,7 +108,15 @@ export default class RoleMenu extends AnchoredRegionMixin(BaseElement) {
    * @param {KeyboardEvent} e
    */
   handleKeydown (e) {
-    if (e.key === "Escape" || e.key === "Tab") {
+    if (e.key === "Escape") {
+      this.active = false
+      if (!this.isSubmenu) {
+        this.focus()
+      }
+      return
+    }
+
+    if (e.key === "Tab") {
       this.active = false
       return
     }

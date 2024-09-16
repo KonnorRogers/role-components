@@ -11,8 +11,8 @@ export const componentStyles = css`
 
   :host(:is(focus-visible, :focus)) {
     outline: 2px solid dodgerblue;
-    background: SelectedItem;
-    color: SelectedItemText;
+    color: white;
+    background: dodgerblue;
   }
 
   [part~="base"] {

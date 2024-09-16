@@ -109,10 +109,12 @@ export default class RoleMenu extends AnchoredRegionMixin(BaseElement) {
    */
   handleKeydown (e) {
     if (e.key === "Escape") {
-      this.active = false
       if (!this.isSubmenu) {
-        this.focus()
+        e.preventDefault()
+        this.focusTrigger()
       }
+
+      this.active = false
       return
     }
 
@@ -134,7 +136,7 @@ export default class RoleMenu extends AnchoredRegionMixin(BaseElement) {
       return
     }
 
-    const menu = e.composedPath().find((el) => el.localName === this.localName)
+    const menu = e.composedPath().find((el) => /** @type {HTMLElement} */ (el).localName === this.localName)
 
     if (menu !== this) {
       return
@@ -236,8 +238,26 @@ export default class RoleMenu extends AnchoredRegionMixin(BaseElement) {
     }
   }
 
-  focus () {
-    this.focusAtIndex(this.currentMenuItemIndex)
+  /**
+   * @param {FocusOptions} [options]
+   */
+  focus (options) {
+    if (this.active) {
+      this.focusAtIndex(this.currentMenuItemIndex)
+    } else {
+      this.focusTrigger(options)
+    }
+  }
+
+  /**
+    * @param {FocusOptions} [options]
+    */
+  focusTrigger (options) {
+    const trigger = /** @type {HTMLButtonElement | undefined | null} */(this.shadowRoot?.querySelector("[part~='trigger']"))
+
+    if (!trigger) { return }
+
+    trigger.focus(options)
   }
 
   /**
@@ -260,11 +280,12 @@ export default class RoleMenu extends AnchoredRegionMixin(BaseElement) {
   willUpdate (changedProperties) {
     const submenuPlacement = this.textDirection === "rtl" ? "left-start" : "right-start"
     this.placement = this.isSubmenu ? submenuPlacement : "bottom-end"
+
+    // @ts-expect-error
     this.anchor = this.isSubmenu ? (this.shadowRoot?.querySelector("button") || this) : this
 
     this.distance = this.isSubmenu ? 8 : 2
     this.skidding = this.isSubmenu ? 4 : 0
-
 
     return super.willUpdate(changedProperties)
   }
@@ -272,9 +293,8 @@ export default class RoleMenu extends AnchoredRegionMixin(BaseElement) {
   render () {
     const submenuChevron = () => this.textDirection === "rtl" ? chevronLeft : chevronRight
     return html`
-
       <button
-        @click=${(e) => {
+        @click=${() => {
           this.active = !this.active
         }}
         aria-expanded=${this.isSubmenu ? null : this.active}
@@ -327,7 +347,7 @@ export default class RoleMenu extends AnchoredRegionMixin(BaseElement) {
         class="${this.active ? '' : 'visually-hidden'}"
         role="none"
       >
-        <div role="menu" tabindex="-1"><slot></slot></div>
+        <div role="menu" tabindex="-1" part="menu"><slot></slot></div>
       </role-anchored-region>
     `
   }

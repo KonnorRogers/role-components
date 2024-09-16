@@ -24,7 +24,7 @@
 // Filter results
 // don't filter (always show all options)
 
-import { css, html, LitElement } from "lit";
+import { html, LitElement } from "lit";
 import { LitFormAssociatedMixin } from "form-associated-helpers/exports/mixins/lit-form-associated-mixin.js";
 import { ValueMissingValidator } from "form-associated-helpers/exports/validators/value-missing-validator.js";
 import { when } from "lit/directives/when.js";
@@ -38,6 +38,8 @@ import { clamp } from "../../../internal/clamp.js";
 import { isMacOs } from "../../../internal/is-mac-os.js";
 import { SelectedEvent } from "../../events/selected-event.js";
 import RoleAnchoredRegion, { AnchoredRegionMixin, AnchoredRegionProperties } from "../anchored-region/anchored-region.js";
+
+import { styles } from "./select.styles.js"
 
 /**
  * @typedef {Object} OptionObject
@@ -104,55 +106,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
 
   static styles = [
     hostStyles,
-    css`
-      [name="trigger"]::slotted(input) {
-        font-size: 1.1em;
-        padding-inline-start: 0.4em;
-        padding-inline-end: 0.4em;
-        line-height: 1.8;
-        -webkit-appearance: none;
-        appearance: none;
-        background: Field;
-        color: FieldText;
-        border: 1px solid GrayText;
-      }
-
-      [name="trigger"]::slotted(*:focus-within) {
-        outline: 2px solid dodgerblue;
-      }
-
-      /** because position: absolute; + isolation: isolate; don't always pierce. */
-      [part~='popup']::part(popover) {
-      }
-
-      [part~="base"] {
-        display: grid;
-        grid-template-rows: minmax(0, auto) minmax(0, 1fr);
-        gap: 8px;
-      }
-
-      [part~="remove-button"] {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        appearance: none;
-        background: rgba(235,235,235,1);
-        color: ButtonText;
-        border: 1px solid ButtonText;
-        font-size: 0.9em;
-        padding: 0.2em 0.4em;
-      }
-
-      [part~="selected-options"] {
-        list-style-type: '';
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin: 0;
-        padding: 0;
-      }
-    `
+    styles,
   ]
 
   static properties = {
@@ -368,7 +322,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     /**
      * @type {this["autoSize"]}
      */
-    this.autoSize = /** @const */ ("height")
+    this.autoSize = /** @const */ ("vertical")
 
     /**
      * Monitors its DOM for new nodes and assigns them to `this.options`
@@ -872,7 +826,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
   renderSelectedOptions () {
     return html`
       ${this.selectedOptions.filter((option) => (option.content || "").trim() !== "").map((option) => {
-        return html`<span class="visually-hidden" id=${`remove-option-${option.id}`}>Remove "${option.displayValue}" option from combobox</span>`
+        return html`<span part="remove-option" class="visually-hidden" id=${`remove-option-${option.id}`}>Remove "${option.displayValue}" option from combobox</span>`
       })}
 
       <ul
@@ -882,7 +836,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
       >
         ${this.selectedOptions.filter((option) => (option.content || "").trim() !== "").map((option, index) => {
           return html`
-            <li>
+            <li part="selected-option">
               <button
                 type="button"
                 part="remove-button"
@@ -894,7 +848,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
                   }
                 }}
               >
-                <span>${option.displayValue}</span>
+                <span part="selected-option-display-value">${option.displayValue}</span>
                 <slot name="remove-icon">
                   <span aria-hidden="true">&times;</span>
                 </slot>
@@ -952,12 +906,8 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
           .hoverBridge=${this.hoverBridge}
         >
           <div
+            part="anchor"
             slot="anchor"
-            style="
-              display: grid;
-              grid-template-columns: minmax(0, auto) minmax(0, 1fr) minmax(0, auto);
-              grid-template-rows: minmax(0, 1fr);
-            "
             ${null/** Tab index of -1 for form validation */}
             tabindex="-1"
           >
@@ -969,12 +919,6 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
           <div
             part="listbox"
             ?hidden=${!this.active || (!this.focusableOptions.length && !this.showEmptyResults && (!this.allowCustomValues && this.multipleSelectionType !== "manual"))}
-            style="
-              background-color: Canvas;
-              border: 2px solid ButtonFace;
-              max-height: var(--auto-size-available-height, 100%);
-              overflow: auto;
-            "
           >
             <slot name="options" @slotchange=${this.updateListboxElement}></slot>
             <slot ?hidden=${!this.shouldShowEmptyResults} name="no-results"><div style="padding: 1rem;">No results found</div></slot>

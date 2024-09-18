@@ -75,6 +75,31 @@ const formProperties = LitFormAssociatedMixin.formProperties
  * @tagname role-select
  * @status experimental
  * @since 3.0
+ *
+ * @csspart selected-options - A list of selected options that are buttons a user can click to remove in a multiple select.
+ * @csspart selected-option - a list item containing a button to remove a selected option in a multiple select.
+ * @csspart remove-button - A button for removing a selected option in a multiple select.
+ * @csspart selected-option-display-value - The displayed text for the selected option
+ * @csspart remove-icon - The icon to use for the "x" next to the selected option.
+ * @csspart base - The base div wrapping everything
+ * @csspart anchored-region - The "popup" that will contain the list of possible options.
+ * @csspart popover - forwarded from role-anchored-region
+ * @csspart popover--active - forwarded from role-anchored-region
+ * @csspart popover--fixed - forwarded from role-anchored-region
+ * @csspart popover--has-arrow - forwarded from role-anchored-region
+ * @csspart arrow - forwarded from role-anchored-region
+ * @csspart hover-bridge - forwarded from role-anchored-region
+ * @csspart hover-bridge--visible - forwarded from role-anchored-region
+ * @csspart anchor - the div wrapping the trigger used for "anchoring" the popup.
+ * @csspart listbox - the container holding the options
+ *
+ * @slot prefix - The prefix slot before the trigger
+ * @slot trigger - the input / form control to use to "trigger" the combobox
+ * @slot suffix - the suffix slot for after the trigger.
+ * @slot options - the slot holding all possible `<role-option>` elements
+ * @slot no-result - The slot that appears when no results are found and `show-empty-results` is provided.
+ *
+ * @event {SelectedEvent} role-selected - The event that fires when an option is selected.
  */
 export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMixin(BaseElement)) {
   static baseName = "role-select";
@@ -494,9 +519,6 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
       this.setCurrent(suggestedOption)
     }
 
-    setTimeout(() => {
-      this.updateCustomOption()
-    })
     this.updateOptions()
   }
 
@@ -826,7 +848,8 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
   renderSelectedOptions () {
     return html`
       ${this.selectedOptions.filter((option) => (option.content || "").trim() !== "").map((option) => {
-        return html`<span part="remove-option" class="visually-hidden" id=${`remove-option-${option.id}`}>Remove "${option.displayValue}" option from combobox</span>`
+        /* Visually hidden label. */
+        return html`<span class="visually-hidden" id=${`remove-option-${option.id}`}>Remove "${option.displayValue}" option from combobox</span>`
       })}
 
       <ul
@@ -849,9 +872,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
                 }}
               >
                 <span part="selected-option-display-value">${option.displayValue}</span>
-                <slot name="remove-icon">
-                  <span aria-hidden="true">&times;</span>
-                </slot>
+                <span part="remove-icon" aria-hidden="true">&times;</span>
               </button>
             </li>
           `
@@ -872,7 +893,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
           () => this.renderSelectedOptions()
         )}
         <role-anchored-region
-          part="popup anchored-region"
+          part="anchored-region"
           exportparts="
             popover,
             popover--active,
@@ -1825,7 +1846,8 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
       const optionEl = this.findOptionElement(option)
 
       if (!hasMatch) {
-        if (optionEl) {
+
+        if (optionEl && (this.allowCustomValues && !optionEl.hasAttribute("data-custom-option"))) {
           optionEl.style.display = "none"
         }
         option.focusable = false
@@ -1911,6 +1933,8 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     } else {
       this.updateMultipleValue(true)
     }
+
+    this.updateCustomOption()
   }
 
   get multipleFormDataAndStringValue () {
@@ -1973,7 +1997,6 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
       return
     }
 
-
     /** @type {import("../option/option.js").default | null} */
     let customOption = listbox.querySelector("[data-custom-option]")
 
@@ -1991,6 +2014,12 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
 
     if ("selectionStart" in triggerElement) {
       value = triggerElement.value.slice(0, triggerElement.selectionStart || undefined)
+    }
+
+    if (!value) {
+      customOption.style.display = "none"
+    } else {
+      customOption.style.display = ""
     }
 
     customOption.value = value || ""

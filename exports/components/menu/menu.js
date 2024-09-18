@@ -31,7 +31,7 @@ import chevronLeft from "../../icons/chevron-left.js";
  * @csspart hover-bridge - the hover bridge element
  * @csspart hover-bridge--visible - if the hover bridge is visible
  *
- * @event {RoleMenuItemSelectedEvent} - Fires when a menu item is selected and will close the menu. Called `event.preventDefault()` to stop this behavior.
+ * @event {RoleMenuItemSelectedEvent} role-menu-item-selected - Fires when a menu item is selected and will close the menu. Called `event.preventDefault()` to stop this behavior.
  */
 export default class RoleMenu extends AnchoredRegionMixin(BaseElement) {
   static baseName = "role-menu"

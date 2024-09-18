@@ -18,7 +18,7 @@ import { RoleMenuItemSelectedEvent } from "../../events/role-menu-item-selected-
  *
  * @part base - The base wrapper around the default slot and submenu slot.
  *
- * @event {RoleMenuItemSelectedEvent} - Fires when a menu item is selected and will close the menu. Called `event.preventDefault()` to stop this behavior.
+ * @event {RoleMenuItemSelectedEvent} role-menu-item-selected - Fires when a menu item is selected and will close the menu. Called `event.preventDefault()` to stop this behavior.
  */
 export default class RoleMenuItem extends BaseElement {
   static baseName = "role-menu-item"
@@ -50,6 +50,9 @@ export default class RoleMenuItem extends BaseElement {
       return
     }
 
+    /**
+     * @ignore
+     */
     this.dispatchEvent(new RoleMenuItemSelectedEvent(this))
   }
 

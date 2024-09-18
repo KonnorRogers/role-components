@@ -24,7 +24,7 @@ export const styles = css`
 }
 
 /** because position: absolute; + isolation: isolate; don't always pierce. */
-[part~='popup'] {
+[part~='anchored-region'] {
   --background: transparent;
 }
 
@@ -41,8 +41,8 @@ export const styles = css`
   gap: 8px;
   appearance: none;
   background: rgba(235,235,235,1);
-  color: ButtonText;
-  border: 1px solid ButtonText;
+  color: black;
+  border: 1px solid black;
   font-size: 0.9em;
   padding: 0.2em 0.4em;
 }
@@ -62,4 +62,10 @@ export const styles = css`
   margin: 0;
   padding: 0;
 }
+
+:host::part(popover) {
+  border: none;
+}
+
+
 `

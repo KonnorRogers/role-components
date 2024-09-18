@@ -394,8 +394,6 @@ Options can be disabled by passing the `disabled` attribute to the `<role-option
 
 ### Using a "manual" selection type + `allow-custom-values` for multi-select.
 
-TODO: Fix flickering with "Add option:" and hide it when no value.
-
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
     <form>

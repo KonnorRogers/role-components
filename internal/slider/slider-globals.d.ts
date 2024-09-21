@@ -1,9 +1,9 @@
-import type RoleSlider from "./slider.js"
+// import type RoleSlider from "./slider.js"
 
-declare global {
-  interface HTMLElementTagNameMap {
-    'role-slider': RoleSlider
-  }
-}
+// declare global {
+//   interface HTMLElementTagNameMap {
+//     'role-slider': RoleSlider
+//   }
+// }
 
 export {}

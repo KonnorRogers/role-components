@@ -6,7 +6,7 @@ export { default as MenuItem } from "./components/menu-item/menu-item-register.j
 export { default as Option } from "./components/option/option-register.js"
 export { default as OptionGroup } from "./components/option-group/option-group-register.js"
 export { default as Select } from "./components/select/select-register.js"
-export { default as Slider } from "./components/slider/slider-register.js"
+// export { default as Slider } from "./components/slider/slider-register.js"
 export { default as Tab } from "./components/tab/tab-register.js"
 export { default as TabList } from "./components/tab-list/tab-list-register.js"
 export { default as TabPanel } from "./components/tab-panel/tab-panel-register.js"

@@ -322,6 +322,7 @@ export default class RoleTooltip extends AnchoredRegionMixin(BaseElement) {
         "
         .anchor=${this.anchor}
         ?active=${this.active}
+        .anchoredPopoverType=${this.anchoredPopoverType}
         .placement=${this.placement}
         .strategy=${this.strategy}
         .distance=${this.distance}

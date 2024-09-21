@@ -10,5 +10,8 @@ internal/**/*.d.ts
 !internal/**/*-types.d.ts
 !internal/**/*-globals.d.ts
 
+docs/tmp/**/*
+!docs/tmp/**/*.keep
+
 custom-elements.json
 .vercel

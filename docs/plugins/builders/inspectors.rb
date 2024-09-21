@@ -4,6 +4,14 @@ class Builders::Inspectors < SiteBuilder
       grab_headers(document)
       mark_external(document)
       syntax_highlight(document)
+      add_light_preview_buttons(document)
+    end
+  end
+
+  def add_light_preview_buttons(document)
+    document.css("light-preview").each do |light_pen|
+      light_pen << %(<button data-controller="codepen" slot='actions'>Codepen</button>)
+      light_pen << %(<button data-controller="direction-switcher" slot='actions' aria-pressed="false"><span class="checkmark">✕</span>RTL</button>)
     end
   end
 

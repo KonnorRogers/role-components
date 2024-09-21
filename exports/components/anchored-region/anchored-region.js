@@ -306,9 +306,9 @@ export const AnchoredRegionProperties = () => /** @const */ ({
 
 
 /**
+ * `<anchored-region>` is a declarative way of declarign floating elements. It is an alternative until anchored-positioning in CSS gets better support.
  * @customelement
  * @tagname role-anchored-region
- * @summary Popup is a utility that lets you declaratively anchor "popover" containers to another element.
  * @documentation https://role-components.vercel.app/components/anchored-region
  * @status experimental
  * @since 3.0
@@ -613,9 +613,13 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
 
     if (popover) {
       if (this.active) {
+        try {
         popover.showPopover()
+        } catch (_) {}
       } else {
+        try {
         popover.hidePopover()
+        } catch (_) {}
       }
     }
 
@@ -796,7 +800,7 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
     if (this.hoverBridge && this.__anchorEl && this.popoverElement) {
       const anchorRect = this.__anchorEl.getBoundingClientRect();
       const popoverRect = this.popoverElement.getBoundingClientRect();
-      const isVertical = this.placement.includes('top') || this.placement.includes('bottom');
+      const isVertical = (this.currentPlacement?.includes('top') || this.currentPlacement?.includes('bottom')) ?? true;
       let topLeftX = 0;
       let topLeftY = 0;
       let topRightX = 0;
@@ -831,28 +835,28 @@ export default class RoleAnchoredRegion extends AnchoredRegionMixin(BaseElement)
           bottomRightY = anchorRect.top;
         }
       } else {
-        if (anchorRect.left < popoverRect.left) {
+        if (this.currentPlacement?.includes("left")) {
           // Anchor is on the left
-          topLeftX = anchorRect.right;
-          topLeftY = anchorRect.top;
-          topRightX = popoverRect.left;
-          topRightY = popoverRect.top;
-
-          bottomLeftX = anchorRect.right;
-          bottomLeftY = anchorRect.bottom;
-          bottomRightX = popoverRect.left;
-          bottomRightY = popoverRect.bottom;
-        } else {
-          // Anchor is on the right
           topLeftX = popoverRect.right;
           topLeftY = popoverRect.top;
-          topRightX = anchorRect.left;
+          topRightX = anchorRect.right;
           topRightY = anchorRect.top;
 
           bottomLeftX = popoverRect.right;
           bottomLeftY = popoverRect.bottom;
-          bottomRightX = anchorRect.left;
+          bottomRightX = anchorRect.right;
           bottomRightY = anchorRect.bottom;
+        } else {
+          // Anchor is on the right
+          topLeftX = anchorRect.left;
+          topLeftY = anchorRect.top;
+          topRightX = popoverRect.left;
+          topRightY = popoverRect.top;
+
+          bottomLeftX = anchorRect.left;
+          bottomLeftY = anchorRect.bottom;
+          bottomRightX = popoverRect.left;
+          bottomRightY = popoverRect.bottom;
         }
       }
 

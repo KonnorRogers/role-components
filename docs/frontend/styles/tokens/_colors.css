@@ -2,9 +2,10 @@
 html.sl-theme-light,
 html.sl-theme-dark {
   /** Colors */
-  --text-color: var(--sl-color-neutral-1000);
+  --text-color: var(--sl-color-neutral-800);
   --light-text-color: var(--sl-color-neutral-700);
   --body-color: var(--sl-color-neutral-0);
+  --heading-color: var(--sl-color-neutral-900);
 
   --logo-color: var(--sl-color-neutral-1000);
 

@@ -124,8 +124,8 @@ export default class RoleOption extends LitFormAssociatedMixin(LinkMixin(BaseEle
       }
 
       :host([aria-current="true"]) [part~="base"] {
-        background-color: SelectedItem;
-        color: SelectedItemText;
+        background-color: dodgerblue;
+        color: white;
       }
 
       [part~="base"] {

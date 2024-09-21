@@ -74,6 +74,16 @@ h1,h2,h3,h4,h5,h6 {
   margin-bottom: var(--sl-spacing-small);
 }
 
+:is(h1,h2,h3,h4,h5,h6)[id] > a {
+  color: var(--heading-color);
+  text-decoration-color: var(--sl-color-primary-600);
+  text-decoration-thickness: 4px;
+}
+
+:is(h1,h2,h3,h4,h5,h6)[id] > a:hover {
+  color: var(--link-color);
+}
+
 main p {
   font-size: 1em;
 }

@@ -47,31 +47,36 @@ export default function (plop) {
       }
     ],
     actions: [
-      // {
-      //   type: 'add',
-      //   path: '../../exports/components/{{ tagWithoutPrefix tag }}/{{ tagWithoutPrefix tag }}-register.js',
-      //   templateFile: 'templates/component-register.hbs'
-      // },
-      // {
-      //   type: 'add',
-      //   path: '../../exports/components/{{ tagWithoutPrefix tag }}/{{ tagWithoutPrefix tag }}.js',
-      //   templateFile: 'templates/component.hbs'
-      // },
-      // {
-      //   type: 'add',
-      //   path: '../../exports/components/{{ tagWithoutPrefix tag }}/{{ tagWithoutPrefix tag }}.styles.js',
-      //   templateFile: 'templates/component-styles.hbs'
-      // },
-      // {
-      //   type: 'add',
-      //   path: '../../tests/{{ tagWithoutPrefix tag }}.test.js',
-      //   templateFile: 'templates/component-tests.hbs'
-      // },
-      // {
-      //   type: 'add',
-      //   path: '../../docs/src/_documentation/components/{{ tagWithoutPrefix tag }}.md',
-      //   templateFile: 'templates/component-docs.hbs'
-      // },
+      {
+        type: 'add',
+        path: '../../exports/components/{{ tagWithoutPrefix tag }}/{{ tagWithoutPrefix tag }}-register.js',
+        templateFile: 'templates/component-register.hbs'
+      },
+      {
+        type: 'add',
+        path: '../../exports/components/{{ tagWithoutPrefix tag }}/{{ tagWithoutPrefix tag }}-globals.ts',
+        templateFile: 'templates/component-globals.hbs'
+      },
+      {
+        type: 'add',
+        path: '../../exports/components/{{ tagWithoutPrefix tag }}/{{ tagWithoutPrefix tag }}.js',
+        templateFile: 'templates/component.hbs'
+      },
+      {
+        type: 'add',
+        path: '../../exports/components/{{ tagWithoutPrefix tag }}/{{ tagWithoutPrefix tag }}.styles.js',
+        templateFile: 'templates/component-styles.hbs'
+      },
+      {
+        type: 'add',
+        path: '../../tests/{{ tagWithoutPrefix tag }}.test.js',
+        templateFile: 'templates/component-tests.hbs'
+      },
+      {
+        type: 'add',
+        path: '../../docs/src/_documentation/components/{{ tagWithoutPrefix tag }}.md',
+        templateFile: 'templates/component-docs.hbs'
+      },
       {
         type: "modify",
         path: "../../exports/index.js",

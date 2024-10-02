@@ -39,6 +39,9 @@ export default class RoleToolbar extends BaseElement {
      */
     this.orientation = "horizontal";
 
+    this.ignoreQuery = "textarea, select, input, [contenteditable='true'], [data-toolbar-ignore]"
+
+
     this.addEventListener("click", this.eventHandler.get(this.handleClick));
     this.addEventListener("keydown", this.eventHandler.get(this.handleKeyDown));
 
@@ -119,11 +122,21 @@ export default class RoleToolbar extends BaseElement {
 
   /** @param {Event} event */
   handleClick(event) {
+    let cancelEvent = false
     const focusedElement = event.composedPath().find((el) => {
+      // It really shouldn't be possible for an interactive element to live above the `data-role`
+      // @ts-expect-error
+      if (el?.matches?.(this.ignoreQuery)) {
+        cancelEvent = true
+        return
+      }
+
       // @ts-expect-error
       const role = el?.getAttribute?.("data-role") || "";
       return role.includes("toolbar-item");
     });
+
+    if (cancelEvent) { return }
 
     if (focusedElement) {
       this._toolbarItems.forEach((el, index) => {
@@ -156,6 +169,12 @@ export default class RoleToolbar extends BaseElement {
       (key === "arrowdown" || key === "arrowup")
     )
       return;
+
+    if (event.composedPath().find((/** @type {any} */ el) => {
+      return el.matches?.(this.ignoreQuery)
+    })) {
+      return
+    }
 
     if (Object.keys(this.keydownHandlers).includes(key)) {
       event.preventDefault();

@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+# v3.0.1 10/01/2024
+
+- Fixed a bug if interactive elements were children of `<role-toolbar>`
+
 # v3.0.0 09/21/2024
 
 - Removed `role-slider`

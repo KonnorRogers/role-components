@@ -170,7 +170,7 @@ export default class RoleToolbar extends BaseElement {
     )
       return;
 
-    if (e.composedPath().find((el) => {
+    if (event.composedPath().find((/** @type {any} */ el) => {
       return el.matches?.(this.ignoreQuery)
     })) {
       return

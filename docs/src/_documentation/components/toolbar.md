@@ -50,6 +50,7 @@ properly implement the "roving tabindex"
       <div style="display: grid; max-width: 800px; margin: 0 auto">
         <role-toolbar aria-controls="textarea-1" style="">
           <button data-role="toolbar-item" data-role-tooltip="bold">
+
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"

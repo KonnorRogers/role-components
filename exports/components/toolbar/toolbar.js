@@ -119,11 +119,22 @@ export default class RoleToolbar extends BaseElement {
 
   /** @param {Event} event */
   handleClick(event) {
+    let cancelEvent = false
+    const ignoredElements = "textarea, select, input, [contenteditable='true'], [data-toolbar-ignore]"
     const focusedElement = event.composedPath().find((el) => {
+      // It really shouldn't be possible for an interactive element to live above the `data-role`
+      // @ts-expect-error
+      if (el?.matches?.(ignoredElements)) {
+        cancelEvent = true
+        return
+      }
+
       // @ts-expect-error
       const role = el?.getAttribute?.("data-role") || "";
       return role.includes("toolbar-item");
     });
+
+    if (cancelEvent) { return }
 
     if (focusedElement) {
       this._toolbarItems.forEach((el, index) => {

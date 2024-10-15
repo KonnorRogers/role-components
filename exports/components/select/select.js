@@ -634,6 +634,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     if (!triggerElement) return
 
     const val = triggerElement.value
+    console.log(val)
 
     /**
      * @type {null | undefined | OptionObject}
@@ -660,11 +661,16 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
         this.deselect(this.currentOption)
       }
 
-      if (currentOption) {
-        if (this.autocomplete === "list" || this.autocomplete === "both" || this.autocomplete === "inline") {
-          this.setCurrent(currentOption)
-        }
+      const hasAutocomplete = [
+        "list",
+        "both",
+        "inline"
+      ].includes(this.autocomplete)
 
+      if (currentOption && hasAutocomplete) {
+        this.setCurrent(currentOption)
+
+        // If its inline autocomplete, select it.
         if (this.autocomplete === "both" || this.autocomplete === "inline") {
           this.select(currentOption)
         }

@@ -124,6 +124,32 @@ A list + inline ("both") combobox will both highlight the value in the input and
   </template>
 </light-preview>
 
+### Editable Combobox no autocomplete with values
+
+A combobox with `autocomplete="off"` is editable, but will not guide the user along the popup list
+of options and will not prefill the input. If you use `value` attributes on the options, and the text matches, it will use the value.
+
+<light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
+  <template slot="code">
+    <form>
+      <role-combobox name="combobox" autocomplete="off">
+        <input slot="trigger">
+        <div slot="options">
+          <role-option value="1">Option 1</role-option>
+          <role-option value="2">Option 2</role-option>
+          <role-option value="3">Option 3</role-option>
+          <role-option value="4" selected>Option 4</role-option>
+          <role-option value="5">Option 5</role-option>
+          <role-option value="6">Option 6</role-option>
+        </div>
+      </role-combobox>
+      <br>
+      <button type="reset">Reset</button>
+    </form>
+    <%= render DebugInfo.new("role-combobox") %>
+  </template>
+</light-preview>
+
 ### Editable Combobox no autocomplete
 
 A combobox with `autocomplete="off"` is editable, but will not guide the user along the popup list

@@ -558,6 +558,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     const shouldSelectSuggestedOption = this.__shouldSelectSuggestedOption(finalString, event)
     const suggestedOption = this.__findSuggestedOption(finalString, event, newSelectedOptions)
 
+
     if (suggestedOption) {
       newSelectedOptions.pop()
       newSelectedOptions.push(suggestedOption)
@@ -639,11 +640,11 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
      */
     let currentOption
 
-    if (event.inputType !== "deleteContentBackward" && (this.autocomplete === "both" || this.autocomplete === "inline")) {
+    if (event.inputType !== "deleteContentBackward" && (this.autocomplete === "list" || this.autocomplete === "both" || this.autocomplete === "inline")) {
       currentOption = this.options.find((option) => option.content.match(this.stringToRegex(val)))
       const valueSize = val.length
 
-      if ("setSelectionRange" in triggerElement) {
+      if ((this.autocomplete === "both" || this.autocomplete === "inline") && "setSelectionRange" in triggerElement) {
         setTimeout(() => {
           if (currentOption) {
             triggerElement.setSelectionRange(valueSize, currentOption.content.length)
@@ -651,7 +652,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
         })
       }
     } else {
-      currentOption = this.options.find((option) => option.content === val)
+      currentOption = this.options.find((option) => option.content.match(this.stringToRegex(val)))
     }
 
     if (val !== this.value) {
@@ -663,7 +664,10 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
         if (this.autocomplete === "list" || this.autocomplete === "both" || this.autocomplete === "inline") {
           this.setCurrent(currentOption)
         }
-        this.select(currentOption)
+
+        if (this.autocomplete === "both" || this.autocomplete === "inline") {
+          this.select(currentOption)
+        }
       } else {
         this.value = val
       }
@@ -1548,6 +1552,10 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     option.selected = true
 
     if (optionElement) {
+      if (optionElement.hasAttribute("data-custom-option")) {
+        optionElement.id = "role-option-" + uuidv4()
+        return
+      }
       optionElement.selected = true
 
       // We don't want to override normal HTMLOptionElement semantics.
@@ -2026,6 +2034,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
 
     const mark = customOption.querySelector("mark")
     if (mark) {
+      customOption.setAttribute("data-display-value", value)
       mark.textContent = value || ""
     }
   }

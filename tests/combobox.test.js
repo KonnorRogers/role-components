@@ -293,6 +293,9 @@ test("Should properly record a value for autocomplete='list'", async () => {
   assert.equal(combobox.triggerElement.value, "Option")
   // Combobox itself
   assert.equal(combobox.value, "Option")
+  const options = () => combobox.querySelectorAll("[role='option']")
+  assert.equal(options()[0].getAttribute("aria-current"), "true")
+  assert.equal(combobox.getAttribute("aria-activedescendant", options()[0].id))
 
   await sendKeys({ press: "Backspace" })
   await aTimeout(20)

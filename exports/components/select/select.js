@@ -536,6 +536,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
 
     const splitValue = this.splitValue(val)
 
+    // Denormalize options
     const newSelectedOptions = splitValue.filter(Boolean).map((str) => {
       const option = this.options.find((option) => option.content === str)
 
@@ -557,7 +558,6 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
 
     const shouldSelectSuggestedOption = this.__shouldSelectSuggestedOption(finalString, event)
     const suggestedOption = this.__findSuggestedOption(finalString, event, newSelectedOptions)
-
 
     if (suggestedOption) {
       newSelectedOptions.pop()
@@ -634,7 +634,6 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     if (!triggerElement) return
 
     const val = triggerElement.value
-    console.log(val)
 
     /**
      * @type {null | undefined | OptionObject}
@@ -652,8 +651,6 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
           }
         })
       }
-    } else {
-      currentOption = this.options.find((option) => option.content.match(this.stringToRegex(val)))
     }
 
     if (val !== this.value) {
@@ -670,9 +667,10 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
       if (currentOption && hasAutocomplete) {
         this.setCurrent(currentOption)
 
-        // If its inline autocomplete, select it.
         if (this.autocomplete === "both" || this.autocomplete === "inline") {
           this.select(currentOption)
+        } else {
+          this.value = val
         }
       } else {
         this.value = val
@@ -861,6 +859,10 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
         /* Visually hidden label. */
         return html`<span class="visually-hidden" id=${`remove-option-${option.id}`}>Remove "${option.displayValue}" option from combobox</span>`
       })}
+
+      <div role="alert" aria-live="assertive">
+        ${this.currentOption ? this.currentOption.content + "selected" : ""}
+      </div>
 
       <ul
         role="list"
@@ -1536,7 +1538,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     // We dont want to simulate clicks if its not open.
     if (this.active && optionElement?.hasAttribute("href")) {
       optionElement.simulateLinkClick()
-      this.triggerElement?.focus()
+      // this.triggerElement?.focus()
     }
 
     if (!this.multiple) {
@@ -1673,25 +1675,6 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     // For some reason something is setting "current" after this only when using VoiceOver, so re-set it in a setTimeout.
     this.setCurrent(selectedOption);
     this.scrollOptionIntoView(selectedOption);
-
-    setTimeout(() => {
-      // This is in a `requestAnimationFrame()` Because for some reason voiceover wont read the option as currently selected
-      // if we dont try to setCurrent again.
-      this.setCurrent(selectedOption)
-
-      if (!this.matches(":focus-within")) { return }
-      if (!this.active) { return }
-
-      /**
-       * Hopefully one day this is no longer needed for Voiceover + Safari.
-       */
-      const optionEl = this.findOptionElement(selectedOption)
-      if (optionEl) {
-        optionEl.focus({ preventScroll: true })
-      }
-
-      requestAnimationFrame(() => this.triggerElement?.focus())
-    })
   }
 
   get focusableOptions () {
@@ -1861,7 +1844,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
 
       if (!hasMatch) {
 
-        if (optionEl && (this.allowCustomValues && !optionEl.hasAttribute("data-custom-option"))) {
+        if (optionEl && (this.filterResults || (this.allowCustomValues && !optionEl.hasAttribute("data-custom-option")))) {
           optionEl.style.display = "none"
         }
         option.focusable = false

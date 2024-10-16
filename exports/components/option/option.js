@@ -94,7 +94,6 @@ export default class RoleOption extends LitFormAssociatedMixin(LinkMixin(BaseEle
       ariaSelected: { reflect: true, attribute: "aria-selected" },
       disabled: {type: Boolean},
       label: {},
-      tabIndex: {attribute: "tabindex", reflect: true},
     }
   };
 
@@ -187,11 +186,6 @@ export default class RoleOption extends LitFormAssociatedMixin(LinkMixin(BaseEle
      * @type {string}
      */
     this.label = this.innerText
-
-    /**
-     * @type {number}
-     */
-    this.tabIndex = -1
 
     this.addEventListener("click", this.eventHandler.get(this.simulateLinkClick))
   }

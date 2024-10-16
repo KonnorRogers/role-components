@@ -132,7 +132,7 @@ of options and will not prefill the input. If you use `value` attributes on the 
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
     <form>
-      <role-combobox name="combobox" autocomplete="off">
+      <role-combobox name="combobox" autocomplete="list">
         <input slot="trigger">
         <div slot="options">
           <role-option value="1">Option 1</role-option>
@@ -141,6 +141,10 @@ of options and will not prefill the input. If you use `value` attributes on the 
           <role-option value="4" selected>Option 4</role-option>
           <role-option value="5">Option 5</role-option>
           <role-option value="6">Option 6</role-option>
+          <role-option value="7">Option 7</role-option>
+          <role-option value="8">Option 8</role-option>
+          <role-option value="9">Option 9</role-option>
+          <role-option value="10">Option 10</role-option>
         </div>
       </role-combobox>
       <br>

@@ -862,7 +862,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
       })}
 
       <div role="status" aria-live="polite">
-        ${this.currentOption ? this.currentOption.textContent + "selected" : ""}
+        ${this.currentOption ? this.currentOption.content + " selected" : ""}
       </div>
 
       <ul

@@ -22,7 +22,7 @@ on the string provided in the input.
   <template slot="code">
     <form>
       <role-combobox name="combobox" autocomplete="list">
-        <input slot="trigger">
+        <input slot="trigger" value="blah">
         <div slot="options">
           <role-option>Capybara</role-option>
           <role-option>Rhino</role-option>
@@ -327,7 +327,7 @@ Options can be disabled by passing the `disabled` attribute to the `<role-option
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
     <form>
-      <role-combobox multiple name="combobox" autocomplete="both">
+      <role-combobox multiple name="combobox" autocomplete="both" filter-results>
         <input slot="trigger">
         <div slot="options">
           <role-option>Capybara</role-option>
@@ -396,7 +396,7 @@ Options can be disabled by passing the `disabled` attribute to the `<role-option
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
     <form>
-      <role-combobox multiple name="combobox" autocomplete="both">
+      <role-combobox multiple name="combobox" autocomplete="both" filter-results>
         <input slot="trigger">
         <div slot="options">
           <role-option>Capybara</role-option>

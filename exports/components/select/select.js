@@ -808,9 +808,10 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
       ["aria-controls", this.listbox?.id || this.__listboxId],
       ["aria-activedescendant", this.currentOption?.id || ""],
       ["aria-autocomplete", this.autocomplete || ""],
-      // ["autocomplete", this.autocomplete || "list"],
       ["spellcheck", "off"],
-      ["aria-expanded", this.active.toString()]
+      ["capitalize", "off"],
+      ["aria-expanded", this.active.toString()],
+      ["aria-multiselectable", this.multiple.toString()]
     ]
 
     /**
@@ -836,7 +837,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     //   part="input"
     //   role="combobox"
     //   aria-haspopup="listbox"
-    //   aria-controls="listbox"
+    //   aria-owns="listbox"
     //   aria-expanded=${this.active}
     //   aria-activedescendant=${this.currentOption?.id}
     //   aria-autocomplete=${this.autocomplete}
@@ -860,8 +861,8 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
         return html`<span class="visually-hidden" id=${`remove-option-${option.id}`}>Remove "${option.displayValue}" option from combobox</span>`
       })}
 
-      <div role="alert" aria-live="assertive">
-        ${this.currentOption ? this.currentOption.content + "selected" : ""}
+      <div role="status" aria-live="polite">
+        ${this.currentOption ? this.currentOption.textContent + "selected" : ""}
       </div>
 
       <ul
@@ -1538,7 +1539,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     // We dont want to simulate clicks if its not open.
     if (this.active && optionElement?.hasAttribute("href")) {
       optionElement.simulateLinkClick()
-      // this.triggerElement?.focus()
+      this.triggerElement?.focus()
     }
 
     if (!this.multiple) {

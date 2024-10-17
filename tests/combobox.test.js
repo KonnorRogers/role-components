@@ -915,16 +915,16 @@ suite("Multiple editable combobox", async () => {
 
     await sendKeys({ press: "ArrowDown" })
     assert.equal(options()[0].getAttribute("aria-selected"), "true")
-    assert.equal(options()[0].getAttribute("aria-current"), "false")
+    assert.isFalse(options()[0].hasAttribute("aria-current"))
 
-    assert.equal(options()[1].getAttribute("aria-selected"), "false")
+    assert.isFalse(options()[1].hasAttribute("aria-selected"))
     assert.equal(options()[1].getAttribute("aria-current"), "true")
 
     // Should select "Cat" and not "Capybara"
     await sendKeys({ press: "Enter" })
 
-    assert.equal(options()[0].getAttribute("aria-selected"), "false")
-    assert.equal(options()[0].getAttribute("aria-current"), "false")
+    assert.isFalse(options()[0].hasAttribute("aria-selected"))
+    assert.isFalse(options()[0].hasAttribute("aria-current"))
 
     assert.equal(options()[1].getAttribute("aria-selected"), "true")
     assert.equal(options()[1].getAttribute("aria-current"), "true")

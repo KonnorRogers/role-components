@@ -357,6 +357,45 @@ Options can be disabled by passing the `disabled` attribute to the `<role-option
 </light-preview>
 
 
+### Multiple combobox hiding already selected options from the list
+
+We can hide options from the list that have already been selected by doing:
+
+`<role-combobox hide-selected-options>`
+
+<light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
+  <template slot="code">
+    <form>
+      <role-combobox multiple name="combobox" autocomplete="both" filter-results>
+        <input slot="trigger">
+        <div slot="options">
+          <role-option>Capybara</role-option>
+          <role-option>Rhino</role-option>
+          <role-option>Badger mole</role-option>
+          <role-option>Flamingo</role-option>
+          <role-option>Tortoise</role-option>
+          <role-option selected>Killer Whale</role-option>
+          <role-option>Opossum</role-option>
+          <role-option>Turtle</role-option>
+          <role-option>Elephant</role-option>
+          <role-option>Dove</role-option>
+          <role-option>Sparrow</role-option>
+          <role-option>Platypus</role-option>
+          <role-option>Zebra</role-option>
+          <role-option>Dog</role-option>
+          <role-option>Cat</role-option>
+          <role-option>Swan</role-option>
+          <role-option>Goose</role-option>
+        </div>
+      </role-combobox>
+      <br>
+      <button type="reset">Reset</button>
+    </form>
+    <%= render DebugInfo.new("role-combobox") %>
+  </template>
+</light-preview>
+
+
 ### Editable Multi select combobox with autocomplete "off"
 
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">

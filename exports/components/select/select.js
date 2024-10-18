@@ -156,6 +156,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     autocomplete: {},
     editable: {type: Boolean},
     filterResults: {type: Boolean, attribute: "filter-results"},
+    hideSelectedOptions: {type: Boolean, attribute: "hide-selected-options"},
     delimiter: {},
     spacer: {},
     showEmptyResults: { type: Boolean, attribute: "show-empty-results" },
@@ -287,6 +288,11 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
      * @type {boolean}
      */
     this.filterResults = false
+
+    /**
+     * Will hide already selected options via `display: none;`, from the selectable list of options in a combobox.
+     */
+    this.hideSelectedOptions = false
 
     /**
      * @internal
@@ -674,6 +680,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
         }
       } else {
         this.value = val
+        this.updateOptions()
       }
     }
   }
@@ -1323,6 +1330,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
         }
         // Shift + DownArrow
         if (evt.key === "ArrowDown") {
+          if (!this.active) { this.active = true }
           this.focusNext();
           this.selectFromRangeStartToCurrent()
           return;
@@ -1859,14 +1867,29 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
 
     // When we preselect values, we need to make sure we check the selection.
     if ("selectionStart" in combobox) {
-      comboboxValue = comboboxValue.slice(0, combobox.selectionStart || undefined)
+      let selectionStart = combobox.selectionStart
+
+      comboboxValue = comboboxValue.slice(0, selectionStart || undefined)
+    }
+
+    if (this.multiple && this.multipleSelectionType !== "manual") {
+      const splitValue = this.splitValue(combobox.value)
+      comboboxValue = splitValue[splitValue.length - 1]
     }
 
     const value = comboboxValue.trim()
+
     let searchRegex = this.stringToRegex(value)
     let lastOptionSelected = false
 
     for (const option of optionsSet) {
+      const optionEl = this.findOptionElement(option)
+
+      if (this.hideSelectedOptions && this.isSelected(option)) {
+        if (optionEl) { optionEl.style.display = "none" }
+        option.focusable = false
+      }
+
       let hasMatch = filterResults === false || !(value) || lastOptionSelected
 
       if (!hasMatch) {
@@ -1877,11 +1900,10 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
         )
       }
 
-      const optionEl = this.findOptionElement(option)
-
       if (!hasMatch) {
-
-        if (optionEl && (this.filterResults || (this.allowCustomValues && !optionEl.hasAttribute("data-custom-option")))) {
+        if (optionEl && (
+          this.filterResults || (this.allowCustomValues && !optionEl.hasAttribute("data-custom-option"))
+        )) {
           optionEl.style.display = "none"
         }
         option.focusable = false

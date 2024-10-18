@@ -907,7 +907,12 @@ suite("Multiple editable combobox", async () => {
     const options = () => combobox.querySelectorAll("role-option")
 
     input.focus()
-    await sendKeys({ type: "Ca" })
+    const str = "Ca"
+    for (let i = 0; i < str.length; i++) {
+      await aTimeout(10)
+      await sendKeys({ type: str[i] })
+      await aTimeout(10)
+    }
 
     assert.equal(input.value, "Capybara")
     assert.equal(options()[0].getAttribute("aria-selected"), "true")

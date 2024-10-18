@@ -861,10 +861,6 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
         return html`<span class="visually-hidden" id=${`remove-option-${option.id}`}>Remove "${option.displayValue}" option from combobox</span>`
       })}
 
-      <div role="status" aria-live="polite">
-        ${this.currentOption ? this.currentOption.content + " selected" : ""}
-      </div>
-
       <ul
         role="list"
         part="selected-options"
@@ -899,9 +895,23 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     return !this.focusableOptions.length && this.showEmptyResults
   }
 
+  liveRegionStatus () {
+    const selectedText = this.currentOption?.selected ? ", selected" : ""
+    const focusableOptions = this.focusableOptions
+    const numberOfOptions = focusableOptions.length
+    const currentOptionIndex = focusableOptions.findIndex((opt) => opt.id === this.currentOption?.id)
+
+    const optionText = currentOptionIndex >= 0 ? `, (${currentOptionIndex + 1} of ${numberOfOptions})` : ""
+
+    return `${this.currentOption ? this.currentOption.content + ", current item" + selectedText + optionText : ""}`
+  }
+
   render () {
     const finalHTML = html`
       <div part="base">
+        <!-- This can go away when Safari properly supports aria-activedescendant -->
+        <div role="status" aria-live="polite" class="visually-hidden" .textContent=${this.liveRegionStatus()}></div>
+
         ${when(this.multiple && this.selectedOptions.length,
           () => this.renderSelectedOptions()
         )}
@@ -1242,6 +1252,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     if (
       ctrlKeyPressed === false &&
       metaKeyPressed === false &&
+      evt.key &&
       evt.key.match(/^.$/)
     ) {
       // For editable comboboxes, we don't want to use the internal search buffer. We rely on the actual input element.
@@ -1589,6 +1600,8 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
         this.updateTriggerElementTextContentAndValue(option.displayValue)
       }
 
+
+      this.updateLiveRegion()
       return
     }
   }
@@ -1615,6 +1628,8 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
       selectedElement.selected = false;
       selectedElement.removeAttribute("aria-selected");
     }
+
+    this.updateLiveRegion()
   }
 
   /**
@@ -1639,6 +1654,10 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     if (updateOptions) {
       this.updateOptions()
     }
+  }
+
+  get liveRegion () {
+    return /** @type {HTMLElement | null} */ (this.shadowRoot?.querySelector("[role='status']"))
   }
 
   /**
@@ -1676,6 +1695,19 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     // For some reason something is setting "current" after this only when using VoiceOver, so re-set it in a setTimeout.
     this.setCurrent(selectedOption);
     this.scrollOptionIntoView(selectedOption);
+
+    this.updateLiveRegion()
+  }
+
+  updateLiveRegion () {
+    const liveRegion = this.liveRegion
+    if (!liveRegion) { return }
+
+    // Dont ask me why, but this is the only combo that played nicely with Safari.
+    liveRegion.style.display = "none"
+    liveRegion.textContent = ""
+    liveRegion.style.display = ""
+    liveRegion.textContent = this.liveRegionStatus();
   }
 
   get focusableOptions () {
@@ -1801,6 +1833,10 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     const combobox = this.triggerElement
     if (!listbox) return
     if (!combobox) return
+
+    setTimeout(() => {
+      this.updateLiveRegion()
+    }, 10)
 
     const options = [...this.selectableOptions].map((optionElement) => {
       // Sometimes people dont provide IDs, so we can fill it for them. We need ids for aria-activedescendant.

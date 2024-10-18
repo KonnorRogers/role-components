@@ -366,7 +366,7 @@ We can hide options from the list that have already been selected by doing:
 <light-preview preview-mode="shadow-dom" script-scope="shadow-dom">
   <template slot="code">
     <form>
-      <role-combobox multiple name="combobox" autocomplete="both" filter-results>
+      <role-combobox multiple name="combobox" autocomplete="both" filter-results hide-selected-options>
         <input slot="trigger">
         <div slot="options">
           <role-option>Capybara</role-option>

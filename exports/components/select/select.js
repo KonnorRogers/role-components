@@ -1387,7 +1387,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
 
     if (this.multiple) {
       // If a completion is selected, we just let it fall through.
-      if (this.multipleSelectionType === "manual" || !this.completionSelected) {
+      if (this.multipleSelectionType === "manual" || !this.autocompleteVisible) {
         this.toggleSelected(this.currentOption)
         this.updateTriggerElementTextContentAndValue("")
       }
@@ -1396,7 +1396,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
         this.updateMultipleValue(true)
       }
     } else {
-      if (!this.currentOption.selected || this.completionSelected) {
+      if (!this.currentOption.selected || this.autocompleteVisible) {
         this.select(this.currentOption)
       } else {
         this.deselect(this.currentOption)
@@ -1572,7 +1572,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     }
 
     // If a user has a completion selected, and then chooses an option, we're in this fun scenario where we need to delete the previous "selectedOption" that they're typing in, but maintain the new selection.
-    if (this.isEditableMultipleCombobox && this.completionSelected && this.multipleSelectionType !== "manual") {
+    if (this.isEditableMultipleCombobox && this.autocompleteVisible && this.multipleSelectionType !== "manual") {
       this.selectedOptions.splice(this.selectedOptions.length - 2, 1)
       this.requestUpdate("selectedOptions")
     }
@@ -1824,9 +1824,9 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
   }
 
   /**
-   * "completionSelected" is determined by if the user has an autosuggestion in the `<input>`.
+   * "autocompleteVisible" is determined by if the user has an autosuggestion in the `<input>`.
    */
-  get completionSelected () {
+  get autocompleteVisible () {
     return (
       this.triggerElement
       && "selectionEnd" in this.triggerElement
@@ -1885,11 +1885,6 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     for (const option of optionsSet) {
       const optionEl = this.findOptionElement(option)
 
-      if (this.hideSelectedOptions && this.isSelected(option)) {
-        if (optionEl) { optionEl.style.display = "none" }
-        option.focusable = false
-      }
-
       let hasMatch = filterResults === false || !(value) || lastOptionSelected
 
       if (!hasMatch) {
@@ -1912,8 +1907,14 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
 
       option.focusable = true
 
+
       if (optionEl && optionEl.style.display === "none") {
         optionEl.style.display = "";
+      }
+
+      if (this.hideSelectedOptions && this.isSelected(option) && !this.autocompleteVisible) {
+        if (optionEl) { optionEl.style.display = "none" }
+        option.focusable = false
       }
 
       if (this.isSelected(option)) {
@@ -2110,7 +2111,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
 
     if ("setSelectionRange" in triggerElement) {
       // The page will scroll to the input if we dont check that the input is currently focused.
-      if (!this.completionSelected && this.triggerElement?.matches(":focus-within")) {
+      if (!this.autocompleteVisible && this.triggerElement?.matches(":focus-within")) {
         triggerElement.setSelectionRange(-1, -1)
       }
     }

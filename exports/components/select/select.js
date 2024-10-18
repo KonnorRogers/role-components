@@ -156,6 +156,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     autocomplete: {},
     editable: {type: Boolean},
     filterResults: {type: Boolean, attribute: "filter-results"},
+    hideSelectedOptions: {type: Boolean, attribute: "hide-selected-options"},
     delimiter: {},
     spacer: {},
     showEmptyResults: { type: Boolean, attribute: "show-empty-results" },
@@ -287,6 +288,11 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
      * @type {boolean}
      */
     this.filterResults = false
+
+    /**
+     * Will hide already selected options via `display: none;`, from the selectable list of options in a combobox.
+     */
+    this.hideSelectedOptions = false
 
     /**
      * @internal
@@ -536,6 +542,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
 
     const splitValue = this.splitValue(val)
 
+    // Denormalize options
     const newSelectedOptions = splitValue.filter(Boolean).map((str) => {
       const option = this.options.find((option) => option.content === str)
 
@@ -639,19 +646,17 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
      */
     let currentOption
 
-    if (event.inputType !== "deleteContentBackward" && (this.autocomplete === "both" || this.autocomplete === "inline")) {
+    if (event.inputType !== "deleteContentBackward" && (this.autocomplete === "list" || this.autocomplete === "both" || this.autocomplete === "inline")) {
       currentOption = this.options.find((option) => option.content.match(this.stringToRegex(val)))
       const valueSize = val.length
 
-      if ("setSelectionRange" in triggerElement) {
+      if ((this.autocomplete === "both" || this.autocomplete === "inline") && "setSelectionRange" in triggerElement) {
         setTimeout(() => {
           if (currentOption) {
             triggerElement.setSelectionRange(valueSize, currentOption.content.length)
           }
         })
       }
-    } else {
-      currentOption = this.options.find((option) => option.content === val)
     }
 
     if (val !== this.value) {
@@ -659,13 +664,23 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
         this.deselect(this.currentOption)
       }
 
-      if (currentOption) {
-        if (this.autocomplete === "list" || this.autocomplete === "both" || this.autocomplete === "inline") {
-          this.setCurrent(currentOption)
+      const hasAutocomplete = [
+        "list",
+        "both",
+        "inline"
+      ].includes(this.autocomplete)
+
+      if (currentOption && hasAutocomplete) {
+        this.setCurrent(currentOption)
+
+        if (this.autocomplete === "both" || this.autocomplete === "inline") {
+          this.select(currentOption)
+        } else {
+          this.value = val
         }
-        this.select(currentOption)
       } else {
         this.value = val
+        this.updateOptions()
       }
     }
   }
@@ -800,9 +815,10 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
       ["aria-controls", this.listbox?.id || this.__listboxId],
       ["aria-activedescendant", this.currentOption?.id || ""],
       ["aria-autocomplete", this.autocomplete || ""],
-      // ["autocomplete", this.autocomplete || "list"],
       ["spellcheck", "off"],
-      ["aria-expanded", this.active.toString()]
+      ["capitalize", "off"],
+      ["aria-expanded", this.active.toString()],
+      ["aria-multiselectable", this.multiple.toString()]
     ]
 
     /**
@@ -828,7 +844,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     //   part="input"
     //   role="combobox"
     //   aria-haspopup="listbox"
-    //   aria-controls="listbox"
+    //   aria-owns="listbox"
     //   aria-expanded=${this.active}
     //   aria-activedescendant=${this.currentOption?.id}
     //   aria-autocomplete=${this.autocomplete}
@@ -886,9 +902,23 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     return !this.focusableOptions.length && this.showEmptyResults
   }
 
+  liveRegionStatus () {
+    const selectedText = this.currentOption?.selected ? ", selected" : ""
+    const focusableOptions = this.focusableOptions
+    const numberOfOptions = focusableOptions.length
+    const currentOptionIndex = focusableOptions.findIndex((opt) => opt.id === this.currentOption?.id)
+
+    const optionText = currentOptionIndex >= 0 ? `, (${currentOptionIndex + 1} of ${numberOfOptions})` : ""
+
+    return `${this.currentOption ? this.currentOption.content + ", current item" + selectedText + optionText : ""}`
+  }
+
   render () {
     const finalHTML = html`
       <div part="base">
+        <!-- This can go away when Safari properly supports aria-activedescendant -->
+        <div role="status" aria-live="polite" class="visually-hidden" .textContent=${this.liveRegionStatus()}></div>
+
         ${when(this.multiple && this.selectedOptions.length,
           () => this.renderSelectedOptions()
         )}
@@ -1229,6 +1259,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     if (
       ctrlKeyPressed === false &&
       metaKeyPressed === false &&
+      evt.key &&
       evt.key.match(/^.$/)
     ) {
       // For editable comboboxes, we don't want to use the internal search buffer. We rely on the actual input element.
@@ -1299,6 +1330,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
         }
         // Shift + DownArrow
         if (evt.key === "ArrowDown") {
+          if (!this.active) { this.active = true }
           this.focusNext();
           this.selectFromRangeStartToCurrent()
           return;
@@ -1355,7 +1387,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
 
     if (this.multiple) {
       // If a completion is selected, we just let it fall through.
-      if (this.multipleSelectionType === "manual" || !this.completionSelected) {
+      if (this.multipleSelectionType === "manual" || !this.autocompleteVisible) {
         this.toggleSelected(this.currentOption)
         this.updateTriggerElementTextContentAndValue("")
       }
@@ -1364,7 +1396,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
         this.updateMultipleValue(true)
       }
     } else {
-      if (!this.currentOption.selected || this.completionSelected) {
+      if (!this.currentOption.selected || this.autocompleteVisible) {
         this.select(this.currentOption)
       } else {
         this.deselect(this.currentOption)
@@ -1540,7 +1572,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     }
 
     // If a user has a completion selected, and then chooses an option, we're in this fun scenario where we need to delete the previous "selectedOption" that they're typing in, but maintain the new selection.
-    if (this.isEditableMultipleCombobox && this.completionSelected && this.multipleSelectionType !== "manual") {
+    if (this.isEditableMultipleCombobox && this.autocompleteVisible && this.multipleSelectionType !== "manual") {
       this.selectedOptions.splice(this.selectedOptions.length - 2, 1)
       this.requestUpdate("selectedOptions")
     }
@@ -1548,6 +1580,10 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     option.selected = true
 
     if (optionElement) {
+      if (optionElement.hasAttribute("data-custom-option")) {
+        optionElement.id = "role-option-" + uuidv4()
+        return
+      }
       optionElement.selected = true
 
       // We don't want to override normal HTMLOptionElement semantics.
@@ -1572,6 +1608,8 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
         this.updateTriggerElementTextContentAndValue(option.displayValue)
       }
 
+
+      this.updateLiveRegion()
       return
     }
   }
@@ -1598,6 +1636,8 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
       selectedElement.selected = false;
       selectedElement.removeAttribute("aria-selected");
     }
+
+    this.updateLiveRegion()
   }
 
   /**
@@ -1622,6 +1662,10 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     if (updateOptions) {
       this.updateOptions()
     }
+  }
+
+  get liveRegion () {
+    return /** @type {HTMLElement | null} */ (this.shadowRoot?.querySelector("[role='status']"))
   }
 
   /**
@@ -1660,24 +1704,18 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     this.setCurrent(selectedOption);
     this.scrollOptionIntoView(selectedOption);
 
-    setTimeout(() => {
-      // This is in a `requestAnimationFrame()` Because for some reason voiceover wont read the option as currently selected
-      // if we dont try to setCurrent again.
-      this.setCurrent(selectedOption)
+    this.updateLiveRegion()
+  }
 
-      if (!this.matches(":focus-within")) { return }
-      if (!this.active) { return }
+  updateLiveRegion () {
+    const liveRegion = this.liveRegion
+    if (!liveRegion) { return }
 
-      /**
-       * Hopefully one day this is no longer needed for Voiceover + Safari.
-       */
-      const optionEl = this.findOptionElement(selectedOption)
-      if (optionEl) {
-        optionEl.focus({ preventScroll: true })
-      }
-
-      requestAnimationFrame(() => this.triggerElement?.focus())
-    })
+    // Dont ask me why, but this is the only combo that played nicely with Safari.
+    liveRegion.style.display = "none"
+    liveRegion.textContent = ""
+    liveRegion.style.display = ""
+    liveRegion.textContent = this.liveRegionStatus();
   }
 
   get focusableOptions () {
@@ -1786,9 +1824,9 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
   }
 
   /**
-   * "completionSelected" is determined by if the user has an autosuggestion in the `<input>`.
+   * "autocompleteVisible" is determined by if the user has an autosuggestion in the `<input>`.
    */
-  get completionSelected () {
+  get autocompleteVisible () {
     return (
       this.triggerElement
       && "selectionEnd" in this.triggerElement
@@ -1803,6 +1841,10 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
     const combobox = this.triggerElement
     if (!listbox) return
     if (!combobox) return
+
+    setTimeout(() => {
+      this.updateLiveRegion()
+    }, 10)
 
     const options = [...this.selectableOptions].map((optionElement) => {
       // Sometimes people dont provide IDs, so we can fill it for them. We need ids for aria-activedescendant.
@@ -1825,14 +1867,24 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
 
     // When we preselect values, we need to make sure we check the selection.
     if ("selectionStart" in combobox) {
-      comboboxValue = comboboxValue.slice(0, combobox.selectionStart || undefined)
+      let selectionStart = combobox.selectionStart
+
+      comboboxValue = comboboxValue.slice(0, selectionStart || undefined)
+    }
+
+    if (this.multiple && this.multipleSelectionType !== "manual") {
+      const splitValue = this.splitValue(combobox.value)
+      comboboxValue = splitValue[splitValue.length - 1]
     }
 
     const value = comboboxValue.trim()
+
     let searchRegex = this.stringToRegex(value)
     let lastOptionSelected = false
 
     for (const option of optionsSet) {
+      const optionEl = this.findOptionElement(option)
+
       let hasMatch = filterResults === false || !(value) || lastOptionSelected
 
       if (!hasMatch) {
@@ -1843,11 +1895,10 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
         )
       }
 
-      const optionEl = this.findOptionElement(option)
-
       if (!hasMatch) {
-
-        if (optionEl && (this.allowCustomValues && !optionEl.hasAttribute("data-custom-option"))) {
+        if (optionEl && (
+          this.filterResults || (this.allowCustomValues && !optionEl.hasAttribute("data-custom-option"))
+        )) {
           optionEl.style.display = "none"
         }
         option.focusable = false
@@ -1856,8 +1907,14 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
 
       option.focusable = true
 
+
       if (optionEl && optionEl.style.display === "none") {
         optionEl.style.display = "";
+      }
+
+      if (this.hideSelectedOptions && this.isSelected(option) && !this.autocompleteVisible) {
+        if (optionEl) { optionEl.style.display = "none" }
+        option.focusable = false
       }
 
       if (this.isSelected(option)) {
@@ -2026,6 +2083,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
 
     const mark = customOption.querySelector("mark")
     if (mark) {
+      customOption.setAttribute("data-display-value", value)
       mark.textContent = value || ""
     }
   }
@@ -2053,7 +2111,7 @@ export default class RoleSelect extends AnchoredRegionMixin(LitFormAssociatedMix
 
     if ("setSelectionRange" in triggerElement) {
       // The page will scroll to the input if we dont check that the input is currently focused.
-      if (!this.completionSelected && this.triggerElement?.matches(":focus-within")) {
+      if (!this.autocompleteVisible && this.triggerElement?.matches(":focus-within")) {
         triggerElement.setSelectionRange(-1, -1)
       }
     }

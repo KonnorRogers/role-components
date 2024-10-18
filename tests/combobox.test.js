@@ -293,6 +293,9 @@ test("Should properly record a value for autocomplete='list'", async () => {
   assert.equal(combobox.triggerElement.value, "Option")
   // Combobox itself
   assert.equal(combobox.value, "Option")
+  const options = () => combobox.querySelectorAll("[role='option']")
+  assert.equal(options()[0].getAttribute("aria-current"), "true")
+  assert.equal(combobox.getAttribute("aria-activedescendant", options()[0].id))
 
   await sendKeys({ press: "Backspace" })
   await aTimeout(20)
@@ -647,6 +650,8 @@ suite("Multiple select combobox", () => {
     const str = "Ca"
     await sendKeys({ type: str })
 
+    await aTimeout(10)
+
     assert.equal(combobox.selectedOptions[0].content, "Capybara")
 
     // We should have "Capybara" preselected, and "Cat" under it.
@@ -904,7 +909,12 @@ suite("Multiple editable combobox", async () => {
     const options = () => combobox.querySelectorAll("role-option")
 
     input.focus()
-    await sendKeys({ type: "Ca" })
+    const str = "Ca"
+    for (let i = 0; i < str.length; i++) {
+      await aTimeout(10)
+      await sendKeys({ type: str[i] })
+      await aTimeout(10)
+    }
 
     assert.equal(input.value, "Capybara")
     assert.equal(options()[0].getAttribute("aria-selected"), "true")
@@ -912,16 +922,16 @@ suite("Multiple editable combobox", async () => {
 
     await sendKeys({ press: "ArrowDown" })
     assert.equal(options()[0].getAttribute("aria-selected"), "true")
-    assert.equal(options()[0].getAttribute("aria-current"), "false")
+    assert.isFalse(options()[0].hasAttribute("aria-current"))
 
-    assert.equal(options()[1].getAttribute("aria-selected"), "false")
+    assert.isFalse(options()[1].hasAttribute("aria-selected"))
     assert.equal(options()[1].getAttribute("aria-current"), "true")
 
     // Should select "Cat" and not "Capybara"
     await sendKeys({ press: "Enter" })
 
-    assert.equal(options()[0].getAttribute("aria-selected"), "false")
-    assert.equal(options()[0].getAttribute("aria-current"), "false")
+    assert.isFalse(options()[0].hasAttribute("aria-selected"))
+    assert.isFalse(options()[0].hasAttribute("aria-current"))
 
     assert.equal(options()[1].getAttribute("aria-selected"), "true")
     assert.equal(options()[1].getAttribute("aria-current"), "true")

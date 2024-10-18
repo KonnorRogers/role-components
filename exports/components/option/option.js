@@ -94,7 +94,6 @@ export default class RoleOption extends LitFormAssociatedMixin(LinkMixin(BaseEle
       ariaSelected: { reflect: true, attribute: "aria-selected" },
       disabled: {type: Boolean},
       label: {},
-      tabIndex: {attribute: "tabindex", reflect: true},
     }
   };
 
@@ -188,11 +187,6 @@ export default class RoleOption extends LitFormAssociatedMixin(LinkMixin(BaseEle
      */
     this.label = this.innerText
 
-    /**
-     * @type {number}
-     */
-    this.tabIndex = -1
-
     this.addEventListener("click", this.eventHandler.get(this.simulateLinkClick))
   }
 
@@ -239,11 +233,19 @@ export default class RoleOption extends LitFormAssociatedMixin(LinkMixin(BaseEle
     }
 
     if (changedProperties.has("ariaSelected") || changedProperties.has("selected")) {
-      this.setAttribute("aria-selected", this.selected.toString())
+      if (this.selected) {
+        this.setAttribute("aria-selected", "true")
+      } else {
+        this.removeAttribute("aria-selected")
+      }
     }
 
     if (changedProperties.has("ariaCurrent") || changedProperties.has("current")) {
-      this.setAttribute("aria-current", this.current.toString())
+      if (this.current) {
+        this.setAttribute("aria-current", "true")
+      } else {
+        this.removeAttribute("aria-current")
+      }
     }
 
     if (changedProperties.has("href")) {

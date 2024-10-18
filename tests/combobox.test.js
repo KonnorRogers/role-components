@@ -650,6 +650,8 @@ suite("Multiple select combobox", () => {
     const str = "Ca"
     await sendKeys({ type: str })
 
+    await aTimeout(10)
+
     assert.equal(combobox.selectedOptions[0].content, "Capybara")
 
     // We should have "Capybara" preselected, and "Cat" under it.

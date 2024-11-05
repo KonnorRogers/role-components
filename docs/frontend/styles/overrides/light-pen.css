@@ -1,3 +1,4 @@
+/** light-preview */
 light-preview button[slot="actions"] {
   appearance: none;
   -webkit-appearance: none;
@@ -52,3 +53,30 @@ light-preview button[slot="actions"]:hover {
   border-color: var(--sl-color-primary-300);
   color: var(--sl-color-primary-700);
 }
+
+/** light-code */
+light-code::part(code) {
+  font-size: 0.85rem;
+  padding-top: 4px;
+  border-top: 1px solid var(--divider-color);
+}
+
+light-code:defined > [slot="code"] {
+  display: none;
+}
+
+light-code > [slot="code"] {
+  display: block;
+  overflow: auto;
+  /* this creates "hard" line-wrapping where it will scroll horizontally. */
+  white-space: pre;
+  word-break: break-all;
+
+}
+
+light-code[wrap="soft"] > [slot="code"] {
+  /* this creates "soft" line-wrapping. */
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+

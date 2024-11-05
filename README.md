@@ -5,8 +5,12 @@ A collection of small reusable components.
 ## Installation
 
 ```
-npm install role-components@beta
+npm install role-components
 ```
+
+## Documentation
+
+<https://role-components.vercel.app>
 
 ## Usage
 

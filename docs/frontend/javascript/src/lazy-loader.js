@@ -3,7 +3,6 @@ import LazyLoader from "web-component-lazy-loader";
 export default function lazyLoader() {
   return new LazyLoader({
     components: {
-
       // "light-editor": {
       //   register () {
       //     import("light-pen/exports/light-editor-register.js")
@@ -16,7 +15,12 @@ export default function lazyLoader() {
       // },
       "light-preview": {
         register () {
-          import("light-pen/exports/light-preview-register.js")
+          import("light-pen/exports/components/light-preview/light-preview-register.js")
+        }
+      },
+      "light-code": {
+        register () {
+          import("light-pen/exports/components/light-code/light-code-register.js")
         }
       },
       "clipboard-copy": {
@@ -121,6 +125,12 @@ export default function lazyLoader() {
           import(
             "@shoelace-style/shoelace/dist/components/tab-group/tab-group.js"
           );
+        },
+      },
+
+      "sl-tooltip": {
+        register() {
+          import("@shoelace-style/shoelace/dist/components/tooltip/tooltip.js");
         },
       },
 
